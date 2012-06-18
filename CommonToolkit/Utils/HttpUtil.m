@@ -110,6 +110,12 @@ typedef enum {
     // set timeout seconds
     [_request setTimeOutSeconds:10.0];
     
+    // crate and init http request object to save processor, finishedRespSelector and failedRespSelector and add it to http request bean Dictionary
+    [[HttpRequestManager shareHttpRequestManager] setHttpRequestBean:[HttpRequestBean initWithProcessor:pProcessor andFinishedRespSelector:pFinRespSel andFailedRespSelector:pFailRespSel] forKey:[NSNumber numberWithInteger:[_request hash]]];
+    
+    // set delegate
+    _request.delegate = [[HttpRequestManager shareHttpRequestManager] httpRequestBeanForKey:[NSNumber numberWithInteger:[_request hash]]];
+    
     // set user infomation
     _request.userInfo = pUserInfo;
     
@@ -120,27 +126,14 @@ typedef enum {
     // start send request with type
     switch (pType) {
         case asynchronous:
-            {
-                // crate and init http request object to save processor, finishedRespSelector and failedRespSelector and add it to http request bean Dictionary
-                [[HttpRequestManager shareHttpRequestManager] setHttpRequestBean:[HttpRequestBean initWithProcessor:pProcessor andFinishedRespSelector:pFinRespSel andFailedRespSelector:pFailRespSel] forKey:[NSNumber numberWithInteger:[_request hash]]];
-                
-                // set delegate
-                _request.delegate = [[HttpRequestManager shareHttpRequestManager] httpRequestBeanForKey:[NSNumber numberWithInteger:[_request hash]]];
-                
-                // star asynchronous request
-                [_request startAsynchronous];
-            }
+            // star asynchronous request
+            [_request startAsynchronous];
             break;
             
         case synchronous:
         default:
-            {
-                // set synchronous delegate
-                _request.delegate = [HttpRequestBean initWithProcessor:pProcessor andFinishedRespSelector:pFinRespSel andFailedRespSelector:pFailRespSel];
-                
-                // star request
-                [_request startSynchronous];
-            }
+            // star synchronous request
+            [_request startSynchronous];
             break;
     }
 }
