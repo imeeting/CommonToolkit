@@ -74,6 +74,9 @@
     if (![self isNil] && ![self hasPrefix:@"http://"] && ![self hasPrefix:@"https://"]) {
         _ret = [NSString stringWithFormat:@"http://%@", self];
     }
+    else {
+        _ret = self;
+    }
     
     return _ret;
 }
