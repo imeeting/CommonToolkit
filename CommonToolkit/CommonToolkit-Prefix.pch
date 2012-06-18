@@ -1,0 +1,9 @@
+//
+// Prefix header for all source files of the 'CommonToolkit' target in the 'CommonToolkit' project
+//
+
+#ifdef __OBJC__
+    //#import <Cocoa/Cocoa.h>
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#endif
