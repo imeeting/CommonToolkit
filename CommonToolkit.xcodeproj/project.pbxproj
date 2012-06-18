@@ -75,6 +75,20 @@
 		DCD6AEA0158ED86C00CBBBDB /* NSBundle+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = DCD6AE9E158ED86C00CBBBDB /* NSBundle+Extension.m */; };
 		DCD6AF10158EFB6A00CBBBDB /* NSDate+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = DCD6AF0E158EFB6A00CBBBDB /* NSDate+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DCD6AF11158EFB6A00CBBBDB /* NSDate+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = DCD6AF0F158EFB6A00CBBBDB /* NSDate+Extension.m */; };
+		F8E3BEDD158F10C200467088 /* MBProgressHUD.h in Headers */ = {isa = PBXBuildFile; fileRef = F8E3BEDB158F10C200467088 /* MBProgressHUD.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F8E3BEDE158F10C200467088 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E3BEDC158F10C200467088 /* MBProgressHUD.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		F8E3BEE3158F192E00467088 /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = F8E3BEE1158F192E00467088 /* JSONKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F8E3BEE4158F192E00467088 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E3BEE2158F192E00467088 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		F8E3BEF5158F2AA600467088 /* ECLoadMoreUITableView.h in Headers */ = {isa = PBXBuildFile; fileRef = F8E3BEF1158F2AA600467088 /* ECLoadMoreUITableView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F8E3BEF6158F2AA600467088 /* ECLoadMoreUITableView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E3BEF2158F2AA600467088 /* ECLoadMoreUITableView.m */; };
+		F8E3BEF7158F2AA600467088 /* TableFooterView.h in Headers */ = {isa = PBXBuildFile; fileRef = F8E3BEF3158F2AA600467088 /* TableFooterView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F8E3BEF8158F2AA600467088 /* TableFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E3BEF4158F2AA600467088 /* TableFooterView.m */; };
+		F8E3BEFC158F2AC000467088 /* EGORefreshTableHeaderView.h in Headers */ = {isa = PBXBuildFile; fileRef = F8E3BEFA158F2AC000467088 /* EGORefreshTableHeaderView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F8E3BEFD158F2AC000467088 /* EGORefreshTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E3BEFB158F2AC000467088 /* EGORefreshTableHeaderView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		F8E3BF01158F2B0600467088 /* JTListView.h in Headers */ = {isa = PBXBuildFile; fileRef = F8E3BEFF158F2B0600467088 /* JTListView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F8E3BF02158F2B0600467088 /* JTListView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E3BF00158F2B0600467088 /* JTListView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		F8E3BF05158F2C0C00467088 /* ECUIControlTableViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = F8E3BF03158F2C0C00467088 /* ECUIControlTableViewCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F8E3BF06158F2C0C00467088 /* ECUIControlTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E3BF04158F2C0C00467088 /* ECUIControlTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -156,6 +170,20 @@
 		DCD6AE9E158ED86C00CBBBDB /* NSBundle+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+Extension.m"; sourceTree = "<group>"; };
 		DCD6AF0E158EFB6A00CBBBDB /* NSDate+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Extension.h"; sourceTree = "<group>"; };
 		DCD6AF0F158EFB6A00CBBBDB /* NSDate+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Extension.m"; sourceTree = "<group>"; };
+		F8E3BEDB158F10C200467088 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
+		F8E3BEDC158F10C200467088 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
+		F8E3BEE1158F192E00467088 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
+		F8E3BEE2158F192E00467088 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
+		F8E3BEF1158F2AA600467088 /* ECLoadMoreUITableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECLoadMoreUITableView.h; sourceTree = "<group>"; };
+		F8E3BEF2158F2AA600467088 /* ECLoadMoreUITableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECLoadMoreUITableView.m; sourceTree = "<group>"; };
+		F8E3BEF3158F2AA600467088 /* TableFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableFooterView.h; sourceTree = "<group>"; };
+		F8E3BEF4158F2AA600467088 /* TableFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableFooterView.m; sourceTree = "<group>"; };
+		F8E3BEFA158F2AC000467088 /* EGORefreshTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGORefreshTableHeaderView.h; sourceTree = "<group>"; };
+		F8E3BEFB158F2AC000467088 /* EGORefreshTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGORefreshTableHeaderView.m; sourceTree = "<group>"; };
+		F8E3BEFF158F2B0600467088 /* JTListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JTListView.h; sourceTree = "<group>"; };
+		F8E3BF00158F2B0600467088 /* JTListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JTListView.m; sourceTree = "<group>"; };
+		F8E3BF03158F2C0C00467088 /* ECUIControlTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECUIControlTableViewCell.h; sourceTree = "<group>"; };
+		F8E3BF04158F2C0C00467088 /* ECUIControlTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECUIControlTableViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +219,10 @@
 		DC3C159A158B936600B31A79 /* DependentLibs */ = {
 			isa = PBXGroup;
 			children = (
+				F8E3BEFE158F2B0600467088 /* JTListView */,
+				F8E3BEF9158F2AC000467088 /* EGOTableViewPullRefresh */,
+				F8E3BEE0158F192E00467088 /* JSONKit */,
+				F8E3BEDA158F10C200467088 /* MBProgressHUD */,
 				DC3C159B158B936600B31A79 /* ASIHTTPRequest */,
 				DC3C161A158B95F500B31A79 /* iToast */,
 				DC3C15B0158B936600B31A79 /* Reachability */,
@@ -282,6 +314,12 @@
 		DC3C15CA158B936600B31A79 /* CustomUI */ = {
 			isa = PBXGroup;
 			children = (
+				F8E3BF03158F2C0C00467088 /* ECUIControlTableViewCell.h */,
+				F8E3BF04158F2C0C00467088 /* ECUIControlTableViewCell.m */,
+				F8E3BEF1158F2AA600467088 /* ECLoadMoreUITableView.h */,
+				F8E3BEF2158F2AA600467088 /* ECLoadMoreUITableView.m */,
+				F8E3BEF3158F2AA600467088 /* TableFooterView.h */,
+				F8E3BEF4158F2AA600467088 /* TableFooterView.m */,
 			);
 			path = CustomUI;
 			sourceTree = "<group>";
@@ -371,6 +409,42 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		F8E3BEDA158F10C200467088 /* MBProgressHUD */ = {
+			isa = PBXGroup;
+			children = (
+				F8E3BEDB158F10C200467088 /* MBProgressHUD.h */,
+				F8E3BEDC158F10C200467088 /* MBProgressHUD.m */,
+			);
+			path = MBProgressHUD;
+			sourceTree = "<group>";
+		};
+		F8E3BEE0158F192E00467088 /* JSONKit */ = {
+			isa = PBXGroup;
+			children = (
+				F8E3BEE1158F192E00467088 /* JSONKit.h */,
+				F8E3BEE2158F192E00467088 /* JSONKit.m */,
+			);
+			path = JSONKit;
+			sourceTree = "<group>";
+		};
+		F8E3BEF9158F2AC000467088 /* EGOTableViewPullRefresh */ = {
+			isa = PBXGroup;
+			children = (
+				F8E3BEFA158F2AC000467088 /* EGORefreshTableHeaderView.h */,
+				F8E3BEFB158F2AC000467088 /* EGORefreshTableHeaderView.m */,
+			);
+			path = EGOTableViewPullRefresh;
+			sourceTree = "<group>";
+		};
+		F8E3BEFE158F2B0600467088 /* JTListView */ = {
+			isa = PBXGroup;
+			children = (
+				F8E3BEFF158F2B0600467088 /* JTListView.h */,
+				F8E3BF00158F2B0600467088 /* JTListView.m */,
+			);
+			path = JTListView;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -378,6 +452,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8E3BF05158F2C0C00467088 /* ECUIControlTableViewCell.h in Headers */,
 				DCBBB288158A277C007C2301 /* CommonToolkit.h in Headers */,
 				DC3C15D9158B936600B31A79 /* ContactBean.h in Headers */,
 				DC3C15DB158B936600B31A79 /* ContactBean_Extension.h in Headers */,
@@ -408,9 +483,15 @@
 				DC3C160E158B936600B31A79 /* AddressBookManager.h in Headers */,
 				DC3C1610158B936600B31A79 /* CommonUtils.h in Headers */,
 				DC3C1612158B936600B31A79 /* HttpUtil+Signature.h in Headers */,
+				F8E3BEDD158F10C200467088 /* MBProgressHUD.h in Headers */,
 				DC3C1614158B936600B31A79 /* HttpUtil.h in Headers */,
 				DC3C1618158B941000B31A79 /* UIColor+Extension.h in Headers */,
+				F8E3BEE3158F192E00467088 /* JSONKit.h in Headers */,
 				DC3C161D158B95F500B31A79 /* iToast.h in Headers */,
+				F8E3BEF5158F2AA600467088 /* ECLoadMoreUITableView.h in Headers */,
+				F8E3BEF7158F2AA600467088 /* TableFooterView.h in Headers */,
+				F8E3BEFC158F2AC000467088 /* EGORefreshTableHeaderView.h in Headers */,
+				F8E3BF01158F2B0600467088 /* JTListView.h in Headers */,
 				DCD6AE9F158ED86C00CBBBDB /* NSBundle+Extension.h in Headers */,
 				DCD6AF10158EFB6A00CBBBDB /* NSDate+Extension.h in Headers */,
 			);
@@ -513,6 +594,13 @@
 				DC3C1626158B975200B31A79 /* HttpRequestManager.m in Sources */,
 				DCD6AEA0158ED86C00CBBBDB /* NSBundle+Extension.m in Sources */,
 				DCD6AF11158EFB6A00CBBBDB /* NSDate+Extension.m in Sources */,
+				F8E3BEDE158F10C200467088 /* MBProgressHUD.m in Sources */,
+				F8E3BEE4158F192E00467088 /* JSONKit.m in Sources */,
+				F8E3BEF6158F2AA600467088 /* ECLoadMoreUITableView.m in Sources */,
+				F8E3BEF8158F2AA600467088 /* TableFooterView.m in Sources */,
+				F8E3BEFD158F2AC000467088 /* EGORefreshTableHeaderView.m in Sources */,
+				F8E3BF02158F2B0600467088 /* JTListView.m in Sources */,
+				F8E3BF06158F2C0C00467088 /* ECUIControlTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

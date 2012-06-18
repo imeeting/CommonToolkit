@@ -10,24 +10,28 @@
 #define CommonToolkit_CommonToolkit_h
 
 // CommonUtils
-#import "ContactBean.h"
-#import "ContactBean_Extension.h"
-#import "AddressBookManager.h"
+
 
 #import "CommonUtils.h"
-
 #import "HttpUtil.h"
 #import "HttpUtil+Signature.h"
+#import "AddressBookManager.h"
 
+
+
+// Foundation Extension
 #import "NSArray+Extension.h"
 #import "NSString+Extension.h"
 #import "NSIndexPath+Extension.h"
 #import "NSBundle+Extension.h"
 #import "NSDate+Extension.h"
 
+// DataStruct
 #import "UserBean.h"
 #import "UserBean_Extension.h"
 #import "UserManager.h"
+#import "ContactBean.h"
+#import "ContactBean_Extension.h"
 
 // Dependent ThirdParty Libraries
 #import "ASIHTTPRequest.h"
@@ -46,8 +50,12 @@
 #import "Reachability.h"
 
 #import "iToast.h"
+#import "MBProgressHUD.h"
+#import "JSONKit.h"
+#import "JTListView.h"
 
 // UIExtension
+//## Architecture
 #import "AppRootViewController.h"
 #import "UIViewController+CompatibleView.h"
 #import "UIView+UI+ViewController.h"
@@ -55,5 +63,10 @@
 #import "UIColor+Extension.h"
 #import "UIActionSheet+Extension.h"
 #import "UITableView+Extension.h"
+
+// Custom UI
+#import "ECLoadMoreUITableView.h"
+#import "TableFooterView.h"
+#import "ECUIControlTableViewCell.h"
 
 #endif

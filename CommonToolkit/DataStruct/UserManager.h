@@ -19,7 +19,8 @@
 + (UserManager *)shareUserManager;
 
 // set user with user name and password
-- (void)setUser:(NSString *)pName andPassword:(NSString *)pPassword;
+- (UserBean*)setUser:(NSString *)pName andPassword:(NSString *)pPassword;
+-(UserBean*) setUserkey:(NSString *)pUserkey;
 
 // remove an user
 - (void)removeUser;

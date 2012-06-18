@@ -37,17 +37,28 @@ static UserManager *singletonUserManagerRef;
     return singletonUserManagerRef;
 }
 
-- (void)setUser:(NSString *)pName andPassword:(NSString *)pPassword{
-    // generator user digit key 
-    NSMutableString *_digitKeyString = [[NSMutableString alloc] initWithString:pName];
-    [_digitKeyString appendString:pPassword];
-    NSString *_digitKey = [_digitKeyString md5];
-    
+- (UserBean*)setUser:(NSString *)pName andPassword:(NSString *)pPassword{
+    if(nil == _userBean){
+        _userBean = [[UserBean alloc] init];
+    }
+
     // set user bean
     _userBean.name = pName;
     _userBean.password = [pPassword md5];
-    _userBean.userKey = _digitKey;
+    
+    return _userBean;
 }
+
+-(UserBean*) setUserkey:(NSString *)pUserkey {
+    if (nil == _userBean) {
+        _userBean = [[UserBean alloc] init];
+    }
+    
+    // set user key
+    _userBean.userKey = pUserkey;
+    return _userBean;
+}
+
 
 - (void)removeUser{
     _userBean = nil;
