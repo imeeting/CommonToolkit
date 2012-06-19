@@ -12,6 +12,10 @@
 #define NSLocalizedStringFromBundle(bundle, key, comment)   \
     [[NSBundle mainBundle] localizedStringFromBundle:(bundle) forKey:(key) value:@"" table:nil]
 
+// localized string from other bundle with name in table
+#define NSLocalizedStringFromBundleInTable(bundle, table, key, comment)   \
+    [[NSBundle mainBundle] localizedStringFromBundle:(bundle) forKey:(key) value:@"" table:(table)]
+
 // localized string from commonToolkit bundle
 #define NSLocalizedStringFromCommonToolkitBundle(key, comment)  \
     [[NSBundle mainBundle] localizedStringFromBundle:@"CommonToolkitBundle" forKey:(key) value:@"" table:nil]
