@@ -25,20 +25,37 @@
     return _ret;
 }
 
-- (NSString *)trimWhitespaceAndNewline{
-    return [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+- (NSArray *)toArrayWithSeparator:(NSString *)pSeparator{
+    NSMutableArray *_ret = [[NSMutableArray alloc] init];
+    
+    // check separator
+    if (!pSeparator || [pSeparator isEqualToString:@""]) {
+        // traversal the string
+        for (NSInteger _index = 0; _index < self.length; _index++) {
+            [_ret addObject:[self substringWithRange:NSMakeRange(_index, 1)]];
+        }
+    }
+    else {
+        [_ret addObjectsFromArray:[self componentsSeparatedByString:pSeparator]];
+    }
+    
+    return _ret;
 }
 
-- (NSString *)trimPhoneNumberSeparator{
+- (NSString *)stringByTrimmingCharactersInString:(NSString *)pString{
     NSMutableString *_ret = [[NSMutableString alloc] init];
     
-    NSArray *_separatedArray = [self componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"()- "]];
+    NSArray *_separatedArray = [self componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:pString]];
     
     for(NSString *_string in _separatedArray){
         [_ret appendString:_string];
     }
     
     return _ret;
+}
+
+- (NSString *)trimWhitespaceAndNewline{
+    return [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
 
 - (NSArray *)stringParagraphs{

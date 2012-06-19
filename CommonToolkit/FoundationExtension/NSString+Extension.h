@@ -13,11 +13,14 @@
 // contains sub string
 - (BOOL)containsSubString:(NSString *)pString;
 
+// string to array with separated string
+- (NSArray *)toArrayWithSeparator:(NSString *)pSeparator;
+
+// string by trimming characters in string
+- (NSString *)stringByTrimmingCharactersInString:(NSString *)pString;
+
 // trim whitespace and new line character
 - (NSString *)trimWhitespaceAndNewline;
-
-// trim phone number separator character
-- (NSString *)trimPhoneNumberSeparator;
 
 // get paragraphs array of the string, according to '\n'
 - (NSArray *)stringParagraphs;
