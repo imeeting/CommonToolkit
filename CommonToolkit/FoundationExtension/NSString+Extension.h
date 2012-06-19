@@ -10,6 +10,9 @@
 
 @interface NSString (Common)
 
+// contains sub string
+- (BOOL)containsSubString:(NSString *)pString;
+
 // trim whitespace and new line character
 - (NSString *)trimWhitespaceAndNewline;
 

@@ -12,6 +12,19 @@
 
 @implementation NSString (Common)
 
+- (BOOL)containsSubString:(NSString *)pString{
+    BOOL _ret = NO;
+    
+    // define range
+    NSRange _range =[[self lowercaseString] rangeOfString:[pString lowercaseString]];
+    
+    if (NSNotFound != _range.location) {
+        _ret = YES;
+    }
+    
+    return _ret;
+}
+
 - (NSString *)trimWhitespaceAndNewline{
     return [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
