@@ -16,23 +16,18 @@
 - (NSString *)getContactPhoneNumbersDisplayTextWithStyle:(PhoneNumbersDisplayStyle)pStyle{
     NSMutableString *_ret = [[NSMutableString alloc] init];
     
-    // append each phone number
-    for (int _index = 0; _index < [self count]; _index++) {
-        [_ret appendString:[self objectAtIndex:_index]];
+    // check display stype
+    switch (pStyle) {
+        case vertical:
+            [_ret appendString:[self toStringWithSeparator:@"\n"]];
+            break;
         
-        if (_index != [self count]-1) {
-            switch (pStyle) {
-                case vertical:
-                    [_ret appendString:@"\n"];
-                    break;
-                    
-                case horizontal:
-                default:
-                    [_ret appendString:@" "];
-                    break;
-            }
-        }
+        case horizontal:
+        default:
+            [_ret appendString:[self toStringWithSeparator:@" "]];
+            break;
     }
+    
     // judge phoneNumsLabel text
     if ([_ret isNil]) {
         // check system current setting language 
