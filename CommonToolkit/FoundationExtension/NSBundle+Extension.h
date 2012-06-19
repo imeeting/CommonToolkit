@@ -20,6 +20,10 @@
 #define NSLocalizedStringFromCommonToolkitBundle(key, comment)  \
     [[NSBundle mainBundle] localizedStringFromBundle:@"CommonToolkitBundle" forKey:(key) value:@"" table:nil]
 
+// localized string from pinyin4j bundle
+#define NSLocalizedStringFromPinyin4jBundle(key, comment)  \
+    [[NSBundle mainBundle] localizedStringFromBundle:@"Pinyin4jBundle" forKey:(key) value:@"" table:nil]
+
 @interface NSBundle (ResourcesFromBundle)
 
 /* Method for retrieving localized strings from other bundle with name. */
