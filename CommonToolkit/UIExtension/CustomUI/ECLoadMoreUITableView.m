@@ -12,6 +12,7 @@
 @implementation ECLoadMoreUITableView
 
 @synthesize hasNext = _hasNext;
+@synthesize autoLoadDelegate = _autoLoadDelegate;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -28,16 +29,9 @@
     return self;
 }
 
-/*
-- (void)refreshDataSource {
-    
-}
-*/
-
 - (void)setReloadingFlag:(BOOL)flag {
     _reloading = flag;
     if (!_reloading) {
-        NSLog(@"egoRefreshScrollViewDataSourceDidFinishedLoading");
         [mRefreshHeaderView egoRefreshScrollViewDataSourceDidFinishedLoading:self];
     }
 }
@@ -49,16 +43,7 @@
         self.tableFooterView = nil;
     }
 }
-/*
-- (void)loadMoreDataSource {
-    
-}
-*/
  
-- (NSInteger)dataCount {
-    return 0;
-}
-
 #pragma mark - EGORefreshTableHeaderDelegate methods implemetation
 -(void) egoRefreshTableHeaderDidTriggerRefresh:(EGORefreshTableHeaderView *)view{
     // egoRefreshTableHeader did trigger refresh
@@ -66,9 +51,8 @@
     
     // update reloading flag
     _reloading = YES;
-    
     // init table dataSource
-    [self refreshDataSource];
+    [self.autoLoadDelegate refreshDataSource];
 }
 
 -(BOOL) egoRefreshTableHeaderDataSourceIsLoading:(EGORefreshTableHeaderView *)view{
@@ -82,7 +66,7 @@
 #pragma mark - UIScrollViewDelegate methods implemetation
 -(void) scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     if (_appending) {
-        [self loadMoreDataSource];
+        [self.autoLoadDelegate loadMoreDataSource];
     }
 }
 
@@ -90,7 +74,7 @@
     [mRefreshHeaderView egoRefreshScrollViewDidScroll:scrollView];
     
     // scroll to bottom of self tableView, judge if or not have more data
-    if(scrollView.contentOffset.y + scrollView.frame.size.height > scrollView.contentSize.height && !_appending && [self dataCount] > 0){
+    if(scrollView.contentOffset.y + scrollView.frame.size.height > scrollView.contentSize.height && !_appending){
         // judge if or not have more data
         if(_hasNext.boolValue){
             NSLog(@"has next, need to load more data");

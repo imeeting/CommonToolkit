@@ -9,6 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "EGORefreshTableHeaderView.h"
 
+@protocol AutoLoadDelegate <NSObject>
+// refresh table view data source - need to be implemented by subclasses
+- (void)refreshDataSource;
+// load more data for table view - need to be implemented by subclasses
+- (void)loadMoreDataSource;
+@end
+
 @interface ECLoadMoreUITableView : UITableView <EGORefreshTableHeaderDelegate, UIScrollViewDelegate>{
     EGORefreshTableHeaderView *mRefreshHeaderView;
     BOOL _reloading;
@@ -16,16 +23,9 @@
 }
 
 @property (nonatomic, retain) NSNumber *hasNext;
-
-// refresh table view data source - need to be implemented by subclasses
-- (void)refreshDataSource;
-// load more data for table view - need to be implemented by subclasses
-- (void)loadMoreDataSource;
+@property (nonatomic, retain) id<AutoLoadDelegate> autoLoadDelegate;
 
 - (void)setReloadingFlag:(BOOL)flag;
 - (void)setAppendingDataFlag:(BOOL)flag;
-
-// count of data items in the table view - need to be implemented by subclasses
-- (NSInteger)dataCount;
 
 @end
