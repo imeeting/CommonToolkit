@@ -32,10 +32,4 @@ typedef enum {
 // get application navigation bar default height
 + (CGFloat)appNavigationBarHeight;
 
-// print http request bean dictionary
-+ (void)printHttpRequestBeanDictionary;
-
-// print UIView extension bean dictionary
-+ (void)printUIViewExtensionBeanDictionary;
-
 @end

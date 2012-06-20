@@ -12,6 +12,19 @@
 
 #import "UIViewExtensionManager.h"
 
+@interface CommonUtils ()
+
+// print http request bean dictionary
++ (void)printHttpRequestBeanDictionary;
+
+// print UIView extension bean dictionary
++ (void)printUIViewExtensionBeanDictionary;
+
+@end
+
+
+
+
 @implementation CommonUtils
 
 + (SystemLanguage)systemCurrentSettingLanguage{
