@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define SPLITSEPARATOR  @" "
+
 @interface NSString (Common)
 
 // contains sub string
@@ -39,5 +41,15 @@
 
 // perfect http request url
 - (NSString *)perfectHttpRequestUrl;
+
+@end
+
+
+
+
+@interface NSString (Contact)
+
+// split to first letter and others
+- (NSArray *)splitToFirstAndOthers;
 
 @end

@@ -10,6 +10,16 @@
 
 #import <CommonCrypto/CommonDigest.h>
 
+@interface NSString (Private)
+
+// multiplied by array
+- (NSArray *)multipliedByArray:(NSArray *)pArray;
+
+@end
+
+
+
+
 @implementation NSString (Common)
 
 - (BOOL)containsSubString:(NSString *)pString{
@@ -108,6 +118,54 @@
         _ret = self;
     }
     
+    return _ret;
+}
+
+@end
+
+
+
+
+@implementation NSString (Contact)
+
+- (NSArray *)splitToFirstAndOthers{
+    NSMutableArray *_ret = [[NSMutableArray alloc] init];
+    
+    // check self
+    if ([self isNil]) {
+        NSLog(@"error: nil or empty string mustn't split");
+    }
+    else if (self.length >= 2) {
+        // get first letter and others
+        NSString *_firstLetter = [self substringToIndex:1];
+        NSString *_others = [self substringFromIndex:1];
+        
+        [_ret addObjectsFromArray:[_firstLetter multipliedByArray:[_others splitToFirstAndOthers]]];
+    }
+    else {
+        [_ret addObject:self];
+    }
+    
+    return _ret;
+}
+
+@end
+
+
+
+
+@implementation NSString (Private)
+
+- (NSArray *)multipliedByArray:(NSArray *)pArray{
+    NSMutableArray *_ret = [[NSMutableArray alloc] init];
+
+    for (NSString *_string in pArray) {
+        // x1 x2
+        [_ret addObject:[NSString stringWithFormat:@"%@%@%@", self, SPLITSEPARATOR, _string]];
+        // x1x2
+        [_ret addObject:[NSString stringWithFormat:@"%@%@", self, _string]];
+    }
+
     return _ret;
 }
 
