@@ -12,19 +12,36 @@
 
 #import "ContactBean.h"
 
-@interface AddressBookManager : NSObject
+@interface AddressBookManager : NSObject {
+    // all contacts, contact id - groups dictionary
+    // key is contact record id (int32_t)
+    // value is contact group array (NSArray)
+    NSMutableDictionary *_mContactIdGroupsDic;
+    
+    // all contacts info array, object is contact bean
+    NSMutableArray *_mAllContactsInfoArray;
+    
+    // contact search result dictionary
+    // key is search keyword (NSString)
+    // value is contact bean (ContactBean)
+    NSMutableDictionary *_mContactSearchResultDic;
+}
 
-// all contact id - group dictionary
-@property (nonatomic, readonly) NSMutableDictionary *contactsIdGroupDic;
-// all contact phone number - name dictionary
-@property (nonatomic, readonly) NSMutableDictionary *contactsPhoneNumberNameDic;
-// all contacts info array
 @property (nonatomic, readonly) NSMutableArray *allContactsInfoArray;
 
 // share singleton AddressBookManager
 + (AddressBookManager *)shareAddressBookManager;
 
-// traversal address book
+// traversal address book, inportant, do it first
 - (void)traversalAddressBook;
+
+// get contacts by phone number
+- (NSArray *)getContactByPhoneNumber:(NSString *)pPhoneNumber;
+
+// get contacts by name(not chinaese character)
+- (NSArray *)getContactByName:(NSString *)pName;
+
+// get contact end
+- (void)getContactEnd;
 
 @end
