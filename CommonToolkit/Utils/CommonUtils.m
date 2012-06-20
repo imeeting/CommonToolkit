@@ -9,21 +9,8 @@
 #import "CommonUtils.h"
 
 #import "HttpRequestManager.h"
-
 #import "UIViewExtensionManager.h"
-
-@interface CommonUtils ()
-
-// print http request bean dictionary
-+ (void)printHttpRequestBeanDictionary;
-
-// print UIView extension bean dictionary
-+ (void)printUIViewExtensionBeanDictionary;
-
-@end
-
-
-
+#import "AddressBookManager.h"
 
 @implementation CommonUtils
 
@@ -80,6 +67,10 @@
 
 + (void)printUIViewExtensionBeanDictionary{
     [[UIViewExtensionManager shareUIViewExtensionManager] printUIViewExtensionBeanDictionary];
+}
+
++ (void)printContactSearchResultDictionary{
+    [[AddressBookManager shareAddressBookManager] performSelector:@selector(printContactSearchResultDictionary)];
 }
 
 @end

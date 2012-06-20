@@ -33,3 +33,19 @@ typedef enum {
 + (CGFloat)appNavigationBarHeight;
 
 @end
+
+
+
+
+@interface CommonUtils ()
+
+// print http request bean dictionary
++ (void)printHttpRequestBeanDictionary;
+
+// print UIView extension bean dictionary
++ (void)printUIViewExtensionBeanDictionary;
+
+// print contact search result dictionary
++ (void)printContactSearchResultDictionary;
+
+@end
