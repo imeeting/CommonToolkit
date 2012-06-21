@@ -77,4 +77,31 @@
     return _ret;
 }
 
+- (NSArray *)multipliedByArray:(NSArray *)pArray{
+    NSMutableSet *_ret = [[NSMutableSet alloc] init];
+    
+    // check parameter array
+    if (self && (!pArray || 0 == [pArray count])) {
+        [_ret addObjectsFromArray:self];
+    }
+    
+    // check self
+    if (pArray && (!self || 0 == [self count])) {
+        [_ret addObjectsFromArray:pArray];
+    }
+    
+    // self and parameter array not nil
+    if (self && pArray && [self count] > 0 && [pArray count] > 0) {
+        // traversal self
+        for (NSString *_selfArrayString in self) {
+            // traversal parameter
+            for (NSString *_parameterArrayString in pArray) {
+                [_ret addObject:[NSString stringWithFormat:@"%@%@", _selfArrayString, _parameterArrayString]];
+            }
+        }
+    }
+    
+    return [_ret allObjects];
+}
+
 @end

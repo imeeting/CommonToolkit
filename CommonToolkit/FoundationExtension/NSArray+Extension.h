@@ -29,4 +29,7 @@ typedef enum {
 // convert to string with separator
 - (NSString *)toStringWithSeparator:(NSString *)pSeparator;
 
+// multiplied by array
+- (NSArray *)multipliedByArray:(NSArray *)pArray;
+
 @end
