@@ -247,13 +247,17 @@ static AddressBookManager *singletonAddressBookManagerRef;
             {
                 // set display name
                 _contact.displayName = [[NSString stringWithFormat:@"%@ %@", _lastName, _firstName] isNil] ? (zh_Hans == [CommonUtils systemCurrentSettingLanguage]) ? @"无名字" : @"無名字" : [NSString stringWithFormat:@"%@ %@", _lastName, _firstName];
+                
                 // set full name array
-                NSMutableArray *_tmpNameArray = [NSMutableArray arrayWithArray:[_lastName toArrayWithSeparator:nil]];
-                [_tmpNameArray addObjectsFromArray:[_firstName toArrayWithSeparator:nil]];
+                NSMutableArray *_tmpNameArray = [[NSMutableArray alloc] init];
+                [_tmpNameArray addObjectsFromArray:[_lastName toArraySeparatedByCharacter]];
+                [_tmpNameArray addObjectsFromArray:[_firstName toArraySeparatedByCharacter]];
                 _contact.fullNames = _tmpNameArray;
+                
                 // set name phonetics
                 NSMutableArray *_tmpNamePhoneticArray = [[NSMutableArray alloc] init];
                 for (NSString *_name in _contact.fullNames) {
+                    // get each name unicode
                     unichar _unicode = [_name characterAtIndex:0];
                     // check name unicode
                     if (_unicode >= 19968 && _unicode <= 40869) {
@@ -262,7 +266,7 @@ static AddressBookManager *singletonAddressBookManagerRef;
                         [_tmpNamePhoneticArray addObject:[NSLocalizedStringFromPinyin4jBundle(_nameUnicodeString, nil) toArrayWithSeparator:@","]];
                     }
                     else {
-                        // others, not implement
+                        // others, character
                         [_tmpNamePhoneticArray addObject:[NSArray arrayWithObject:_name]];
                     }
                 }
@@ -275,8 +279,10 @@ static AddressBookManager *singletonAddressBookManagerRef;
             {
                 // set display name
                 _contact.displayName = [[NSString stringWithFormat:@"%@ %@", _firstName, _lastName] isNil] ? @"No Name" : [NSString stringWithFormat:@"%@ %@", _firstName, _lastName];
+                
                 // set full name array
                 _contact.fullNames = [NSArray arrayWithObjects:_firstName, _lastName, nil];
+                
                 // set name phonetics
                 _contact.namePhonetics = [NSArray arrayWithObjects:[_firstName lowercaseString], [_lastName lowercaseString], nil];
             }
