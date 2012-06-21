@@ -10,6 +10,8 @@
 
 #import <CommonCrypto/CommonDigest.h>
 
+#import "RegexKitLite.h"
+
 @interface NSString (Private)
 
 // multiplied by array
@@ -144,6 +146,35 @@
     }
     else {
         [_ret addObject:self];
+    }
+    
+    return _ret;
+}
+
+- (NSArray *)getAllPrefixes{
+    NSMutableArray *_ret = [[NSMutableArray alloc] init];
+    
+    for (NSInteger _index = 0; _index < self.length; _index++) {
+        [_ret addObject:[self substringToIndex:_index + 1]];
+    }
+    
+    return _ret;
+}
+
+- (NSArray *)toArraySeparatedByCharacter{
+    NSMutableArray *_ret = [NSMutableArray arrayWithArray:[self componentsSeparatedByRegex:@"([A-Za-z0-9]*)"]];
+    
+    // all characters
+    if (_ret && 0 == [_ret count] && ![self isNil]) {
+        [_ret addObject:self];
+    }
+    else if (_ret && [_ret count] > 0) {
+        // trim "" object
+        for (NSInteger _index = 0; _index < [_ret count]; _index++) {
+            if ([[_ret objectAtIndex:_index] isNil]) {
+                [_ret removeObjectAtIndex:_index];
+            }
+        }
     }
     
     return _ret;
