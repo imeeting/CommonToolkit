@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DC0F2E141592F26200F9D4FA /* RegexKitLite.h in Headers */ = {isa = PBXBuildFile; fileRef = DC0F2E121592F26200F9D4FA /* RegexKitLite.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DC0F2E151592F26200F9D4FA /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = DC0F2E131592F26200F9D4FA /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		DC3C1584158B921800B31A79 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DC3C1582158B921800B31A79 /* InfoPlist.strings */; };
 		DC3C15D9158B936600B31A79 /* ContactBean.h in Headers */ = {isa = PBXBuildFile; fileRef = DC3C1592158B936600B31A79 /* ContactBean.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DC3C15DA158B936600B31A79 /* ContactBean.m in Sources */ = {isa = PBXBuildFile; fileRef = DC3C1593158B936600B31A79 /* ContactBean.m */; };
@@ -78,6 +80,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		DC0F2E121592F26200F9D4FA /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
+		DC0F2E131592F26200F9D4FA /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		DC3C1583158B921800B31A79 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = internationalization/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DC3C1585158B922700B31A79 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "internationalization/zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		DC3C1587158B922E00B31A79 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "internationalization/zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -169,6 +173,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DC0F2E111592F26200F9D4FA /* RegexKitLite */ = {
+			isa = PBXGroup;
+			children = (
+				DC0F2E121592F26200F9D4FA /* RegexKitLite.h */,
+				DC0F2E131592F26200F9D4FA /* RegexKitLite.m */,
+			);
+			path = RegexKitLite;
+			sourceTree = "<group>";
+		};
 		DC3C1591158B936600B31A79 /* DataStruct */ = {
 			isa = PBXGroup;
 			children = (
@@ -194,6 +207,7 @@
 				DC3C159B158B936600B31A79 /* ASIHTTPRequest */,
 				DC3C161A158B95F500B31A79 /* iToast */,
 				DC3C15B0158B936600B31A79 /* Reachability */,
+				DC0F2E111592F26200F9D4FA /* RegexKitLite */,
 			);
 			path = DependentLibs;
 			sourceTree = "<group>";
@@ -413,6 +427,7 @@
 				DC3C161D158B95F500B31A79 /* iToast.h in Headers */,
 				DCD6AE9F158ED86C00CBBBDB /* NSBundle+Extension.h in Headers */,
 				DCD6AF10158EFB6A00CBBBDB /* NSDate+Extension.h in Headers */,
+				DC0F2E141592F26200F9D4FA /* RegexKitLite.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -513,6 +528,7 @@
 				DC3C1626158B975200B31A79 /* HttpRequestManager.m in Sources */,
 				DCD6AEA0158ED86C00CBBBDB /* NSBundle+Extension.m in Sources */,
 				DCD6AF11158EFB6A00CBBBDB /* NSDate+Extension.m in Sources */,
+				DC0F2E151592F26200F9D4FA /* RegexKitLite.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
