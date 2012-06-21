@@ -47,6 +47,8 @@
 
 #import "iToast.h"
 
+#import "RegexKitLite.h"
+
 // UIExtension
 #import "AppRootViewController.h"
 #import "UIViewController+CompatibleView.h"
