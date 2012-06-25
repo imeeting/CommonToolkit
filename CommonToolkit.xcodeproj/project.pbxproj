@@ -73,6 +73,12 @@
 		DC3C1622158B972D00B31A79 /* HttpRequestBean.m in Sources */ = {isa = PBXBuildFile; fileRef = DC3C1620158B972D00B31A79 /* HttpRequestBean.m */; };
 		DC3C1626158B975200B31A79 /* HttpRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DC3C1624158B975200B31A79 /* HttpRequestManager.m */; };
 		DCBBB288158A277C007C2301 /* CommonToolkit.h in Headers */ = {isa = PBXBuildFile; fileRef = DCBBB287158A26B1007C2301 /* CommonToolkit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DCBC76811597FF6000EBEC1D /* UISoftKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = DCBC767F1597FF6000EBEC1D /* UISoftKeyboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DCBC76821597FF6000EBEC1D /* UISoftKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = DCBC76801597FF6000EBEC1D /* UISoftKeyboard.m */; };
+		DCBC768715980ACB00EBEC1D /* FoundationExtensionBean.m in Sources */ = {isa = PBXBuildFile; fileRef = DCBC768515980ACB00EBEC1D /* FoundationExtensionBean.m */; };
+		DCBC768B15980BBF00EBEC1D /* FoundationExtensionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DCBC768915980BBF00EBEC1D /* FoundationExtensionManager.m */; };
+		DCBC7692159836EF00EBEC1D /* UISoftKeyboardCell.h in Headers */ = {isa = PBXBuildFile; fileRef = DCBC7690159836EF00EBEC1D /* UISoftKeyboardCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DCBC7693159836EF00EBEC1D /* UISoftKeyboardCell.m in Sources */ = {isa = PBXBuildFile; fileRef = DCBC7691159836EF00EBEC1D /* UISoftKeyboardCell.m */; };
 		DCD6AE9F158ED86C00CBBBDB /* NSBundle+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = DCD6AE9D158ED86C00CBBBDB /* NSBundle+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DCD6AEA0158ED86C00CBBBDB /* NSBundle+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = DCD6AE9E158ED86C00CBBBDB /* NSBundle+Extension.m */; };
 		DCD6AF10158EFB6A00CBBBDB /* NSDate+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = DCD6AF0E158EFB6A00CBBBDB /* NSDate+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -156,6 +162,14 @@
 		DCBBB223158A2485007C2301 /* CommonToolkit-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "CommonToolkit-Info.plist"; sourceTree = "<group>"; };
 		DCBBB227158A2485007C2301 /* CommonToolkit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CommonToolkit-Prefix.pch"; sourceTree = "<group>"; };
 		DCBBB287158A26B1007C2301 /* CommonToolkit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonToolkit.h; sourceTree = "<group>"; };
+		DCBC767F1597FF6000EBEC1D /* UISoftKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UISoftKeyboard.h; sourceTree = "<group>"; };
+		DCBC76801597FF6000EBEC1D /* UISoftKeyboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UISoftKeyboard.m; sourceTree = "<group>"; };
+		DCBC768415980ACB00EBEC1D /* FoundationExtensionBean.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoundationExtensionBean.h; sourceTree = "<group>"; };
+		DCBC768515980ACB00EBEC1D /* FoundationExtensionBean.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoundationExtensionBean.m; sourceTree = "<group>"; };
+		DCBC768815980BBF00EBEC1D /* FoundationExtensionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoundationExtensionManager.h; sourceTree = "<group>"; };
+		DCBC768915980BBF00EBEC1D /* FoundationExtensionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoundationExtensionManager.m; sourceTree = "<group>"; };
+		DCBC7690159836EF00EBEC1D /* UISoftKeyboardCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UISoftKeyboardCell.h; sourceTree = "<group>"; };
+		DCBC7691159836EF00EBEC1D /* UISoftKeyboardCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UISoftKeyboardCell.m; sourceTree = "<group>"; };
 		DCD6AE9D158ED86C00CBBBDB /* NSBundle+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+Extension.h"; sourceTree = "<group>"; };
 		DCD6AE9E158ED86C00CBBBDB /* NSBundle+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+Extension.m"; sourceTree = "<group>"; };
 		DCD6AF0E158EFB6A00CBBBDB /* NSDate+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Extension.h"; sourceTree = "<group>"; };
@@ -251,6 +265,10 @@
 		DC3C15B3158B936600B31A79 /* FoundationExtension */ = {
 			isa = PBXGroup;
 			children = (
+				DCBC768415980ACB00EBEC1D /* FoundationExtensionBean.h */,
+				DCBC768515980ACB00EBEC1D /* FoundationExtensionBean.m */,
+				DCBC768815980BBF00EBEC1D /* FoundationExtensionManager.h */,
+				DCBC768915980BBF00EBEC1D /* FoundationExtensionManager.m */,
 				DC3C15B4158B936600B31A79 /* NSArray+Extension.h */,
 				DC3C15B5158B936600B31A79 /* NSArray+Extension.m */,
 				DCD6AE9D158ED86C00CBBBDB /* NSBundle+Extension.h */,
@@ -296,6 +314,10 @@
 		DC3C15CA158B936600B31A79 /* CustomUI */ = {
 			isa = PBXGroup;
 			children = (
+				DCBC767F1597FF6000EBEC1D /* UISoftKeyboard.h */,
+				DCBC76801597FF6000EBEC1D /* UISoftKeyboard.m */,
+				DCBC7690159836EF00EBEC1D /* UISoftKeyboardCell.h */,
+				DCBC7691159836EF00EBEC1D /* UISoftKeyboardCell.m */,
 			);
 			path = CustomUI;
 			sourceTree = "<group>";
@@ -428,6 +450,8 @@
 				DCD6AE9F158ED86C00CBBBDB /* NSBundle+Extension.h in Headers */,
 				DCD6AF10158EFB6A00CBBBDB /* NSDate+Extension.h in Headers */,
 				DC0F2E141592F26200F9D4FA /* RegexKitLite.h in Headers */,
+				DCBC76811597FF6000EBEC1D /* UISoftKeyboard.h in Headers */,
+				DCBC7692159836EF00EBEC1D /* UISoftKeyboardCell.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -529,6 +553,10 @@
 				DCD6AEA0158ED86C00CBBBDB /* NSBundle+Extension.m in Sources */,
 				DCD6AF11158EFB6A00CBBBDB /* NSDate+Extension.m in Sources */,
 				DC0F2E151592F26200F9D4FA /* RegexKitLite.m in Sources */,
+				DCBC76821597FF6000EBEC1D /* UISoftKeyboard.m in Sources */,
+				DCBC768715980ACB00EBEC1D /* FoundationExtensionBean.m in Sources */,
+				DCBC768B15980BBF00EBEC1D /* FoundationExtensionManager.m in Sources */,
+				DCBC7693159836EF00EBEC1D /* UISoftKeyboardCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
