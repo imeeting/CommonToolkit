@@ -177,20 +177,20 @@
 
 @implementation NSIndexPath (UISoftKeyboard)
 
-- (void)setSkb_row:(NSInteger)skb_row{
-    [[FoundationExtensionManager shareFoundationExtensionManager] setFoundationExtensionBeanExtInfoDicValue:[NSNumber numberWithInteger:skb_row] withExtInfoDicKey:SOFTKEYBOARDROW forKey:[NSNumber numberWithInteger:self.hash]];
+- (void)setSkb_row:(NSInteger)skb_row{    
+    [[FoundationExtensionManager shareFoundationExtensionManager] setFoundationExtensionBeanExtInfoDicValue:[NSNumber numberWithInteger:skb_row] withExtInfoDicKey:SOFTKEYBOARDROW forKey:[NSNumber numberWithInteger:[super hash]]];
 }
 
 - (NSInteger)skb_row{
-    return ((NSNumber *)[[[[FoundationExtensionManager shareFoundationExtensionManager] foundationExtensionForKey:[NSNumber numberWithInteger:self.hash]] extensionDic] objectForKey:SOFTKEYBOARDROW]).integerValue;
+    return ((NSNumber *)[[[[FoundationExtensionManager shareFoundationExtensionManager] foundationExtensionForKey:[NSNumber numberWithInteger:[super hash]]] extensionDic] objectForKey:SOFTKEYBOARDROW]).integerValue;
 }
 
-- (void)setSkb_cell:(NSInteger)skb_cell{
-    [[FoundationExtensionManager shareFoundationExtensionManager] setFoundationExtensionBeanExtInfoDicValue:[NSNumber numberWithInteger:skb_cell] withExtInfoDicKey:SOFTKEYBOARDCELL forKey:[NSNumber numberWithInteger:self.hash]];
+- (void)setSkb_cell:(NSInteger)skb_cell{    
+    [[FoundationExtensionManager shareFoundationExtensionManager] setFoundationExtensionBeanExtInfoDicValue:[NSNumber numberWithInteger:skb_cell] withExtInfoDicKey:SOFTKEYBOARDCELL forKey:[NSNumber numberWithInteger:[super hash]]];
 }
 
 - (NSInteger)skb_cell{
-    return ((NSNumber *)[[[[FoundationExtensionManager shareFoundationExtensionManager] foundationExtensionForKey:[NSNumber numberWithInteger:self.hash]] extensionDic] objectForKey:SOFTKEYBOARDCELL]).integerValue;
+    return ((NSNumber *)[[[[FoundationExtensionManager shareFoundationExtensionManager] foundationExtensionForKey:[NSNumber numberWithInteger:[super hash]]] extensionDic] objectForKey:SOFTKEYBOARDCELL]).integerValue;
 }
 
 + (NSIndexPath *)indexPathForCell:(NSInteger)pSoftKeyboardCell inRow:(NSInteger)pSoftKeyboardRow{
@@ -205,7 +205,7 @@
 
 - (void)dealloc{
     // remove foundation extension bean from FoundationExtensionBeanDictionary
-    [[FoundationExtensionManager shareFoundationExtensionManager] removeFoundationExtensionForKey:[NSNumber numberWithInteger:self.hash]];
+    [[FoundationExtensionManager shareFoundationExtensionManager] removeFoundationExtensionForKey:[NSNumber numberWithInteger:[super hash]]];
 }
 
 @end
