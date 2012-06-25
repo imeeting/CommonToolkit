@@ -58,4 +58,7 @@
 #import "UIActionSheet+Extension.h"
 #import "UITableView+Extension.h"
 
+#import "UISoftKeyboard.h"
+#import "UISoftKeyboardCell.h"
+
 #endif
