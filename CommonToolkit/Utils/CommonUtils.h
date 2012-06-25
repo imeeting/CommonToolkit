@@ -48,4 +48,7 @@ typedef enum {
 // print contact search result dictionary
 + (void)printContactSearchResultDictionary;
 
+// print Foundation extension bean dictionary
++ (void)printFoundationExtensionBeanDictionary;
+
 @end

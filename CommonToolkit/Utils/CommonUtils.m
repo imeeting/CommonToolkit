@@ -11,6 +11,7 @@
 #import "HttpRequestManager.h"
 #import "UIViewExtensionManager.h"
 #import "AddressBookManager.h"
+#import "FoundationExtensionManager.h"
 
 @implementation CommonUtils
 
@@ -71,6 +72,10 @@
 
 + (void)printContactSearchResultDictionary{
     [[AddressBookManager shareAddressBookManager] performSelector:@selector(printContactSearchResultDictionary)];
+}
+
++ (void)printFoundationExtensionBeanDictionary{
+    [[FoundationExtensionManager shareFoundationExtensionManager] printFoundationExtensionBeanDictionary];
 }
 
 @end
