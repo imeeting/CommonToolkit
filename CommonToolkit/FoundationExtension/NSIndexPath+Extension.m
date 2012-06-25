@@ -10,7 +10,7 @@
 
 @implementation NSIndexPath (UITableViewCompare)
 
-- (BOOL)isEqualToIndexPath:(NSIndexPath *)pIndexPath{
+- (BOOL)compareWithUITableViewIndexPath:(NSIndexPath *)pIndexPath{
     BOOL _ret = NO;
     
     if (self.section == pIndexPath.section && self.row == pIndexPath.row) {
