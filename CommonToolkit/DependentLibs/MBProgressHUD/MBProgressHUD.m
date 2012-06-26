@@ -264,7 +264,17 @@
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) 
 												 name:UIDeviceOrientationDidChangeNotification object:nil];
 	
+    
 	return me;
+}
+
+- (id)initWithSuperView:(UIView *)superview {
+    self = [self initWithView:superview];
+    if (self) {
+        [superview addSubview:self];
+        self.removeFromSuperViewOnHide = YES;
+    }
+    return self;
 }
 
 - (void)removeFromSuperview {

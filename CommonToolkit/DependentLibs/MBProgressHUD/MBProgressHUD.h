@@ -167,6 +167,8 @@ typedef enum {
  */
 - (id)initWithView:(UIView *)view;
 
+- (id)initWithSuperView:(UIView*)superview;
+
 /**
  * The UIView (i.g., a UIIMageView) to be shown when the HUD is in MBProgressHUDModeCustomView.
  * For best results use a 37 by 37 pixel view (so the bounds match the build in indicator bounds). 
