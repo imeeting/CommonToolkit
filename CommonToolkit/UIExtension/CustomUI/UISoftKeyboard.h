@@ -31,6 +31,9 @@
 // width for cell at indexPath
 - (CGFloat)softKeyboard:(UISoftKeyboard *)pSoftKeyboard widthForCellAtIndexPath:(NSIndexPath *)pIndexPath;
 
+// height for row
+- (CGFloat)softKeyboard:(UISoftKeyboard *)pSoftKeyboard heightForRow:(NSInteger)pRow;
+
 @end
 
 
@@ -39,7 +42,10 @@
 // softKeyboard delegate
 @protocol UISoftKeyboardDelegate <NSObject>
 
-//
+@optional
+
+// softKeyboard clicked response selector
+- (void)softKeyboard:(UISoftKeyboard *)pSoftKeyboard didSelectCellAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
@@ -51,11 +57,16 @@
     // row number
     NSInteger _mRow;
     // cell number array
-    NSMutableArray *_mCellArray;
+    NSMutableArray *_mCellNumberArr;
     
     // softKeyboard cell margin and padding
     NSInteger _mMargin;
     NSInteger _mPadding;
+    
+    // cell dictionary
+    // key is row index (NSNumber)
+    // value is cell array (NSArray)
+    NSMutableDictionary *_mCellDic;
     
     // softKeyboard dataSource
     id<UISoftKeyboardDataSource> _mDataSource;
@@ -68,6 +79,15 @@
 
 @property (nonatomic, retain) id<UISoftKeyboardDataSource> dataSource;
 @property (nonatomic, retain) id<UISoftKeyboardDelegate> delegate;
+
+// indexPath for cell
+- (NSIndexPath *)indexPathForCell:(UISoftKeyboardCell *)pCell;
+
+// cell for roww at indexPath
+- (UISoftKeyboardCell *)cellForRowAtIndexPath:(NSIndexPath *)pIndexPath;
+
+// merge softKeyboard cell in range
+- (BOOL)mergeCellInRange:(NSRange)pRange andCellIndexArray:(NSArray *)pCellIndexs;
 
 @end
 
