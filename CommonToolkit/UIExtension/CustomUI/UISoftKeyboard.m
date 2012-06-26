@@ -81,20 +81,19 @@
         
         // create and int softkeyboard cell view and add to softKeyboard
         for (NSInteger __index = 0; __index < _cellNumberInRow; __index++) {
-            // genetate indexPath
-            NSIndexPath *_indexPath = [NSIndexPath indexPathForCell:__index inRow:_index];
-            
-            // get cell
-            UISoftKeyboardCell *_cell = [dataSource softKeyboard:self cellForRowAtIndexPath:_indexPath];
-            
-            // get cell width
-            CGFloat _cellWidth = ((NSNumber *)[_cellWidthArrayInRow objectAtIndex:__index]).floatValue;
-            
-            // update cell frame, origin x not confirmed
-            _cell.frame = CGRectMake([self cellTotalWidthToIndex:__index withCellWidthArray:_cellWidthArrayInRow], _margin + _index * (_cellHeight + _padding), _cellWidth, _cellHeight);
-            
-            // add to softKeyboard view
-            [self addSubview:_cell];
+            @autoreleasepool {
+                // get cell
+                UISoftKeyboardCell *_cell = [dataSource softKeyboard:self cellForRowAtIndexPath:[NSIndexPath indexPathForCell:__index inRow:_index]];
+                
+                // get cell width
+                CGFloat _cellWidth = ((NSNumber *)[_cellWidthArrayInRow objectAtIndex:__index]).floatValue;
+                
+                // update cell frame, origin x not confirmed
+                _cell.frame = CGRectMake([self cellTotalWidthToIndex:__index withCellWidthArray:_cellWidthArrayInRow], _margin + _index * (_cellHeight + _padding), _cellWidth, _cellHeight);
+                
+                // add to softKeyboard view
+                [self addSubview:_cell];
+            }
         }
     }
 }
@@ -121,12 +120,14 @@
     BOOL _cellWidthSettedFlag = [_mDataSource respondsToSelector:@selector(softKeyboard:widthForCellAtIndexPath:)];
     
     for (NSInteger _index = 0; _index < _cellNumberInRow; _index++) {
-        // get cell width
-        if (_cellWidthSettedFlag) {
-            [_tmpArray addObject:[NSNumber numberWithFloat:[_mDataSource softKeyboard:self widthForCellAtIndexPath:[NSIndexPath indexPathForCell:_index inRow:pRow]]]];
-        }
-        else {
-            [_tmpArray addObject:[NSNumber numberWithFloat:(self.frame.size.width - 2 * _margin - (_cellNumberInRow - 1) * _padding) / _cellNumberInRow]];
+        @autoreleasepool {
+            // get cell width
+            if (_cellWidthSettedFlag) {
+                [_tmpArray addObject:[NSNumber numberWithFloat:[_mDataSource softKeyboard:self widthForCellAtIndexPath:[NSIndexPath indexPathForCell:_index inRow:pRow]]]];
+            }
+            else {
+                [_tmpArray addObject:[NSNumber numberWithFloat:(self.frame.size.width - 2 * _margin - (_cellNumberInRow - 1) * _padding) / _cellNumberInRow]];
+            }
         }
     }
     
