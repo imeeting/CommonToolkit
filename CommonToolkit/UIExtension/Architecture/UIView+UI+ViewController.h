@@ -23,6 +23,9 @@
 // navigation bar right button item
 @property (nonatomic, retain) UIBarButtonItem *rightBarButtonItem;
 
+// background image
+@property (nonatomic, retain) UIImage *backgroundImg;
+
 @end
 
 

@@ -16,6 +16,7 @@
 @synthesize titleView = _titleView;
 @synthesize leftBarButtonItem = _leftBarButtonItem;
 @synthesize rightBarButtonItem = _rightBarButtonItem;
+@synthesize backgroundImg = _backgroundImg;
 
 @synthesize viewControllerRef = _viewControllerRef;
 
@@ -31,7 +32,7 @@
 }
 
 - (NSString *)description{
-    return [NSString stringWithFormat:@"UIViewExtensionBean description: title = %@, title view = %@, left bar button item = %@, right bar button item = %@ and view controller reference = %@, extension dictionary = %@", _title, _titleView, _leftBarButtonItem, _rightBarButtonItem, _viewControllerRef, _extensionDic];
+    return [NSString stringWithFormat:@"UIViewExtensionBean description: title = %@, title view = %@, left bar button item = %@, right bar button item = %@, background image = %@ and view controller reference = %@, extension dictionary = %@", _title, _titleView, _leftBarButtonItem, _rightBarButtonItem, _backgroundImg, _viewControllerRef, _extensionDic];
 }
 
 @end
