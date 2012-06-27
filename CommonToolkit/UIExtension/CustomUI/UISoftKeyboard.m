@@ -11,15 +11,15 @@
 #import "FoundationExtensionManager.h"
 
 // softKeyboard row key
-#define SOFTKEYBOARDROW @"softKeyboardRow"
+#define SOFTKEYBOARD_ROW @"softKeyboardRow"
 // softKeyboard cell key
-#define SOFTKEYBOARDCELL @"softKeyboardCell"
+#define SOFTKEYBOARD_CELL @"softKeyboardCell"
 
-// default row or cell number
-#define DEFAULTROWORCELLNUMBER  1
+// row or cell default number
+#define ROW_CELL_DEFAULTNUMBER  1
 
 // softkeyboard cell margin and padding default value
-#define MARGINPADDINGDEFAULTVALUE   1.0
+#define MARGIN_PADDING_DEFAULTVALUE   1.0
 
 // UISoftKeyboard extension
 @interface UISoftKeyboard ()
@@ -61,7 +61,7 @@
         _mCellDic = [[NSMutableDictionary alloc] init];
         
         // set margin and padding default value
-        _mMargin = _mPadding = MARGINPADDINGDEFAULTVALUE;
+        _mMargin = _mPadding = MARGIN_PADDING_DEFAULTVALUE;
         
         //
     }
@@ -74,7 +74,7 @@
     
     // init softkeyboard row number, cell number array and softKeyboard cell view
     // get rows and checked
-    _mRow = [dataSource numberOfRowsInSoftKeyboard:self] <= 0 ? DEFAULTROWORCELLNUMBER : [dataSource numberOfRowsInSoftKeyboard:self];
+    _mRow = [dataSource numberOfRowsInSoftKeyboard:self] <= 0 ? ROW_CELL_DEFAULTNUMBER : [dataSource numberOfRowsInSoftKeyboard:self];
     
     // set softKeyboard cell height array
     _mRowHeightArr = [self generateRowHeightArray];
@@ -82,7 +82,7 @@
     // traversal rows
     for (NSInteger _index = 0; _index < _mRow; _index++) {
         // get cell number in row
-        NSInteger _cellNumberInRow = [dataSource softKeyboard:self numberOfCellsInRow:_index] <= 0 ? DEFAULTROWORCELLNUMBER : [dataSource softKeyboard:self numberOfCellsInRow:_index];
+        NSInteger _cellNumberInRow = [dataSource softKeyboard:self numberOfCellsInRow:_index] <= 0 ? ROW_CELL_DEFAULTNUMBER : [dataSource softKeyboard:self numberOfCellsInRow:_index];
         
         // add cell number in row to cell number array
         [_mCellNumberArr addObject:[NSNumber numberWithInteger:_cellNumberInRow]];
@@ -388,19 +388,19 @@
 @implementation NSIndexPath (UISoftKeyboard)
 
 - (void)setSkb_row:(NSInteger)skb_row{    
-    [[FoundationExtensionManager shareFoundationExtensionManager] setFoundationExtensionBeanExtInfoDicValue:[NSNumber numberWithInteger:skb_row] withExtInfoDicKey:SOFTKEYBOARDROW forKey:[NSNumber numberWithInteger:[super hash]]];
+    [[FoundationExtensionManager shareFoundationExtensionManager] setFoundationExtensionBeanExtInfoDicValue:[NSNumber numberWithInteger:skb_row] withExtInfoDicKey:SOFTKEYBOARD_ROW forKey:[NSNumber numberWithInteger:[super hash]]];
 }
 
 - (NSInteger)skb_row{
-    return ((NSNumber *)[[[[FoundationExtensionManager shareFoundationExtensionManager] foundationExtensionForKey:[NSNumber numberWithInteger:[super hash]]] extensionDic] objectForKey:SOFTKEYBOARDROW]).integerValue;
+    return ((NSNumber *)[[[[FoundationExtensionManager shareFoundationExtensionManager] foundationExtensionForKey:[NSNumber numberWithInteger:[super hash]]] extensionDic] objectForKey:SOFTKEYBOARD_ROW]).integerValue;
 }
 
 - (void)setSkb_cell:(NSInteger)skb_cell{    
-    [[FoundationExtensionManager shareFoundationExtensionManager] setFoundationExtensionBeanExtInfoDicValue:[NSNumber numberWithInteger:skb_cell] withExtInfoDicKey:SOFTKEYBOARDCELL forKey:[NSNumber numberWithInteger:[super hash]]];
+    [[FoundationExtensionManager shareFoundationExtensionManager] setFoundationExtensionBeanExtInfoDicValue:[NSNumber numberWithInteger:skb_cell] withExtInfoDicKey:SOFTKEYBOARD_CELL forKey:[NSNumber numberWithInteger:[super hash]]];
 }
 
 - (NSInteger)skb_cell{
-    return ((NSNumber *)[[[[FoundationExtensionManager shareFoundationExtensionManager] foundationExtensionForKey:[NSNumber numberWithInteger:[super hash]]] extensionDic] objectForKey:SOFTKEYBOARDCELL]).integerValue;
+    return ((NSNumber *)[[[[FoundationExtensionManager shareFoundationExtensionManager] foundationExtensionForKey:[NSNumber numberWithInteger:[super hash]]] extensionDic] objectForKey:SOFTKEYBOARD_CELL]).integerValue;
 }
 
 + (NSIndexPath *)indexPathForCell:(NSInteger)pSoftKeyboardCell inRow:(NSInteger)pSoftKeyboardRow{

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#define SPLITSEPARATOR  @" "
+#define SPLIT_SEPARATOR  @" "
 
 @interface NSString (Common)
 

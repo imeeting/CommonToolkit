@@ -192,7 +192,7 @@
 
     for (NSString *_string in pArray) {
         // x1 x2
-        [_ret addObject:[NSString stringWithFormat:@"%@%@%@", self, SPLITSEPARATOR, _string]];
+        [_ret addObject:[NSString stringWithFormat:@"%@%@%@", self, SPLIT_SEPARATOR, _string]];
         // x1x2
         [_ret addObject:[NSString stringWithFormat:@"%@%@", self, _string]];
     }

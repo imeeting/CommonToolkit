@@ -14,9 +14,9 @@
 #import "UserManager.h"
 
 // user name parameter key
-#define USERNAMEPARAMETERKEY    @"username"
+#define USERNAME_PARAMETER_KEY    @"username"
 // signature parameter key
-#define SIGNATUREPARAMETERKEY    @"sig"
+#define SIGNATURE_PARAMETER_KEY    @"sig"
 
 @implementation HttpUtil (Signature)
 
@@ -31,7 +31,7 @@
     }];
     
     // append user name to post body data array and add to http request post body
-    [_parameterDataArray addObject:[NSString stringWithFormat:@"%@=%@", USERNAMEPARAMETERKEY, [[[UserManager shareUserManager] userBean] name]]];
+    [_parameterDataArray addObject:[NSString stringWithFormat:@"%@=%@", USERNAME_PARAMETER_KEY, [[[UserManager shareUserManager] userBean] name]]];
     NSLog(@"post body data array = %@", _parameterDataArray);
     
     // sort parameter data array
@@ -56,9 +56,9 @@
     NSMutableDictionary *_signatureGetRequestParameter = [NSMutableDictionary dictionaryWithDictionary:pParameter];
     
     // append user name to get request url
-    [_signatureGetRequestParameter setObject:[[[UserManager shareUserManager] userBean] name] forKey:USERNAMEPARAMETERKEY];
+    [_signatureGetRequestParameter setObject:[[[UserManager shareUserManager] userBean] name] forKey:USERNAME_PARAMETER_KEY];
     // add signature to get request url
-    [_signatureGetRequestParameter setObject:[self generateSignatureWithParameter:pParameter] forKey:SIGNATUREPARAMETERKEY];
+    [_signatureGetRequestParameter setObject:[self generateSignatureWithParameter:pParameter] forKey:SIGNATURE_PARAMETER_KEY];
     
     // send get request
     [self getRequestWithUrl:pUrl andParameter:_signatureGetRequestParameter andUserInfo:pUserInfo andRequestType:pType andProcessor:pProcessor andFinishedRespSelector:pFinRespSel andFailedRespSelector:pFailRespSel];
@@ -69,9 +69,9 @@
     pParameter = pParameter ? pParameter : [[NSMutableDictionary alloc] init];
     
     // add signature to post parameter
-    [pParameter setObject:[self generateSignatureWithParameter:pParameter] forKey:SIGNATUREPARAMETERKEY];
+    [pParameter setObject:[self generateSignatureWithParameter:pParameter] forKey:SIGNATURE_PARAMETER_KEY];
     // append user name to post parameter
-    [pParameter setObject:[[[UserManager shareUserManager] userBean] name] forKey:USERNAMEPARAMETERKEY];
+    [pParameter setObject:[[[UserManager shareUserManager] userBean] name] forKey:USERNAME_PARAMETER_KEY];
     
     // send post request
     [self postRequestWithUrl:pUrl andPostFormat:pPostFormat andParameter:pParameter andUserInfo:pUserInfo andRequestType:pType andProcessor:pProcessor andFinishedRespSelector:pFinRespSel andFailedRespSelector:pFailRespSel];

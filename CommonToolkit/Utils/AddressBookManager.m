@@ -148,7 +148,7 @@ static AddressBookManager *singletonAddressBookManagerRef;
                 BOOL unmatch = NO;
                 
                 // get split name array
-                NSArray *_splitNameArray = [_splitName toArrayWithSeparator:SPLITSEPARATOR];
+                NSArray *_splitNameArray = [_splitName toArrayWithSeparator:SPLIT_SEPARATOR];
                 
                 // compare split name array count with contact name phonetic array count
                 if ([_splitNameArray count] > [_contact.namePhonetics count]) {
