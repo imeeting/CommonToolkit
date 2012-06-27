@@ -63,15 +63,22 @@
     CGFloat _mMargin;
     CGFloat _mPadding;
     
-    // cell dictionary
+    // row height array
+    NSArray *_mRowHeightArr;
+    // cell width dictionary
     // key is row index (NSNumber)
-    // value is cell array (NSArray)
-    NSMutableDictionary *_mCellDic;
+    // value is cell width array (NSArray)
+    NSMutableDictionary *_mCellWidthDic;
     
     // softKeyboard dataSource
     id<UISoftKeyboardDataSource> _mDataSource;
     // softkeyboard delegate
     id<UISoftKeyboardDelegate> _mDelegate;
+    
+    // cell dictionary
+    // key is row index (NSNumber)
+    // value is cell array (NSArray)
+    NSMutableDictionary *_mCellDic;
 }
 
 @property (nonatomic, readwrite) CGFloat margin;
