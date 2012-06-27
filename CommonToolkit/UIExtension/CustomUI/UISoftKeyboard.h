@@ -60,8 +60,8 @@
     NSMutableArray *_mCellNumberArr;
     
     // softKeyboard cell margin and padding
-    NSInteger _mMargin;
-    NSInteger _mPadding;
+    CGFloat _mMargin;
+    CGFloat _mPadding;
     
     // cell dictionary
     // key is row index (NSNumber)
@@ -74,8 +74,8 @@
     id<UISoftKeyboardDelegate> _mDelegate;
 }
 
-@property (nonatomic, readwrite) NSInteger margin;
-@property (nonatomic, readwrite) NSInteger padding;
+@property (nonatomic, readwrite) CGFloat margin;
+@property (nonatomic, readwrite) CGFloat padding;
 
 @property (nonatomic, retain) id<UISoftKeyboardDataSource> dataSource;
 @property (nonatomic, retain) id<UISoftKeyboardDelegate> delegate;

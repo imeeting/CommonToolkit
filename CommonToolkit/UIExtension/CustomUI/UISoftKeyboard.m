@@ -19,7 +19,7 @@
 #define DEFAULTROWORCELLNUMBER  1
 
 // softkeyboard cell margin and padding default value
-#define MARGINPADDINGDEFAULTVALUE   1
+#define MARGINPADDINGDEFAULTVALUE   1.0
 
 // UISoftKeyboard extension
 @interface UISoftKeyboard ()
@@ -53,8 +53,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code
-        
         // alloc cell number array
         _mCellNumberArr = [[NSMutableArray alloc] init];
         
@@ -70,29 +68,29 @@
 }
 
 - (void)setDataSource:(id<UISoftKeyboardDataSource>)dataSource{
-    // set softKeyboard dataSource
+    // save softKeyboard dataSource
     _mDataSource = dataSource;
     
     // init softkeyboard row number, cell number array and softKeyboard cell view
-    // get rows
+    // get rows and checked
     _mRow = [dataSource numberOfRowsInSoftKeyboard:self] <= 0 ? DEFAULTROWORCELLNUMBER : [dataSource numberOfRowsInSoftKeyboard:self];
     
     // create and init softKeyboard cell height array
     NSArray *_rowHeightArray = [self generateRowHeightArray];
     
-    // process each row
+    // traversal rows
     for (NSInteger _index = 0; _index < _mRow; _index++) {
         // get cell number in row
         NSInteger _cellNumberInRow = [dataSource softKeyboard:self numberOfCellsInRow:_index] <= 0 ? DEFAULTROWORCELLNUMBER : [dataSource softKeyboard:self numberOfCellsInRow:_index];
         
-        // add cell numberin row to cell number array
+        // add cell number in row to cell number array
         [_mCellNumberArr addObject:[NSNumber numberWithInteger:_cellNumberInRow]];
-        
-        // get row height
-        CGFloat _rowHeight = ((NSNumber *)[_rowHeightArray objectAtIndex:_index]).floatValue;
         
         // create and init cell width array in row
         NSArray *_cellWidthArrayInRow = [self generateCellWidthArrayInRow:_index];
+        
+        // get row height
+        CGFloat _rowHeight = ((NSNumber *)[_rowHeightArray objectAtIndex:_index]).floatValue;
         
         // create and init cell array in row
         NSMutableArray *_cellArray = [[NSMutableArray alloc] init];
@@ -100,15 +98,15 @@
         // create and int softkeyboard cell view and add to softKeyboard
         for (NSInteger __index = 0; __index < _cellNumberInRow; __index++) {
             @autoreleasepool {
-                // get cell
+                // get cell and init
                 UISoftKeyboardCell *_cell = [dataSource softKeyboard:self cellForRowAtIndexPath:[NSIndexPath indexPathForCell:__index inRow:_index]];
                 
                 // add cell to cell array in row
                 [_cellArray addObject:_cell];
                 
-                // check cell width and height
+                // check cell width and height, both greater than 0.0
                 if (_rowHeight >= 0.0 && ((NSNumber *)[_cellWidthArrayInRow objectAtIndex:__index]).floatValue >= 0.0) {
-                    // update cell frame, origin x not confirmed
+                    // update cell frame
                     _cell.frame = CGRectMake([self cellTotalWidthToIndex:__index withCellWidthArray:_cellWidthArrayInRow], [self rowTotalHeightToIndex:_index withRowHeightArray:_rowHeightArray], ((NSNumber *)[_cellWidthArrayInRow objectAtIndex:__index]).floatValue, _rowHeight);
                     
                     // add to softKeyboard view
@@ -117,9 +115,23 @@
             }
         }
         
-        // set cell dictionary
+        // add cell array in row to cell dictionary
         [_mCellDic setObject:_cellArray forKey:[NSNumber numberWithInteger:_index]];
     }
+}
+
+- (void)setMargin:(CGFloat)margin{
+    // save margin
+    _mMargin = margin;
+    
+    //
+}
+
+- (void)setPadding:(CGFloat)padding{
+    // save padding
+    _mPadding = padding;
+    
+    //
 }
 
 /*
@@ -139,6 +151,8 @@
         if ([[_mCellDic objectForKey:[NSNumber numberWithInteger:_index]] containsObject:pCell]) {
             // init return indexPath
             _ret = [NSIndexPath indexPathForCell:[[_mCellDic objectForKey:[NSNumber numberWithInteger:_index]] indexOfObject:pCell] inRow:_index];
+            
+            break;
         }
     }
     
@@ -169,7 +183,7 @@
         // cell index is validity
         if (_cellIndexValidity) {
             // create and init cell width default value
-            CGFloat _cellWidth = - 2.0;
+            CGFloat _cellWidth = - 2.0/* customize */;
             
             // create and init merged cell height
             CGFloat _mergeCellHeight = - _mPadding;
@@ -177,8 +191,8 @@
             // check cell width
             BOOL _cellWidthEqual = YES;
             
-            for (NSInteger _index = 0; _index < pRange.length; _index++) {
-                UISoftKeyboardCell *_cell = [[_mCellDic objectForKey:[NSNumber numberWithInteger:pRange.location + _index]] objectAtIndex:((NSNumber *)[pCellIndexs objectAtIndex:_index]).integerValue];
+            for (NSInteger __index = 0; __index < pRange.length; __index++) {
+                UISoftKeyboardCell *_cell = [[_mCellDic objectForKey:[NSNumber numberWithInteger:pRange.location + __index]] objectAtIndex:((NSNumber *)[pCellIndexs objectAtIndex:__index]).integerValue];
                 
                 // set cell width
                 _cellWidth = (- 2.0 == _cellWidth) ? _cell.frame.size.width : _cellWidth;
@@ -197,15 +211,27 @@
             
             // all cell width equal
             if (_cellWidthEqual) {
-                // update merged present cell frame
-                UISoftKeyboardCell *__cell = [[_mCellDic objectForKey:[NSNumber numberWithInteger:pRange.location]] objectAtIndex:((NSNumber *)[pCellIndexs objectAtIndex:0]).integerValue];
+                // update merged present cell(the top cell) frame and remove other cells
+                for (NSInteger ___index = 0; ___index < pRange.length; ___index++) {
+                    // get the cell for updating
+                    UISoftKeyboardCell *__cell = [[_mCellDic objectForKey:[NSNumber numberWithInteger:pRange.location + ___index]] objectAtIndex:((NSNumber *)[pCellIndexs objectAtIndex:___index]).integerValue];
+                    
+                    // top cell
+                    if (0 == ___index) {
+                        // update cell frame
+                        __cell.frame = CGRectMake(__cell.frame.origin.x, __cell.frame.origin.y, __cell.frame.size.width, _mergeCellHeight);
+                    }
+                    // others
+                    else {
+                        // remove the cell
+                        [__cell removeFromSuperview];
+                        
+                        // update cell dictionary
+                        [[_mCellDic objectForKey:[NSNumber numberWithInteger:pRange.location + ___index]] replaceObjectAtIndex:((NSNumber *)[pCellIndexs objectAtIndex:___index]).integerValue withObject:[[_mCellDic objectForKey:[NSNumber numberWithInteger:pRange.location]] objectAtIndex:((NSNumber *)[pCellIndexs objectAtIndex:0]).integerValue]];
+                    }
+                }
                 
-                __cell.frame = CGRectMake(__cell.frame.origin.x, __cell.frame.origin.y, __cell.frame.size.width, _mergeCellHeight);
-                
-                // bring to front
-                [self bringSubviewToFront:__cell];
-                
-                // merge ok
+                // merge success
                 _ret = YES;
             }
         }
@@ -217,20 +243,20 @@
 - (NSArray *)generateCellWidthArrayInRow:(NSInteger)pRow{
     NSMutableArray *_ret = [[NSMutableArray alloc] init];
     
-    // init tmp array
+    // init temp cell width array
     NSMutableArray *_tmpArray = [[NSMutableArray alloc] init];
 
     // get cell number in row
     NSInteger _cellNumberInRow = ((NSNumber *)[_mCellNumberArr objectAtIndex:pRow]).integerValue;
     
-    // init cell width setted flag
-    BOOL _cellWidthSettedFlag = [_mDataSource respondsToSelector:@selector(softKeyboard:widthForCellAtIndexPath:)];
+    // create and init cell width set flag
+    BOOL _cellWidthSetFlag = [_mDataSource respondsToSelector:@selector(softKeyboard:widthForCellAtIndexPath:)];
     
-    // init temp cell width array
+    // set temp cell width array
     for (NSInteger _index = 0; _index < _cellNumberInRow; _index++) {
         @autoreleasepool {
             // get cell width
-            if (_cellWidthSettedFlag) {
+            if (_cellWidthSetFlag) {
                 [_tmpArray addObject:[NSNumber numberWithFloat:[_mDataSource softKeyboard:self widthForCellAtIndexPath:[NSIndexPath indexPathForCell:_index inRow:pRow]]]];
             }
             else {
@@ -239,28 +265,29 @@
         }
     }
     
-    // check cell total width and hasn't width cell number
-    CGFloat _cellsTotalWidth = 0.0;
-    NSInteger _cellHasnotWidthNumber = 0;
+    // check set width cell total width and hasn't set width cell number
+    CGFloat _setWidthCellsTotalWidth = 0.0;
+    NSInteger _cellHasnotSetWidthNumber = 0;
     for (NSNumber *_cellWidth in _tmpArray) {
-        // check width is 0.0
+        // judge cell width is it 0.0
         if (0.0 == _cellWidth.floatValue) {
-            _cellHasnotWidthNumber += 1;
+            _cellHasnotSetWidthNumber += 1;
         }
         
-        _cellsTotalWidth += _cellWidth.floatValue;
+        _setWidthCellsTotalWidth += _cellWidth.floatValue;
     }
     
     // get remaining cell average width
-    CGFloat _remainingCellAvgWidth = (self.frame.size.width - 2 * _mMargin - (_cellNumberInRow - 1) * _mPadding - _cellsTotalWidth) <= 0 ? - 1.0 : (self.frame.size.width - 2 * _mMargin - (_cellNumberInRow - 1) * _mPadding - _cellsTotalWidth) / _cellHasnotWidthNumber;
+    CGFloat _remainingCellAvgWidth = (self.frame.size.width - 2 * _mMargin - (_cellNumberInRow - 1) * _mPadding - _setWidthCellsTotalWidth) <= 0 ? - 1.0 : (self.frame.size.width - 2 * _mMargin - (_cellNumberInRow - 1) * _mPadding - _setWidthCellsTotalWidth) / _cellHasnotSetWidthNumber;
     
-    // set return cell width array
+    // set return result: cell width array
     for (NSNumber *_cellWidth in _tmpArray) {
         [_ret addObject:(0.0 == _cellWidth.floatValue) ? [NSNumber numberWithFloat:_remainingCellAvgWidth] : ((self.frame.size.width - 2 * _mMargin) < _cellWidth.floatValue) ? [NSNumber numberWithFloat:(self.frame.size.width - 2 * _mMargin)] : _cellWidth];
     }
     
-    // check cell number in row
+    // check cell number in row and update cell width
     if (1 == _cellNumberInRow) {
+        // just one cell in the row
         [_ret replaceObjectAtIndex:0 withObject:[NSNumber numberWithFloat:self.frame.size.width - 2 * _mMargin]];
     }
     
@@ -270,19 +297,19 @@
 - (NSArray *)generateRowHeightArray{
     NSMutableArray *_ret = [[NSMutableArray alloc] init];
     
-    // init tmp array
+    // init temp row height array
     NSMutableArray *_tmpArray = [[NSMutableArray alloc] init];
     
     // get row number
     NSInteger _rowNumber = _mRow;
     
-    // init row height setted flag
-    BOOL _rowHeightSettedFlag = [_mDataSource respondsToSelector:@selector(softKeyboard:heightForRow:)];
+    // create and init row height set flag
+    BOOL _rowHeightSetFlag = [_mDataSource respondsToSelector:@selector(softKeyboard:heightForRow:)];
     
-    // init temp row height array 
+    // set temp row height array 
     for (NSInteger _index = 0; _index < _rowNumber; _index++) {
         // get row height
-        if (_rowHeightSettedFlag) {
+        if (_rowHeightSetFlag) {
             [_tmpArray addObject:[NSNumber numberWithFloat:[_mDataSource softKeyboard:self heightForRow:_index]]];
         }
         else {
@@ -290,28 +317,29 @@
         }
     }
     
-    // check row total height and hasn't height row number
-    CGFloat _rowsTotalHeight = 0.0;
-    NSInteger _rowHasnotHeightNumber = 0;
+    // check set height row total height and hasn't set height row number
+    CGFloat _setHeightRowsTotalHeight = 0.0;
+    NSInteger _rowHasnotSetHeightNumber = 0;
     for (NSNumber *_rowHeight in _tmpArray) {
-        // check height is 0.0
+        // judge row height is it 0.0
         if (0.0 == _rowHeight.floatValue) {
-            _rowHasnotHeightNumber += 1;
+            _rowHasnotSetHeightNumber += 1;
         }
         
-        _rowsTotalHeight += _rowHeight.floatValue;
+        _setHeightRowsTotalHeight += _rowHeight.floatValue;
     }
     
     // get remaining row average height
-    CGFloat _remainingRowAvgHeight = (self.frame.size.height - 2 * _mMargin - (_rowNumber - 1) * _mPadding - _rowsTotalHeight) <= 0 ? - 1.0 : (self.frame.size.height - 2 * _mMargin - (_rowNumber - 1) * _mPadding - _rowsTotalHeight) / _rowHasnotHeightNumber;
+    CGFloat _remainingRowAvgHeight = (self.frame.size.height - 2 * _mMargin - (_rowNumber - 1) * _mPadding - _setHeightRowsTotalHeight) <= 0 ? - 1.0 : (self.frame.size.height - 2 * _mMargin - (_rowNumber - 1) * _mPadding - _setHeightRowsTotalHeight) / _rowHasnotSetHeightNumber;
     
-    // set return row height array
+    // set return result: row height array
     for (NSNumber *_rowHeight in _tmpArray) {
         [_ret addObject:(0.0 == _rowHeight.floatValue) ? [NSNumber numberWithFloat:_remainingRowAvgHeight] : ((self.frame.size.height - 2 * _mMargin) < _rowHeight.floatValue) ? [NSNumber numberWithFloat:(self.frame.size.height - 2 * _mMargin)] : _rowHeight];
     }
     
-    // check row number
+    // check row number and update row height
     if (1 == _rowNumber) {
+        // just has one row
         [_ret replaceObjectAtIndex:0 withObject:[NSNumber numberWithFloat:self.frame.size.height - 2 * _mMargin]];
     }
     
@@ -321,7 +349,7 @@
 - (CGFloat)cellTotalWidthToIndex:(NSInteger)pIndex withCellWidthArray:(NSArray *)pCellWidthArray{
     CGFloat _ret = _mMargin;
     
-    // check index parameter
+    // check index
     if (pIndex > [pCellWidthArray count]) {
         _ret = self.frame.size.width;
     }
@@ -338,7 +366,7 @@
 - (CGFloat)rowTotalHeightToIndex:(NSInteger)pIndex withRowHeightArray:(NSArray *)pRowHeightArray{
     CGFloat _ret = _mMargin;
     
-    // check index parameter
+    // check index
     if (pIndex > [pRowHeightArray count]) {
         _ret = self.frame.size.height;
     }

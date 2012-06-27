@@ -10,6 +10,8 @@
 
 #import "UIView+UI+ViewController.h"
 
+#import "UISoftKeyboard.h"
+
 @implementation UISoftKeyboardCell
 
 @synthesize frontView = _mFrontView;
@@ -65,20 +67,26 @@
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
-    NSLog(@"touch began");
-    
+    // set background color is pressed background color or image
     self.backgroundColor = _mPressedBackgroundImg ? [UIColor colorWithPatternImage:_mPressedBackgroundImg] : _mPressedBackgroundColor ? _mPressedBackgroundColor : _mNormalBackgroundColor;
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
-    NSLog(@"touches ended");
-    
+    // recover background color or image
     // check normal background image
     if (_mNormalBackgroundImg) {
         self.backgroundImg = _mNormalBackgroundImg;
     }
     else {
         self.backgroundColor = _mNormalBackgroundColor;
+    }
+    
+    // call softKeyboard response selector if implemented
+    if ([((UISoftKeyboard *)self.superview).delegate respondsToSelector:@selector(softKeyboard:didSelectCellAtIndexPath:)]) {
+        [((UISoftKeyboard *)self.superview).delegate softKeyboard:(UISoftKeyboard *)self.superview didSelectCellAtIndexPath:[((UISoftKeyboard *)self.superview) indexPathForCell:self]];
+    }
+    else {
+        NSLog(@"Warning : %@ can't implemante UISoftKeyboard response selector %@", NSStringFromClass(((UISoftKeyboard *)self.superview).delegate.class), NSStringFromSelector(@selector(softKeyboard:didSelectCellAtIndexPath:)));
     }
 }
 
