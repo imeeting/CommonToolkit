@@ -53,7 +53,6 @@
 #import "MBProgressHUD.h"
 #import "JSONKit.h"
 #import "JTListView.h"
-#import "SVProgressHUD.h"
 #import "SocketIO.h"
 
 // UIExtension

@@ -31,7 +31,7 @@
 - (void) socketIODidDisconnect:(SocketIO *)socket;
 - (void) socketIO:(SocketIO *)socket didReceiveMessage:(SocketIOPacket *)packet;
 - (void) socketIO:(SocketIO *)socket didReceiveJSON:(SocketIOPacket *)packet;
-- (void) socketIO:(SocketIO *)socket d:(SocketIOPacket *)packet;
+- (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
 - (void) socketIO:(SocketIO *)socket didSendMessage:(SocketIOPacket *)packet;
 // add by ares
 - (void) socketIODidConnectError:(NSString *) errorMsg;
