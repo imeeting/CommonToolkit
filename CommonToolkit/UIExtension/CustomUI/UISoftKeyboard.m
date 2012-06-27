@@ -155,7 +155,7 @@
     BOOL _ret = NO;
     
     // check range index and length
-    if (pRange.location + pRange.length < _mRow && pRange.length == [pCellIndexs count]) {
+    if (pRange.location + pRange.length <= _mRow && pRange.length == [pCellIndexs count]) {
         // check cell index validity
         BOOL _cellIndexValidity = YES;
         
@@ -170,8 +170,9 @@
         
         // cell index is validity
         if (_cellIndexValidity) {
-            // create and init cell width default value
+            // create and init cell width and origin x default value
             CGFloat _cellWidth = - 2.0/* customize */;
+            CGFloat _cellOriginX = - 2.0/* customize */;
             
             // create and init merge cell height
             CGFloat _mergeCellHeight = - _mPadding;
@@ -182,11 +183,12 @@
             for (NSInteger __index = 0; __index < pRange.length; __index++) {
                 UISoftKeyboardCell *_cell = [[_mCellDic objectForKey:[NSNumber numberWithInteger:pRange.location + __index]] objectAtIndex:((NSNumber *)[pCellIndexs objectAtIndex:__index]).integerValue];
                 
-                // set cell width
+                // set cell width and origin x
                 _cellWidth = (- 2.0 == _cellWidth) ? _cell.frame.size.width : _cellWidth;
+                _cellOriginX = (- 2.0 == _cellOriginX) ? _cell.frame.origin.x : _cellOriginX;
                 
-                // compare cell width with others
-                if (_cellWidth == _cell.frame.size.width) {
+                // compare cell width and origin x with others
+                if (_cellOriginX == _cell.frame.origin.x && _cellWidth == _cell.frame.size.width) {
                     _mergeCellHeight += _cell.frame.size.height + _mPadding;
                 }
                 else {
