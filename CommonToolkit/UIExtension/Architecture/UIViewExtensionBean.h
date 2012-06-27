@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+// UIView extension type
 typedef enum {
     titleExt,
     titleViewExt,

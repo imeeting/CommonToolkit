@@ -8,12 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+// http request type
 typedef enum {
     synchronous,
     asynchronous
 } HTTPRequestType;
 
 
+// http post format, nonentity for get request, mustn't use for post request
 typedef enum {
     nonentity,
     urlEncoded,

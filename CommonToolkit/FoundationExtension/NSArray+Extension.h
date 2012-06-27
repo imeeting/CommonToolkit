@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+// phone numbers display style
 typedef enum {
     vertical,
     horizontal

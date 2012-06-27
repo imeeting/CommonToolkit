@@ -14,6 +14,7 @@
 
 #import "HttpRequestManager.h"
 
+// http request method mode type
 typedef enum {
     get,
     post

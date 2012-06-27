@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+// ios system currently setting language
 typedef enum {
     // English
     en,

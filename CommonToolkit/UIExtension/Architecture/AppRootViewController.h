@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+// application root view controller mode type
 typedef enum {
     normalController,
     navigationController
