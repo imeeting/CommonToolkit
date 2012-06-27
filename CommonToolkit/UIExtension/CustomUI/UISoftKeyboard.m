@@ -120,20 +120,6 @@
     }
 }
 
-- (void)setMargin:(CGFloat)margin{
-    // save margin
-    _mMargin = margin;
-    
-    //
-}
-
-- (void)setPadding:(CGFloat)padding{
-    // save padding
-    _mPadding = padding;
-    
-    //
-}
-
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
@@ -185,7 +171,7 @@
             // create and init cell width default value
             CGFloat _cellWidth = - 2.0/* customize */;
             
-            // create and init merged cell height
+            // create and init merge cell height
             CGFloat _mergeCellHeight = - _mPadding;
             
             // check cell width
@@ -211,28 +197,40 @@
             
             // all cell width equal
             if (_cellWidthEqual) {
-                // update merged present cell(the top cell) frame and remove other cells
+                // get merge rows total height
+                CGFloat _mergeRowsTotalHeight = - _mPadding;
                 for (NSInteger ___index = 0; ___index < pRange.length; ___index++) {
-                    // get the cell for updating
-                    UISoftKeyboardCell *__cell = [[_mCellDic objectForKey:[NSNumber numberWithInteger:pRange.location + ___index]] objectAtIndex:((NSNumber *)[pCellIndexs objectAtIndex:___index]).integerValue];
-                    
-                    // top cell
-                    if (0 == ___index) {
-                        // update cell frame
-                        __cell.frame = CGRectMake(__cell.frame.origin.x, __cell.frame.origin.y, __cell.frame.size.width, _mergeCellHeight);
-                    }
-                    // others
-                    else {
-                        // remove the cell
-                        [__cell removeFromSuperview];
-                        
-                        // update cell dictionary
-                        [[_mCellDic objectForKey:[NSNumber numberWithInteger:pRange.location + ___index]] replaceObjectAtIndex:((NSNumber *)[pCellIndexs objectAtIndex:___index]).integerValue withObject:[[_mCellDic objectForKey:[NSNumber numberWithInteger:pRange.location]] objectAtIndex:((NSNumber *)[pCellIndexs objectAtIndex:0]).integerValue]];
-                    }
+                    _mergeRowsTotalHeight += ((NSNumber *)[[self generateRowHeightArray] objectAtIndex:pRange.location + ___index]).floatValue + _mPadding;
                 }
                 
-                // merge success
-                _ret = YES;
+                // compare merge cell height with merge rows total height
+                if (_mergeCellHeight == _mergeRowsTotalHeight) {
+                    // update merge present cell(the top cell) frame and remove other cells
+                    for (NSInteger ____index = 0; ____index < pRange.length; ____index++) {
+                        // get the cell for updating
+                        UISoftKeyboardCell *__cell = [[_mCellDic objectForKey:[NSNumber numberWithInteger:pRange.location + ____index]] objectAtIndex:((NSNumber *)[pCellIndexs objectAtIndex:____index]).integerValue];
+                        
+                        // top cell
+                        if (0 == ____index) {
+                            // update cell frame
+                            __cell.frame = CGRectMake(__cell.frame.origin.x, __cell.frame.origin.y, __cell.frame.size.width, _mergeCellHeight);
+                        }
+                        // others
+                        else {
+                            // remove the cell
+                            [__cell removeFromSuperview];
+                            
+                            // update cell dictionary
+                            [[_mCellDic objectForKey:[NSNumber numberWithInteger:pRange.location + ____index]] replaceObjectAtIndex:((NSNumber *)[pCellIndexs objectAtIndex:____index]).integerValue withObject:[[_mCellDic objectForKey:[NSNumber numberWithInteger:pRange.location]] objectAtIndex:((NSNumber *)[pCellIndexs objectAtIndex:0]).integerValue]];
+                        }
+                    }
+                    
+                    // merge success
+                    _ret = YES;
+                }
+                else {
+                    NSLog(@"Error: mustn't merge the merged cell");
+                }
             }
         }
     }

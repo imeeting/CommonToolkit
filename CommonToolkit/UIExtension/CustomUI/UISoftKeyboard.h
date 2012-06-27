@@ -59,7 +59,7 @@
     // cell number array
     NSMutableArray *_mCellNumberArr;
     
-    // softKeyboard cell margin and padding
+    // softKeyboard cell margin and padding, must set before dataSource
     CGFloat _mMargin;
     CGFloat _mPadding;
     
