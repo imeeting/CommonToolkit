@@ -86,7 +86,7 @@
         [((UISoftKeyboard *)self.superview).delegate softKeyboard:(UISoftKeyboard *)self.superview didSelectCellAtIndexPath:[((UISoftKeyboard *)self.superview) indexPathForCell:self]];
     }
     else {
-        NSLog(@"Warning : %@ can't implemante UISoftKeyboard response selector %@", NSStringFromClass(((UISoftKeyboard *)self.superview).delegate.class), NSStringFromSelector(@selector(softKeyboard:didSelectCellAtIndexPath:)));
+        NSLog(@"%@ : %@", ((UISoftKeyboard *)self.superview).delegate ? @"Warning" : @"Error", ((UISoftKeyboard *)self.superview).delegate ? [NSString stringWithFormat:@"%@ can't implement UISoftKeyboard response selector %@", NSStringFromClass(((UISoftKeyboard *)self.superview).delegate.class), NSStringFromSelector(@selector(softKeyboard:didSelectCellAtIndexPath:))] : [NSString stringWithFormat:@"%@ processor is nil", NSStringFromClass(((UISoftKeyboard *)self.superview).delegate.class)]);
     }
 }
 

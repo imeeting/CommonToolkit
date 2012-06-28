@@ -99,7 +99,7 @@
         objc_msgSend(self.processor, self.buttonClickedEventSelector, actionSheet, buttonIndex);
     }
     else if (buttonIndex != actionSheet.cancelButtonIndex) {
-        NSLog(@"error : %@", self.processor ? [NSString stringWithFormat:@"%@ processor %@ cann't implement method %@", NSStringFromClass(self.class), self.processor, NSStringFromSelector(self.buttonClickedEventSelector)] : [NSString stringWithFormat:@"%@ processor is nil", NSStringFromClass(self.class)]);
+        NSLog(@"Error : %@", self.processor ? [NSString stringWithFormat:@"%@ processor %@ can't implement method %@", NSStringFromClass(self.class), self.processor, NSStringFromSelector(self.buttonClickedEventSelector)] : [NSString stringWithFormat:@"%@ processor is nil", NSStringFromClass(self.class)]);
     }
     
     // remove UIViewExtensionBean to UIViewExtensionBeanDictionary

@@ -45,7 +45,7 @@ typedef enum {
 + (void)sendRequestWithUrl:(NSString *)pUrl andParameter:(NSDictionary *)pParameter andUserInfo:(NSDictionary *)pUserInfo andProcessor:(id)pProcessor andFinishedRespSelector:(SEL)pFinRespSel andFailedRespSelector:(SEL)pFailRespSel andRequestMethod:(HTTPRequestMethod)pMethod andRequestType:(HTTPRequestType)pType andPostFormat:(HttpPostFormat)pPostFormat{
     // check request url
     if ([pUrl isNil]) {
-        NSLog(@"error: send http request error - request url is nil.");
+        NSLog(@"Error: send http request error - request url is nil.");
         
         // return immediately
         return;

@@ -135,7 +135,7 @@
     
     // check self
     if ([self isNil]) {
-        NSLog(@"error: nil or empty string mustn't split");
+        NSLog(@"Error: nil or empty string mustn't split");
     }
     else if (self.length >= 2) {
         // get first letter and others

@@ -48,7 +48,7 @@
         _ret = YES;
     }
     else {
-        NSLog(@"%@ : %@", pProcessor ? @"warning" : @"error", pProcessor ? [NSString stringWithFormat:@"processor = %@ cann't implement method = %@", pProcessor, NSStringFromSelector(pSelector)] : @"processor is nil");
+        NSLog(@"%@ : %@", pProcessor ? @"Warning" : @"Error", pProcessor ? [NSString stringWithFormat:@"processor = %@ can't implement method = %@", pProcessor, NSStringFromSelector(pSelector)] : @"processor is nil");
     }
 
     return _ret;
