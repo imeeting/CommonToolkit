@@ -232,6 +232,11 @@ static AddressBookManager *singletonAddressBookManagerRef;
         [_ret addObject:_contact.displayName];
     }
     
+    // check return result
+    if (nil == _ret || 0 == [_ret count]) {
+        [_ret addObject:pPhoneNumber];
+    }
+    
     return _ret;
 }
 
