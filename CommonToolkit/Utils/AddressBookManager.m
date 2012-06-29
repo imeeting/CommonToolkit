@@ -222,6 +222,19 @@ static AddressBookManager *singletonAddressBookManagerRef;
     }
 }
 
+- (NSArray *)contactsDisplayNameArrayWithPhoneNumber:(NSString *)pPhoneNumber{
+    // get contacts array
+    NSArray *_contactsByPhoneNumber = [self getContactByPhoneNumber:pPhoneNumber];
+    
+    NSMutableArray *_ret = [[NSMutableArray alloc] initWithCapacity:[_contactsByPhoneNumber count]];
+    
+    for (ContactBean *_contact in _contactsByPhoneNumber) {
+        [_ret addObject:_contact.displayName];
+    }
+    
+    return _ret;
+}
+
 - (ContactBean *)getContactNamePhoneNumsInfoByRecord:(ABRecordRef)pRecord{
     ContactBean *_contact = [[ContactBean alloc] init];
     
