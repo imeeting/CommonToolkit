@@ -118,10 +118,7 @@
     } else {
         _ret = self;
     }
-    else {
-        _ret = self;
-    }
-    
+      
     return _ret;
 }
 

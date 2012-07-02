@@ -87,8 +87,6 @@
 		F885A58F159AAE5200709FC7 /* AVCamUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = F885A58D159AAE5200709FC7 /* AVCamUtilities.m */; };
 		F8D791BC1599630300986BCD /* AsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = F8D791B41599630300986BCD /* AsyncSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8D791BD1599630300986BCD /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = F8D791B51599630300986BCD /* AsyncSocket.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		F8D791BE1599630300986BCD /* RegexKitLite.h in Headers */ = {isa = PBXBuildFile; fileRef = F8D791B61599630300986BCD /* RegexKitLite.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F8D791BF1599630300986BCD /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = F8D791B71599630300986BCD /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		F8D791C01599630300986BCD /* SocketIO.h in Headers */ = {isa = PBXBuildFile; fileRef = F8D791B81599630300986BCD /* SocketIO.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8D791C11599630300986BCD /* SocketIO.m in Sources */ = {isa = PBXBuildFile; fileRef = F8D791B91599630300986BCD /* SocketIO.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		F8D791C21599630300986BCD /* WebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = F8D791BA1599630300986BCD /* WebSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -204,8 +202,6 @@
 		F885A58D159AAE5200709FC7 /* AVCamUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamUtilities.m; sourceTree = "<group>"; };
 		F8D791B41599630300986BCD /* AsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncSocket.h; sourceTree = "<group>"; };
 		F8D791B51599630300986BCD /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncSocket.m; sourceTree = "<group>"; };
-		F8D791B61599630300986BCD /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
-		F8D791B71599630300986BCD /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		F8D791B81599630300986BCD /* SocketIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketIO.h; sourceTree = "<group>"; };
 		F8D791B91599630300986BCD /* SocketIO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketIO.m; sourceTree = "<group>"; };
 		F8D791BA1599630300986BCD /* WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
@@ -479,8 +475,6 @@
 			children = (
 				F8D791B41599630300986BCD /* AsyncSocket.h */,
 				F8D791B51599630300986BCD /* AsyncSocket.m */,
-				F8D791B61599630300986BCD /* RegexKitLite.h */,
-				F8D791B71599630300986BCD /* RegexKitLite.m */,
 				F8D791B81599630300986BCD /* SocketIO.h */,
 				F8D791B91599630300986BCD /* SocketIO.m */,
 				F8D791BA1599630300986BCD /* WebSocket.h */,
@@ -534,7 +528,6 @@
 			files = (
 				F885A58E159AAE5200709FC7 /* AVCamUtilities.h in Headers */,
 				F8D791BC1599630300986BCD /* AsyncSocket.h in Headers */,
-				F8D791BE1599630300986BCD /* RegexKitLite.h in Headers */,
 				F8D791C01599630300986BCD /* SocketIO.h in Headers */,
 				F8D791C21599630300986BCD /* WebSocket.h in Headers */,
 				F8E58F90159862F400CC2F1C /* UIImage+Extension.h in Headers */,
@@ -697,7 +690,6 @@
 				F8E3BF06158F2C0C00467088 /* ECUIControlTableViewCell.m in Sources */,
 				F8E58F91159862F400CC2F1C /* UIImage+Extension.m in Sources */,
 				F8D791BD1599630300986BCD /* AsyncSocket.m in Sources */,
-				F8D791BF1599630300986BCD /* RegexKitLite.m in Sources */,
 				F8D791C11599630300986BCD /* SocketIO.m in Sources */,
 				F8D791C31599630300986BCD /* WebSocket.m in Sources */,
 				F885A58F159AAE5200709FC7 /* AVCamUtilities.m in Sources */,
