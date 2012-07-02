@@ -77,6 +77,7 @@
 {
     if (!_isConnected && !_isConnecting) 
     {
+        NSLog(@"connectToHost: %@", host);
         _isConnecting = YES;
         
         _host = [host retain];
@@ -506,6 +507,12 @@
 {
     NSError *error = [request error];
     NSLog(@"ERROR: handshake failed ... %@", [error localizedDescription]);
+    
+    _isConnected = NO;
+    _isConnecting = NO;
+    _sid = nil;
+    
+    [_queue removeAllObjects];
     
     // add by ares
     [_delegate socketIODidConnectError:[error localizedDescription]];
