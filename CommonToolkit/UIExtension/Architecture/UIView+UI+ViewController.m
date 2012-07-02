@@ -15,6 +15,10 @@
 @implementation UIView (UI)
 
 - (void)setTitle:(NSString *)title{
+    // set view title
+    self.viewControllerRef.title = title;
+    
+    // save title
     [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtension:title withType:titleExt forKey:[NSNumber numberWithInteger:self.hash]];
 }
 
@@ -23,6 +27,10 @@
 }
 
 - (void)setTitleView:(UIView *)titleView{
+    // set view title view
+    self.viewControllerRef.navigationItem.titleView = titleView;
+    
+    // save title view
     [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtension:titleView withType:titleExt forKey:[NSNumber numberWithInteger:self.hash]];
 }
 
@@ -31,6 +39,10 @@
 }
 
 - (void)setLeftBarButtonItem:(UIBarButtonItem *)leftBarButtonItem{
+    // set view left bar button item
+    self.viewControllerRef.navigationItem.leftBarButtonItem = leftBarButtonItem;
+    
+    // save left bar button item
     [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtension:leftBarButtonItem withType:leftBarButtonItemExt forKey:[NSNumber numberWithInteger:self.hash]];
 }
 
@@ -39,11 +51,27 @@
 }
 
 - (void)setRightBarButtonItem:(UIBarButtonItem *)rightBarButtonItem{
+    // set view right bar button item
+    self.viewControllerRef.navigationItem.rightBarButtonItem = rightBarButtonItem;
+    
+    // save right bar button item
     [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtension:rightBarButtonItem withType:rightBarButtonItemExt forKey:[NSNumber numberWithInteger:self.hash]];
 }
 
 - (UIBarButtonItem *)rightBarButtonItem{
     return [[UIViewExtensionManager shareUIViewExtensionManager] uiViewExtensionForKey:[NSNumber numberWithInteger:self.hash]].rightBarButtonItem;
+}
+
+- (void)setBackgroundImg:(UIImage *)backgroundImg{
+    // set view background image
+    self.backgroundColor = [UIColor colorWithPatternImage:backgroundImg];
+    
+    // save background image
+    [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtension:backgroundImg withType:backgroundImgExt forKey:[NSNumber numberWithInteger:self.hash]];
+}
+
+- (UIImage *)backgroundImg{
+    return [[UIViewExtensionManager shareUIViewExtensionManager] uiViewExtensionForKey:[NSNumber numberWithInteger:self.hash]].backgroundImg;
 }
 
 @end
@@ -75,7 +103,7 @@
         _ret = YES;
     }
     else {
-        NSLog(@"error : %@", pViewControllerRef ? [NSString stringWithFormat:@"%@ view controller %@ cann't implement method %@", NSStringFromClass(self.class), NSStringFromClass(pViewControllerRef.class), NSStringFromSelector(pSelector)] : [NSString stringWithFormat:@"%@ view controller is nil", NSStringFromClass(self.class)]);
+        NSLog(@"Error : %@", pViewControllerRef ? [NSString stringWithFormat:@"%@ view controller %@ can't implement method %@", NSStringFromClass(self.class), NSStringFromClass(pViewControllerRef.class), NSStringFromSelector(pSelector)] : [NSString stringWithFormat:@"%@ view controller is nil", NSStringFromClass(self.class)]);
     }
     
     return _ret;

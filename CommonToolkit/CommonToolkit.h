@@ -55,6 +55,8 @@
 #import "JTListView.h"
 #import "SocketIO.h"
 
+#import "RegexKitLite.h"
+
 // UIExtension
 //## Architecture
 #import "AppRootViewController.h"
@@ -65,6 +67,8 @@
 #import "UIActionSheet+Extension.h"
 #import "UITableView+Extension.h"
 
+#import "UISoftKeyboard.h"
+#import "UISoftKeyboardCell.h"
 // Custom UI
 #import "ECLoadMoreUITableView.h"
 #import "TableFooterView.h"

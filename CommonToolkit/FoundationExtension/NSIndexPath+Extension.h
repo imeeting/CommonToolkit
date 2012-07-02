@@ -10,7 +10,7 @@
 
 @interface NSIndexPath (UITableViewCompare)
 
-// is equal to indexPath
-- (BOOL)isEqualToIndexPath:(NSIndexPath *)pIndexPath;
+// compare with UITableView indexPath
+- (BOOL)compareWithUITableViewIndexPath:(NSIndexPath *)pIndexPath;
 
 @end

@@ -8,12 +8,12 @@
 
 #import "UIColor+Extension.h"
 
-#define RGBCHANNELMAXFLOATVALUE 255.0
+#define RGBCHANNEL_MAXVALUE 255.0
 
 @implementation UIColor (RGBInteger)
 
 + (UIColor *)colorWithIntegerRed:(NSInteger)intRed integerGreen:(NSInteger)intGreen integerBlue:(NSInteger)intBlue alpha:(CGFloat)alpha{
-    return [UIColor colorWithRed:intRed / RGBCHANNELMAXFLOATVALUE green:intGreen / RGBCHANNELMAXFLOATVALUE blue:intBlue / RGBCHANNELMAXFLOATVALUE alpha:alpha];
+    return [UIColor colorWithRed:intRed / RGBCHANNEL_MAXVALUE green:intGreen / RGBCHANNEL_MAXVALUE blue:intBlue / RGBCHANNEL_MAXVALUE alpha:alpha];
 }
 
 @end

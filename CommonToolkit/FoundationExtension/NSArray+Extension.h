@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+// phone numbers display style
 typedef enum {
     vertical,
     horizontal
@@ -28,5 +29,8 @@ typedef enum {
 
 // convert to string with separator
 - (NSString *)toStringWithSeparator:(NSString *)pSeparator;
+
+// multiplied by array
+- (NSArray *)multipliedByArray:(NSArray *)pArray;
 
 @end

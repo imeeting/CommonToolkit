@@ -12,11 +12,15 @@
 
 // contact id
 @property (nonatomic, readwrite) NSInteger id;
-// contact group
-@property (nonatomic, retain) NSString *group;
-// contact full name
-@property (nonatomic, retain) NSString *fullName;
-// contact phone numbers array
+// contact group array
+@property (nonatomic, retain) NSArray *groups;
+// contact display name
+@property (nonatomic, retain) NSString *displayName;
+// contact full name array
+@property (nonatomic, retain) NSArray *fullNames;
+// contact name phonetic array
+@property (nonatomic, retain) NSArray *namePhonetics;
+// contact phone number array
 @property (nonatomic, retain) NSArray *phoneNumbers;
 // contact photo
 @property (nonatomic, retain) NSData *photo;

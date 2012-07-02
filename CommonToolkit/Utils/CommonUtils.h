@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+// ios system currently setting language
 typedef enum {
     // English
     en,
@@ -32,10 +33,23 @@ typedef enum {
 // get application navigation bar default height
 + (CGFloat)appNavigationBarHeight;
 
+@end
+
+
+
+
+@interface CommonUtils ()
+
 // print http request bean dictionary
 + (void)printHttpRequestBeanDictionary;
 
 // print UIView extension bean dictionary
 + (void)printUIViewExtensionBeanDictionary;
+
+// print contact search result dictionary
++ (void)printContactSearchResultDictionary;
+
+// print Foundation extension bean dictionary
++ (void)printFoundationExtensionBeanDictionary;
 
 @end

@@ -8,13 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
+#define SPLIT_SEPARATOR  @" "
+
 @interface NSString (Common)
+
+// contains sub string
+- (BOOL)containsSubString:(NSString *)pString;
+
+// string to array with separated string
+- (NSArray *)toArrayWithSeparator:(NSString *)pSeparator;
+
+// string by trimming characters in string
+- (NSString *)stringByTrimmingCharactersInString:(NSString *)pString;
 
 // trim whitespace and new line character
 - (NSString *)trimWhitespaceAndNewline;
-
-// trim phone number separator character
-- (NSString *)trimPhoneNumberSeparator;
 
 // get paragraphs array of the string, according to '\n'
 - (NSArray *)stringParagraphs;
@@ -33,5 +41,21 @@
 
 // perfect http request url
 - (NSString *)perfectHttpRequestUrl;
+
+@end
+
+
+
+
+@interface NSString (Contact)
+
+// split to first letter and others
+- (NSArray *)splitToFirstAndOthers;
+
+// get all prefixes
+- (NSArray *)getAllPrefixes;
+
+// to array separated by character regular expression ([A-Za-z0-9]*)
+- (NSArray *)toArraySeparatedByCharacter;
 
 @end

@@ -17,9 +17,9 @@
 #import <objc/message.h>
 
 // actionSheet processor key of extension dictionary
-#define ACTIONSHEETPROCESSORKEY @"actionSheetProcessor"
+#define ACTIONSHEET_PROCESSOR_KEY @"actionSheetProcessor"
 // actionSheet button clicked event selector key of extension dictionary
-#define ACTIONSHEETBUTTONCLICKEDEVENTSELECTORKEY    @"actionSheetButtonClickedEventSelector"
+#define ACTIONSHEET_BUTTONCLICKEDEVENT_SELECTOR_KEY    @"actionSheetButtonClickedEventSelector"
 
 @implementation UIActionSheet (Processor)
 
@@ -76,19 +76,19 @@
 }
 
 - (void)setProcessor:(id)processor{
-    [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtensionExtInfoDicValue:processor withExtInfoDicKey:ACTIONSHEETPROCESSORKEY forKey:[NSNumber numberWithInteger:self.hash]];
+    [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtensionExtInfoDicValue:processor withExtInfoDicKey:ACTIONSHEET_PROCESSOR_KEY forKey:[NSNumber numberWithInteger:self.hash]];
 }
 
 - (id)processor{
-    return [[[UIViewExtensionManager shareUIViewExtensionManager] uiViewExtensionForKey:[NSNumber numberWithInteger:self.hash]].extensionDic objectForKey:ACTIONSHEETPROCESSORKEY];
+    return [[[UIViewExtensionManager shareUIViewExtensionManager] uiViewExtensionForKey:[NSNumber numberWithInteger:self.hash]].extensionDic objectForKey:ACTIONSHEET_PROCESSOR_KEY];
 }
 
 - (void)setButtonClickedEventSelector:(SEL)buttonClickedEventSelector{
-    [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtensionExtInfoDicValue:NSStringFromSelector(buttonClickedEventSelector) withExtInfoDicKey:ACTIONSHEETBUTTONCLICKEDEVENTSELECTORKEY forKey:[NSNumber numberWithInteger:self.hash]];
+    [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtensionExtInfoDicValue:NSStringFromSelector(buttonClickedEventSelector) withExtInfoDicKey:ACTIONSHEET_BUTTONCLICKEDEVENT_SELECTOR_KEY forKey:[NSNumber numberWithInteger:self.hash]];
 }
 
 - (SEL)buttonClickedEventSelector{
-    return NSSelectorFromString([[[UIViewExtensionManager shareUIViewExtensionManager] uiViewExtensionForKey:[NSNumber numberWithInteger:self.hash]].extensionDic objectForKey:ACTIONSHEETBUTTONCLICKEDEVENTSELECTORKEY]);
+    return NSSelectorFromString([[[UIViewExtensionManager shareUIViewExtensionManager] uiViewExtensionForKey:[NSNumber numberWithInteger:self.hash]].extensionDic objectForKey:ACTIONSHEET_BUTTONCLICKEDEVENT_SELECTOR_KEY]);
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
@@ -99,7 +99,7 @@
         objc_msgSend(self.processor, self.buttonClickedEventSelector, actionSheet, buttonIndex);
     }
     else if (buttonIndex != actionSheet.cancelButtonIndex) {
-        NSLog(@"error : %@", self.processor ? [NSString stringWithFormat:@"%@ processor %@ cann't implement method %@", NSStringFromClass(self.class), self.processor, NSStringFromSelector(self.buttonClickedEventSelector)] : [NSString stringWithFormat:@"%@ processor is nil", NSStringFromClass(self.class)]);
+        NSLog(@"Error : %@", self.processor ? [NSString stringWithFormat:@"%@ processor %@ can't implement method %@", NSStringFromClass(self.class), self.processor, NSStringFromSelector(self.buttonClickedEventSelector)] : [NSString stringWithFormat:@"%@ processor is nil", NSStringFromClass(self.class)]);
     }
     
     // remove UIViewExtensionBean to UIViewExtensionBeanDictionary

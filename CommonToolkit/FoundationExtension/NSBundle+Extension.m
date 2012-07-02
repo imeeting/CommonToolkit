@@ -9,14 +9,14 @@
 #import "NSBundle+Extension.h"
 
 // bundle name suffix
-#define BUNDLENAMESUFFIX    @".bundle"
+#define BUNDLENAME_SUFFIX    @".bundle"
 
 @implementation NSBundle (ResourcesFromBundle)
 
 - (NSString *)localizedStringFromBundle:(NSString *)pBundleName forKey:(NSString *)pKey value:(NSString *)pValue table:(NSString *)pTableName{    
     // check bundle name
-    if (![pBundleName hasSuffix:BUNDLENAMESUFFIX]) {
-        pBundleName = [NSString stringWithFormat:@"%@%@", pBundleName, BUNDLENAMESUFFIX];
+    if (![pBundleName hasSuffix:BUNDLENAME_SUFFIX]) {
+        pBundleName = [NSString stringWithFormat:@"%@%@", pBundleName, BUNDLENAME_SUFFIX];
     }
     
     // create and init bundle path

@@ -14,6 +14,7 @@
 
 #import "HttpRequestManager.h"
 
+// http request method mode type
 typedef enum {
     get,
     post
@@ -44,7 +45,7 @@ typedef enum {
 + (void)sendRequestWithUrl:(NSString *)pUrl andParameter:(NSDictionary *)pParameter andUserInfo:(NSDictionary *)pUserInfo andProcessor:(id)pProcessor andFinishedRespSelector:(SEL)pFinRespSel andFailedRespSelector:(SEL)pFailRespSel andRequestMethod:(HTTPRequestMethod)pMethod andRequestType:(HTTPRequestType)pType andPostFormat:(HttpPostFormat)pPostFormat{
     // check request url
     if ([pUrl isNil]) {
-        NSLog(@"error: send http request error - request url is nil.");
+        NSLog(@"Error: send http request error - request url is nil.");
         
         // return immediately
         return;
@@ -110,6 +111,12 @@ typedef enum {
     // set timeout seconds
     [_request setTimeOutSeconds:10.0];
     
+    // crate and init http request object to save processor, finishedRespSelector and failedRespSelector and add it to http request bean Dictionary
+    [[HttpRequestManager shareHttpRequestManager] setHttpRequestBean:[HttpRequestBean initWithProcessor:pProcessor andFinishedRespSelector:pFinRespSel andFailedRespSelector:pFailRespSel] forKey:[NSNumber numberWithInteger:[_request hash]]];
+    
+    // set delegate
+    _request.delegate = [[HttpRequestManager shareHttpRequestManager] httpRequestBeanForKey:[NSNumber numberWithInteger:[_request hash]]];
+    
     // set user infomation
     _request.userInfo = pUserInfo;
     
@@ -127,18 +134,14 @@ typedef enum {
     // start send request with type
     switch (pType) {
         case asynchronous:
-            {
-                // star asynchronous request
-                [_request startAsynchronous];
-            }
+            // star asynchronous request
+            [_request startAsynchronous];
             break;
             
         case synchronous:
         default:
-            {                
-                // star request
-                [_request startSynchronous];
-            }
+            // star synchronous request
+            [_request startSynchronous];
             break;
     }
 }

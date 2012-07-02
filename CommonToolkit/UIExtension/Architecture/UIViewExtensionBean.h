@@ -8,11 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+// UIView extension type
 typedef enum {
     titleExt,
     titleViewExt,
     leftBarButtonItemExt,
     rightBarButtonItemExt,
+    backgroundImgExt,
     viewControllerRefExt,
     extensionExt
 } UIViewExtensionType;
@@ -29,6 +31,8 @@ typedef enum {
 @property (nonatomic, retain) UIBarButtonItem *leftBarButtonItem;
 // UIView navigation bar right button item
 @property (nonatomic, retain) UIBarButtonItem *rightBarButtonItem;
+// UIView background image
+@property (nonatomic, retain) UIImage *backgroundImg;
 
 // view controller reference
 @property (nonatomic, retain) UIViewController *viewControllerRef;

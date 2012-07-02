@@ -9,8 +9,9 @@
 #import "CommonUtils.h"
 
 #import "HttpRequestManager.h"
-
 #import "UIViewExtensionManager.h"
+#import "AddressBookManager.h"
+#import "FoundationExtensionManager.h"
 
 @implementation CommonUtils
 
@@ -47,7 +48,7 @@
         _ret = YES;
     }
     else {
-        NSLog(@"%@ : %@", pProcessor ? @"warning" : @"error", pProcessor ? [NSString stringWithFormat:@"processor = %@ cann't implement method = %@", pProcessor, NSStringFromSelector(pSelector)] : @"processor is nil");
+        NSLog(@"%@ : %@", pProcessor ? @"Warning" : @"Error", pProcessor ? [NSString stringWithFormat:@"processor = %@ can't implement method = %@", pProcessor, NSStringFromSelector(pSelector)] : @"processor is nil");
     }
 
     return _ret;
@@ -67,6 +68,14 @@
 
 + (void)printUIViewExtensionBeanDictionary{
     [[UIViewExtensionManager shareUIViewExtensionManager] printUIViewExtensionBeanDictionary];
+}
+
++ (void)printContactSearchResultDictionary{
+    [[AddressBookManager shareAddressBookManager] performSelector:@selector(printContactSearchResultDictionary)];
+}
+
++ (void)printFoundationExtensionBeanDictionary{
+    [[FoundationExtensionManager shareFoundationExtensionManager] printFoundationExtensionBeanDictionary];
 }
 
 @end
