@@ -123,6 +123,13 @@ typedef enum {
     // set response selectors
     _request.didFinishSelector = @selector(httpRequestDidFinishedRequest:);
     _request.didFailSelector = @selector(httpRequestDidFailedRequest:);
+
+    // crate and init http request object to save processor, finishedRespSelector and failedRespSelector and add it to http request bean Dictionary
+    [[HttpRequestManager shareHttpRequestManager] setHttpRequestBean:[HttpRequestBean initWithProcessor:pProcessor andFinishedRespSelector:pFinRespSel andFailedRespSelector:pFailRespSel] forKey:[NSNumber numberWithInteger:[_request hash]]];
+    
+    // set delegate
+    _request.delegate = [[HttpRequestManager shareHttpRequestManager] httpRequestBeanForKey:[NSNumber numberWithInteger:[_request hash]]];
+
     
     // start send request with type
     switch (pType) {
