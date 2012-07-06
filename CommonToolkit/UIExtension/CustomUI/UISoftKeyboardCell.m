@@ -12,6 +12,19 @@
 
 #import "UISoftKeyboard.h"
 
+#import "NSIndexPath+Extension.h"
+
+// UISoftKeyboardCell extension
+@interface UISoftKeyboardCell ()
+
+// handel long press timer
+- (void)handleLongPressTimer:(NSTimer *)pTimer;
+
+@end
+
+
+
+
 @implementation UISoftKeyboardCell
 
 @synthesize frontView = _mFrontView;
@@ -69,9 +82,30 @@
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
     // set background color is pressed background color or image
     self.backgroundColor = _mPressedBackgroundImg ? [UIColor colorWithPatternImage:_mPressedBackgroundImg] : _mPressedBackgroundColor ? _mPressedBackgroundColor : _mNormalBackgroundColor;
+    
+    // set long pressed flag
+    _mLongPressed = NO;
+    
+    // check cell indexPath in softkeyboard long press cell indexPath
+    if ([((UISoftKeyboard *)self.superview).delegate respondsToSelector:@selector(longPressCellIndexPathsInSoftKeyboard:)]) {
+        for (NSIndexPath *_indexPath in [((UISoftKeyboard *)self.superview).delegate longPressCellIndexPathsInSoftKeyboard:(UISoftKeyboard *)self.superview]) {
+            if ([_indexPath compareWithUISoftKeyboardIndexPath:[((UISoftKeyboard *)self.superview) indexPathForCell:self]]) {
+                // init long press timer
+                _mLongPressTimer = [NSTimer scheduledTimerWithTimeInterval:/*long press duration*/0.5 target:self selector:@selector(handleLongPressTimer:) userInfo:nil repeats:NO];
+                
+                // break immediately
+                break;
+            }
+        }
+    }
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
+    // invalidate long press timer
+    if (_mLongPressTimer && [_mLongPressTimer isValid]) {
+        [_mLongPressTimer invalidate];
+    }
+    
     // recover background color or image
     // check normal background image
     if (_mNormalBackgroundImg) {
@@ -81,18 +115,20 @@
         self.backgroundColor = _mNormalBackgroundColor;
     }
     
-    // call softKeyboard response selector if implemented
-    if ([((UISoftKeyboard *)self.superview).delegate respondsToSelector:@selector(softKeyboard:didSelectCellAtIndexPath:)]) {
-        [((UISoftKeyboard *)self.superview).delegate softKeyboard:(UISoftKeyboard *)self.superview didSelectCellAtIndexPath:[((UISoftKeyboard *)self.superview) indexPathForCell:self]];
-    }
-    else {
-        NSLog(@"%@ : %@", ((UISoftKeyboard *)self.superview).delegate ? @"Warning" : @"Error", ((UISoftKeyboard *)self.superview).delegate ? [NSString stringWithFormat:@"%@ can't implement UISoftKeyboard response selector %@", NSStringFromClass(((UISoftKeyboard *)self.superview).delegate.class), NSStringFromSelector(@selector(softKeyboard:didSelectCellAtIndexPath:))] : [NSString stringWithFormat:@"%@ processor is nil", NSStringFromClass(((UISoftKeyboard *)self.superview).delegate.class)]);
+    // normal touches
+    if (!_mLongPressed) {
+        // call softKeyboard taped response selector if implemented
+        if ([((UISoftKeyboard *)self.superview).delegate respondsToSelector:@selector(softKeyboard:didSelectCellAtIndexPath:)]) {
+            [((UISoftKeyboard *)self.superview).delegate softKeyboard:(UISoftKeyboard *)self.superview didSelectCellAtIndexPath:[((UISoftKeyboard *)self.superview) indexPathForCell:self]];
+        }
+        else {
+            NSLog(@"%@ : %@", ((UISoftKeyboard *)self.superview).delegate ? @"Warning" : @"Error", ((UISoftKeyboard *)self.superview).delegate ? [NSString stringWithFormat:@"%@ can't implement UISoftKeyboard response selector %@", NSStringFromClass(((UISoftKeyboard *)self.superview).delegate.class), NSStringFromSelector(@selector(softKeyboard:didSelectCellAtIndexPath:))] : [NSString stringWithFormat:@"%@ processor is nil", NSStringFromClass(((UISoftKeyboard *)self.superview).delegate.class)]);
+        }
     }
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
-    NSLog(@"touched moved");
-    NSLog(@"event = %@ and touches = %@", event, touches);
+    NSLog(@"touches moved - touched = %@ and event = %@", touches, event);
 }
 
 /*
@@ -103,5 +139,27 @@
     // Drawing code
 }
 */
+
+- (void)handleLongPressTimer:(NSTimer *)pTimer{
+    // update long pressed flag
+    _mLongPressed = YES;
+    
+    // recover background color or image
+    // check normal background image
+    if (_mNormalBackgroundImg) {
+        self.backgroundImg = _mNormalBackgroundImg;
+    }
+    else {
+        self.backgroundColor = _mNormalBackgroundColor;
+    }
+    
+    // call softKeyboard long press response selector if implemented
+    if ([((UISoftKeyboard *)self.superview).delegate respondsToSelector:@selector(softKeyboard:longPressCellAtIndexPath:)]) {
+        [((UISoftKeyboard *)self.superview).delegate softKeyboard:(UISoftKeyboard *)self.superview longPressCellAtIndexPath:[((UISoftKeyboard *)self.superview) indexPathForCell:self]];
+    }
+    else {
+        NSLog(@"%@ : %@", ((UISoftKeyboard *)self.superview).delegate ? @"Warning" : @"Error", ((UISoftKeyboard *)self.superview).delegate ? [NSString stringWithFormat:@"%@ can't implement UISoftKeyboard response selector %@", NSStringFromClass(((UISoftKeyboard *)self.superview).delegate.class), NSStringFromSelector(@selector(softKeyboard:longPressCellAtIndexPath:))] : [NSString stringWithFormat:@"%@ processor is nil", NSStringFromClass(((UISoftKeyboard *)self.superview).delegate.class)]);
+    }
+}
 
 @end

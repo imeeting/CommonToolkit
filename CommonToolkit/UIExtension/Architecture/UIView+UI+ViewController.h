@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "UIViewGestureRecognizerDelegate.h"
+
 // UIView UI category
 @interface UIView (UI)
 
@@ -39,5 +41,16 @@
 
 // validate view controller reference and check selector
 - (BOOL)validateViewControllerRef:(UIViewController*)pViewControllerRef andSelector:(SEL) pSelector;
+
+@end
+
+
+
+
+// UIView gesture recognizer category
+@interface UIView (GestureRecognizer) <UIGestureRecognizerDelegate>
+
+// view gesture recognizer delegate
+@property (nonatomic, retain) id<UIViewGestureRecognizerDelegate> viewGestureRecognizerDelegate;
 
 @end

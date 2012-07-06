@@ -57,14 +57,22 @@
         // [self.processor performSelector:self.finishedRespSelector withObject:pRequest];
         objc_msgSend(self.processor, self.finishedRespSelector, pRequest);
     }
+    else {
+        NSLog(@"Warning : %@", self.processor ? [NSString stringWithFormat:@"http request object processor %@ can't implement did finished response method %@", NSStringFromClass([self.processor class]), NSStringFromSelector(self.finishedRespSelector)] : [NSString stringWithFormat:@"http request object processor is nil"]);
+    }
     
     // remove self from http request bean dictionary
     [[HttpRequestManager shareHttpRequestManager] removeHttpRequestBeanForKey:[NSNumber numberWithInteger:[pRequest hash]]];
 }
 
 - (void)httpRequestDidFailedRequest:(ASIHTTPRequest *)pRequest{
-    // check http request object failed response selector
-    if (!self.failedRespSelector) {
+    // check processor and failed response selector
+    if ([CommonUtils validateProcessor:self.processor andSelector:self.failedRespSelector]) {
+        // [self.processor performSelector:self.failedRespSelector withObject:pRequest];
+        objc_msgSend(self.processor, self.failedRespSelector, pRequest);
+    }
+    // check http request object failed response selector, if nil use default http request did failed selector
+    else if (self.processor && nil == self.failedRespSelector) {
         // get error
         NSError *_error = [pRequest error];
         NSLog(@"httpRequest object didFailed - request url = %@, error: %@, response data: %@", pRequest.url, _error, pRequest.responseData);
@@ -73,11 +81,7 @@
         [[iToast makeText:NSLocalizedStringFromCommonToolkitBundle(@"default http request did failed toast", nil)] show];
     }
     else {
-        // check processor and failed response selector
-        if ([CommonUtils validateProcessor:self.processor andSelector:self.failedRespSelector]) {
-            // [self.processor performSelector:self.failedRespSelector withObject:pRequest];
-            objc_msgSend(self.processor, self.failedRespSelector, pRequest);
-        }
+        NSLog(@"Warning : %@", self.processor ? [NSString stringWithFormat:@"http request object processor %@ can't implement did failed response method %@", NSStringFromClass([self.processor class]), NSStringFromSelector(self.failedRespSelector)] : [NSString stringWithFormat:@"http request object processor is nil"]);
     }
     
     // remove self from http request bean dictionary

@@ -14,3 +14,13 @@
 - (BOOL)compareWithUITableViewIndexPath:(NSIndexPath *)pIndexPath;
 
 @end
+
+
+
+
+@interface NSIndexPath (UISoftKeyboardCompare)
+
+// compare with UISoftKeyboard indexPath
+- (BOOL)compareWithUISoftKeyboardIndexPath:(NSIndexPath *)pIndexPath;
+
+@end

@@ -62,8 +62,6 @@
         
         // set margin and padding default value
         _mMargin = _mPadding = MARGIN_PADDING_DEFAULTVALUE;
-        
-        //
     }
     return self;
 }

@@ -115,10 +115,11 @@
     // check url is nil and has prefix "http://" or "https://"
     if (![self isNil] && ![self hasPrefix:@"http://"] && ![self hasPrefix:@"https://"]) {
         _ret = [NSString stringWithFormat:@"http://%@", self];
-    } else {
+    }
+    else {
         _ret = self;
     }
-      
+    
     return _ret;
 }
 

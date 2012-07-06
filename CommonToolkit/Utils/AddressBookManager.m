@@ -13,6 +13,8 @@
 #import "CommonUtils.h"
 #import "ContactBean_Extension.h"
 
+#import "ContactBean_Extension.h"
+
 // static singleton AddressBookManager reference
 static AddressBookManager *singletonAddressBookManagerRef;
 
@@ -21,6 +23,9 @@ static AddressBookManager *singletonAddressBookManagerRef;
 
 // get contact's name, phone numbers info by record
 - (ContactBean *)getContactNamePhoneNumsInfoByRecord:(ABRecordRef)pRecord;
+
+// get contact information array by particular phone number
+- (NSArray *)getContactInfoByPhoneNumber:(NSString *)pPhoneNumber;
 
 // init all contacts contact id - groups dictionary
 - (void)initContactIdGroupsDictionary;
@@ -38,8 +43,6 @@ static AddressBookManager *singletonAddressBookManagerRef;
 
 @implementation AddressBookManager
 
-@synthesize allContactsInfoArray = _mAllContactsInfoArray;
-
 - (id)init{
     self = [super init];
     if (self) {
@@ -55,6 +58,15 @@ static AddressBookManager *singletonAddressBookManagerRef;
          */
     }
     return self;
+}
+
+- (NSMutableArray *)allContactsInfoArray{
+    // remove each contact extension dictionary
+    for (ContactBean *_contact in _mAllContactsInfoArray) {
+        [_contact.extensionDic removeAllObjects];
+    }
+    
+    return _mAllContactsInfoArray;
 }
 
 + (AddressBookManager *)shareAddressBookManager{
@@ -108,7 +120,7 @@ static AddressBookManager *singletonAddressBookManagerRef;
         for (ContactBean *_contact in _contactSearchScope) {
             // search contact each phone number
             for (NSString *_phoneNumber in _contact.phoneNumbers) {
-                // check phone number is matched
+                // check phone number is sub matched
                 if ([_phoneNumber containsSubString:pPhoneNumber]) {
                     // add contact to result
                     [_ret addObject:_contact];
@@ -127,6 +139,7 @@ static AddressBookManager *singletonAddressBookManagerRef;
 - (NSArray *)getContactByName:(NSString *)pName{
     NSMutableArray *_ret = [[NSMutableArray alloc] init];
     
+    // convert search contact name to lowercase string
     pName = [pName lowercaseString];
     
     // check contact search result dictionary and all contacts info array
@@ -236,18 +249,22 @@ static AddressBookManager *singletonAddressBookManagerRef;
 }
 
 - (NSArray *)contactsDisplayNameArrayWithPhoneNumber:(NSString *)pPhoneNumber{
-    // get contacts array
-    NSArray *_contactsByPhoneNumber = [self getContactByPhoneNumber:pPhoneNumber];
+    // get contact information array by particular phone number
+    NSArray *_contactInfoArray = [self getContactInfoByPhoneNumber:pPhoneNumber];
     
-    NSMutableArray *_ret = [[NSMutableArray alloc] initWithCapacity:[_contactsByPhoneNumber count]];
+    // define return result
+    NSMutableArray *_ret = [[NSMutableArray alloc] initWithCapacity:[_contactInfoArray count]];
     
-    for (ContactBean *_contact in _contactsByPhoneNumber) {
-        [_ret addObject:_contact.displayName];
-    }
-    
-    // check return result
-    if (nil == _ret || 0 == [_ret count]) {
+    // check contact info array
+    if (0 == [_contactInfoArray count]) {
+        // set default return result
         [_ret addObject:pPhoneNumber];
+    }
+    else {
+        // set each contact display name
+        for (ContactBean *_contact in _contactInfoArray) {
+            [_ret addObject:_contact.displayName];
+        }
     }
     
     return _ret;
@@ -343,6 +360,28 @@ static AddressBookManager *singletonAddressBookManagerRef;
     CFRelease(_contactPhoneNumberArrayInAB);
     
     return _contact;
+}
+
+- (NSArray *)getContactInfoByPhoneNumber:(NSString *)pPhoneNumber{
+    NSMutableArray *_ret = [[NSMutableArray alloc] init];
+    
+    // check all contacts info array
+    _mAllContactsInfoArray = _mAllContactsInfoArray ? _mAllContactsInfoArray : [self getAllContactsInfoFromAB];
+    
+    // search each contact in all contacts info array
+    for (ContactBean *_contact in _mAllContactsInfoArray) {
+        // search contact each phone number
+        for (NSString *_phoneNumber in _contact.phoneNumbers) {
+            // check phone number is matched
+            if ([_phoneNumber isEqualToString:pPhoneNumber]) {
+                // add contact to result
+                [_ret addObject:_contact];
+                break;
+            }
+        }
+    }
+    
+    return _ret;
 }
 
 - (void)initContactIdGroupsDictionary{

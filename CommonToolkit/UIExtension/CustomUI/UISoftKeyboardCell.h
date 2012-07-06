@@ -21,6 +21,11 @@
     UIColor *_mPressedBackgroundColor;
     // pressed background image
     UIImage *_mPressedBackgroundImg;
+    
+    // long press timer
+    NSTimer *_mLongPressTimer;
+    // long pressed flag
+    BOOL _mLongPressed;
 }
 
 @property (nonatomic, retain) UIView *frontView;

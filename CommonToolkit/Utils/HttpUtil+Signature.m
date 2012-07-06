@@ -65,9 +65,9 @@
 }
 
 + (void)postSignatureRequestWithUrl:(NSString *)pUrl andPostFormat:(HttpPostFormat)pPostFormat andParameter:(NSMutableDictionary *)pParameter andUserInfo:(NSDictionary *)pUserInfo andRequestType:(HTTPRequestType)pType andProcessor:(id)pProcessor andFinishedRespSelector:(SEL)pFinRespSel andFailedRespSelector:(SEL)pFailRespSel{
-    if (pParameter == nil) {
-        pParameter = [[NSMutableDictionary alloc] initWithCapacity:2];
-    }
+    // check parameter
+    pParameter = pParameter ? pParameter : [[NSMutableDictionary alloc] init];
+    
     // add signature to post parameter
     [pParameter setObject:[self generateSignatureWithParameter:pParameter] forKey:SIGNATURE_PARAMETER_KEY];
     // append user name to post parameter

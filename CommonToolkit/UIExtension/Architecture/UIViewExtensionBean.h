@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "UIViewGestureRecognizerDelegate.h"
+
 // UIView extension type
 typedef enum {
     titleExt,
@@ -16,6 +18,7 @@ typedef enum {
     rightBarButtonItemExt,
     backgroundImgExt,
     viewControllerRefExt,
+    viewGestureRecognizerDelegateExt,
     extensionExt
 } UIViewExtensionType;
 
@@ -36,5 +39,8 @@ typedef enum {
 
 // view controller reference
 @property (nonatomic, retain) UIViewController *viewControllerRef;
+
+// view gesture recognizer delegate
+@property (nonatomic, retain) id<UIViewGestureRecognizerDelegate> viewGestureRecognizerDelegate;
 
 @end
