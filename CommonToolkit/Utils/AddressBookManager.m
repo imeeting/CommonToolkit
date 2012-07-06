@@ -60,15 +60,6 @@ static AddressBookManager *singletonAddressBookManagerRef;
     return self;
 }
 
-- (NSMutableArray *)allContactsInfoArray{
-    // remove each contact extension dictionary
-    for (ContactBean *_contact in _mAllContactsInfoArray) {
-        [_contact.extensionDic removeAllObjects];
-    }
-    
-    return _mAllContactsInfoArray;
-}
-
 + (AddressBookManager *)shareAddressBookManager{
     @synchronized(self){
         if (nil == singletonAddressBookManagerRef) {

@@ -107,6 +107,7 @@
 		F8E3BF06158F2C0C00467088 /* ECUIControlTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E3BF04158F2C0C00467088 /* ECUIControlTableViewCell.m */; };
 		F8E58F90159862F400CC2F1C /* UIImage+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = F8E58F8E159862F400CC2F1C /* UIImage+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8E58F91159862F400CC2F1C /* UIImage+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E58F8F159862F400CC2F1C /* UIImage+Extension.m */; };
+		F8EDF12F15A6F230003DF47F /* UIViewGestureRecognizerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = F8EDF12E15A6F230003DF47F /* UIViewGestureRecognizerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -222,6 +223,7 @@
 		F8E3BF04158F2C0C00467088 /* ECUIControlTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECUIControlTableViewCell.m; sourceTree = "<group>"; };
 		F8E58F8E159862F400CC2F1C /* UIImage+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Extension.h"; sourceTree = "<group>"; };
 		F8E58F8F159862F400CC2F1C /* UIImage+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Extension.m"; sourceTree = "<group>"; };
+		F8EDF12E15A6F230003DF47F /* UIViewGestureRecognizerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIViewGestureRecognizerDelegate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -349,6 +351,7 @@
 		DC3C15BE158B936600B31A79 /* Architecture */ = {
 			isa = PBXGroup;
 			children = (
+				F8EDF12E15A6F230003DF47F /* UIViewGestureRecognizerDelegate.h */,
 				DC3C15BF158B936600B31A79 /* AppRootViewController.h */,
 				DC3C15C0158B936600B31A79 /* AppRootViewController.m */,
 				DC3C15C1158B936600B31A79 /* UIView+UI+ViewController.h */,
@@ -526,6 +529,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8EDF12F15A6F230003DF47F /* UIViewGestureRecognizerDelegate.h in Headers */,
 				F885A58E159AAE5200709FC7 /* AVCamUtilities.h in Headers */,
 				F8D791BC1599630300986BCD /* AsyncSocket.h in Headers */,
 				F8D791C01599630300986BCD /* SocketIO.h in Headers */,
