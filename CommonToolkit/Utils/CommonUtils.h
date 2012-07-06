@@ -33,11 +33,15 @@ typedef enum {
 // get application navigation bar default height
 + (CGFloat)appNavigationBarHeight;
 
+// convert NSInteger to binary array(NSNumber *)
++ (NSArray *)convertIntegerToBinaryArray:(NSInteger)pInteger;
+
 @end
 
 
 
 
+// CommonUtils extension
 @interface CommonUtils ()
 
 // print http request bean dictionary

@@ -62,6 +62,22 @@
     return 44.0;
 }
 
++ (NSArray *)convertIntegerToBinaryArray:(NSInteger)pInteger{
+    // get int bits count in ios
+    size_t bits = sizeof(int) * CHAR_BIT;
+    
+    NSMutableArray *_ret = [[NSMutableArray alloc] initWithCapacity:bits];
+    
+    // type punning because signed shift is implementation-defined
+    unsigned u = *(unsigned *)&pInteger;
+    for (; bits--; u >>= 1) {
+        [_ret addObject:[NSNumber numberWithInt:u & 1 ? 1 : 0]];
+    }        
+    
+    // array reverse
+    return [[_ret reverseObjectEnumerator] allObjects];
+}
+
 + (void)printHttpRequestBeanDictionary{
     [[HttpRequestManager shareHttpRequestManager] printHttpRequestBeanDictionary];
 }

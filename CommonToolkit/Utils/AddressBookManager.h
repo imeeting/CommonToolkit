@@ -35,10 +35,10 @@
 // traversal address book, inportant, do it first
 - (void)traversalAddressBook;
 
-// get contacts by phone number
+// get contacts by phone number: sub matching
 - (NSArray *)getContactByPhoneNumber:(NSString *)pPhoneNumber;
 
-// get contacts by name(not chinaese character)
+// get contacts by name(not chinaese character): fuzzy matching
 - (NSArray *)getContactByName:(NSString *)pName;
 
 // get contact end
