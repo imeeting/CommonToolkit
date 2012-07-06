@@ -47,4 +47,7 @@
 // contacts display name array with user input phone number
 - (NSArray *)contactsDisplayNameArrayWithPhoneNumber:(NSString *)pPhoneNumber;
 
+// get the default contact by phone number
+- (ContactBean*)defaultContactByPhoneNumber:(NSString*)pPhoneNumber;
+
 @end

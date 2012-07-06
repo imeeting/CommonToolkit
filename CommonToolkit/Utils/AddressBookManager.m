@@ -11,6 +11,7 @@
 #import "NSString+Extension.h"
 #import "NSBundle+Extension.h"
 #import "CommonUtils.h"
+#import "ContactBean_Extension.h"
 
 // static singleton AddressBookManager reference
 static AddressBookManager *singletonAddressBookManagerRef;
@@ -66,6 +67,16 @@ static AddressBookManager *singletonAddressBookManagerRef;
     return singletonAddressBookManagerRef;
 }
 
+- (NSMutableArray *)allContactsInfoArray{
+    // remove each contact extension dictionary
+    for (ContactBean *_contact in _mAllContactsInfoArray) {
+        [_contact.extensionDic removeAllObjects];
+    }
+    
+    return _mAllContactsInfoArray;
+}
+
+
 - (void)traversalAddressBook{
     // traversal addressBook
     [self initContactIdGroupsDictionary];
@@ -115,6 +126,8 @@ static AddressBookManager *singletonAddressBookManagerRef;
 
 - (NSArray *)getContactByName:(NSString *)pName{
     NSMutableArray *_ret = [[NSMutableArray alloc] init];
+    
+    pName = [pName lowercaseString];
     
     // check contact search result dictionary and all contacts info array
     _mContactSearchResultDic = _mContactSearchResultDic ? _mContactSearchResultDic : [[NSMutableDictionary alloc] init];
@@ -426,6 +439,15 @@ static AddressBookManager *singletonAddressBookManagerRef;
     CFRelease(addressBook);
     
     return _ret;
+}
+
+- (ContactBean *)defaultContactByPhoneNumber:(NSString *)pPhoneNumber {
+    NSArray *contacts = [self getContactByPhoneNumber:pPhoneNumber];
+    ContactBean *defaultContact = nil;
+    if (contacts.count > 0) {
+        defaultContact = [contacts objectAtIndex:0];
+    }
+    return defaultContact;
 }
 
 - (void)printContactSearchResultDictionary{
