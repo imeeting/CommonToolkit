@@ -25,6 +25,7 @@
 #import "NSIndexPath+Extension.h"
 #import "NSBundle+Extension.h"
 #import "NSDate+Extension.h"
+#import "NSNumber+Extension.h"
 
 // DataStruct
 #import "UserBean.h"

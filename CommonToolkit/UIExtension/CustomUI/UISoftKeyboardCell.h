@@ -12,6 +12,9 @@
     // front present view
     UIView *_mFrontView;
     
+    // core data for save cell value
+    NSNumber *_mCoreData;
+    
     // normal background color
     UIColor *_mNormalBackgroundColor;
     // normal background image
@@ -29,6 +32,8 @@
 }
 
 @property (nonatomic, retain) UIView *frontView;
+
+@property (nonatomic, retain) NSNumber *coreData;
 
 @property (nonatomic, retain) UIColor *pressedBackgroundColor;
 @property (nonatomic, retain) UIImage *pressedBackgroundImg;

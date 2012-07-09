@@ -3,7 +3,7 @@
 //  CommonToolkit
 //
 //  Created by  on 12-6-25.
-//  Copyright (c) 2012年 richitec. All rights reserved.
+//  Copyright (c) 2012 richitec. All rights reserved.
 //
 
 #import "UISoftKeyboardCell.h"
@@ -28,6 +28,8 @@
 @implementation UISoftKeyboardCell
 
 @synthesize frontView = _mFrontView;
+
+@synthesize coreData = _mCoreData;
 
 @synthesize pressedBackgroundColor = _mPressedBackgroundColor;
 @synthesize pressedBackgroundImg = _mPressedBackgroundImg;
