@@ -522,6 +522,15 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     return _ret;
 }
 
+- (ContactBean *)defaultContactByPhoneNumber:(NSString *)pPhoneNumber {
+    NSArray *contacts = [self getContactByPhoneNumber:pPhoneNumber];
+    ContactBean *defaultContact = nil;
+    if (contacts.count > 0) {
+        defaultContact = [contacts objectAtIndex:0];
+    }
+    return defaultContact;
+}
+
 - (void)printContactSearchResultDictionary{
     NSLog(@"Important Info: %@, contact search result dictionary = %@", NSStringFromClass(self.class), _mContactSearchResultDic);
 }
