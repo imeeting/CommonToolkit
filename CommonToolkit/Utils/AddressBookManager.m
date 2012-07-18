@@ -9,11 +9,13 @@
 #import "AddressBookManager.h"
 
 #import "NSString+Extension.h"
+#import "NSArray+Extension.h"
 #import "NSBundle+Extension.h"
 #import "CommonUtils.h"
-#import "ContactBean_Extension.h"
 
 #import "ContactBean_Extension.h"
+
+#import <objc/message.h>
 
 // static singleton AddressBookManager reference
 static AddressBookManager *singletonAddressBookManagerRef;
@@ -21,20 +23,33 @@ static AddressBookManager *singletonAddressBookManagerRef;
 // AddressBookManager extension
 @interface AddressBookManager ()
 
-// get contact's name, phone numbers info by record
-- (ContactBean *)getContactNamePhoneNumsInfoByRecord:(ABRecordRef)pRecord;
+// generate contact with contact's name, phone numbers info by record
+- (ContactBean *)generateContactNamePhoneNumsInfoByRecord:(ABRecordRef)pRecord;
 
 // get contact information array by particular phone number
 - (NSArray *)getContactInfoByPhoneNumber:(NSString *)pPhoneNumber;
 
+// get contact info by particular contact id
+- (ContactBean *)getContactInfoById:(NSInteger)pId;
+
+// get contacts by name(not chinaese character): fuzzy matching
+- (NSArray *)getContactByName:(NSString *)pName allMatching:(BOOL)pAllMatching;
+
 // init all contacts contact id - groups dictionary
 - (void)initContactIdGroupsDictionary;
 
-// get all contacts info array from address book
+// get all contacts info array from addressBook
 - (NSMutableArray *)getAllContactsInfoFromAB;
 
 // print contact search result dictionary
 - (void)printContactSearchResultDictionary;
+
+// refresh addressBook and return contact id dirty dictionary
+// key: contact id(NSInteger), value: action dictionary(NSDictionary *)
+- (NSDictionary *)refreshAddressBook;
+
+// private method: addressBook changed callback function
+void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void *context);
 
 @end
 
@@ -46,28 +61,9 @@ static AddressBookManager *singletonAddressBookManagerRef;
 - (id)init{
     self = [super init];
     if (self) {
-        /*
-        // fetch the address book, addressBook manager object 
-        ABAddressBookRef addressBook = ABAddressBookCreate();
-        
-        // register external change callback function
-        ABAddressBookRegisterExternalChangeCallback(addressBook, pSelector, nil);
-        
-        // release
-        CFRelease(addressBook);
-         */
+        // Initialization code
     }
     return self;
-}
-
-+ (AddressBookManager *)shareAddressBookManager{
-    @synchronized(self){
-        if (nil == singletonAddressBookManagerRef) {
-            singletonAddressBookManagerRef = [[self alloc] init];
-        }
-    }
-    
-    return singletonAddressBookManagerRef;
 }
 
 - (NSMutableArray *)allContactsInfoArray{
@@ -79,6 +75,15 @@ static AddressBookManager *singletonAddressBookManagerRef;
     return _mAllContactsInfoArray;
 }
 
++ (AddressBookManager *)shareAddressBookManager{
+    @synchronized(self){
+        if (nil == singletonAddressBookManagerRef) {
+            singletonAddressBookManagerRef = [[self alloc] init];
+        }
+    }
+    
+    return singletonAddressBookManagerRef;
+}
 
 - (void)traversalAddressBook{
     // traversal addressBook
@@ -128,108 +133,7 @@ static AddressBookManager *singletonAddressBookManagerRef;
 }
 
 - (NSArray *)getContactByName:(NSString *)pName{
-    NSMutableArray *_ret = [[NSMutableArray alloc] init];
-    
-    // convert search contact name to lowercase string
-    pName = [pName lowercaseString];
-    
-    // check contact search result dictionary and all contacts info array
-    _mContactSearchResultDic = _mContactSearchResultDic ? _mContactSearchResultDic : [[NSMutableDictionary alloc] init];
-    _mAllContactsInfoArray = _mAllContactsInfoArray ? _mAllContactsInfoArray : [self getAllContactsInfoFromAB];
-    
-    // check search contact name
-    if ([[_mContactSearchResultDic allKeys] containsObject:pName]) {
-        // existed in search result dictionary
-        _ret = [_mContactSearchResultDic objectForKey:pName];
-    }
-    else {
-        // define contact search scope
-        NSArray *_contactSearchScope = _mAllContactsInfoArray;
-        
-        // check search contact name sub phone name
-        if (pName.length >= 2 && [[_mContactSearchResultDic allKeys] containsObject:[pName substringToIndex:pName.length - 2]]) {
-            _contactSearchScope = [_mContactSearchResultDic objectForKey:[pName substringToIndex:pName.length - 2]];
-        }
-        
-        // split search contact name
-        NSArray *_searchContactNameSplitArray = nil;
-        if (_contactSearchScope && [_contactSearchScope count] > 0) {
-            _searchContactNameSplitArray = [pName splitToFirstAndOthers];
-        }
-        
-        // search each contact in contact search scope
-        for (ContactBean *_contact in _contactSearchScope) {
-            // traversal all split name array
-            for (NSString *_splitName in _searchContactNameSplitArray) {
-                // split name unmatch flag
-                BOOL unmatch = NO;
-                
-                // get split name array
-                NSArray *_splitNameArray = [_splitName toArrayWithSeparator:SPLIT_SEPARATOR];
-                
-                // compare split name array count with contact name phonetic array count
-                if ([_splitNameArray count] > [_contact.namePhonetics count]) {
-                    continue;
-                }
-                
-                // slide split name array on contact name phonetic array
-                for (NSInteger _index = 0; _index < [_contact.namePhonetics count] - [_splitNameArray count] + 1; _index++) {
-                    // split name array match flag in particular contact name phonetic array
-                    BOOL _matched = NO;
-                    
-                    // match each split name 
-                    for (NSInteger __index = 0; __index < [_splitNameArray count]; __index++) {
-                        // one split name unmatch flag
-                        BOOL __unmatched = NO;
-                        
-                        // traversal multi phonetic
-                        for (NSInteger ___index = 0; ___index < [[_contact.namePhonetics objectAtIndex:_index + __index] count]; ___index++) {
-                            // matched, contact phonetic has prefix with split name
-                            if ([[[_contact.namePhonetics objectAtIndex:_index + __index] objectAtIndex:___index] hasPrefix:[_splitNameArray objectAtIndex:__index]]) {
-                                break;
-                            }
-                            else if (___index == [[_contact.namePhonetics objectAtIndex:_index + __index] count] - 1) {
-                                __unmatched = YES;
-                            }
-                        }
-                        
-                        // one split name unmatch, break, slide split name array
-                        if (__unmatched) {
-                            break;
-                        }
-                        
-                        // all split name matched, break
-                        if (!__unmatched && __index == [_splitNameArray count] - 1) {
-                            _matched = YES;
-                            break;
-                        }
-                    }
-                    
-                    // one particular split name array metched, break
-                    if (_matched) {
-                        break;
-                    }
-                    
-                    // all split name array unmatch, break, search next contact
-                    if (!_matched && _index == [_contact.namePhonetics count] - [_splitNameArray count]) {
-                        unmatch = YES;
-                        break;
-                    }
-                }
-                
-                // one contact match, add in search result array
-                if (!unmatch) {
-                    [_ret addObject:_contact];
-                    break;
-                }
-            }
-        }
-        
-        // add to contact search result dictionary
-        [_mContactSearchResultDic setObject:_ret forKey:pName];
-    }
-    
-    return _ret;
+    return [self getContactByName:pName allMatching:YES];
 }
 
 - (void)getContactEnd{
@@ -261,7 +165,23 @@ static AddressBookManager *singletonAddressBookManagerRef;
     return _ret;
 }
 
-- (ContactBean *)getContactNamePhoneNumsInfoByRecord:(ABRecordRef)pRecord{
+- (void)addABChangedObserver:(NSObject *)pObserver{
+    // validate addressBookChanged implemetation
+    if ([CommonUtils validateProcessor:pObserver andSelector:@selector(addressBookChanged:info:context:)]) {
+        // register external change callback function
+        ABAddressBookRegisterExternalChangeCallback(ABAddressBookCreate(), addressBookChanged, (__bridge void *)pObserver);
+    }
+    else {
+        NSLog(@"Error: %@ can't implement addressBook changed callback function %@", NSStringFromClass(pObserver.class), NSStringFromSelector(@selector(addressBookChanged:info:context:)));
+    }
+}
+
+- (void)removeABChangedObserver:(NSObject *)pObserver{
+    // unregister external change callback function
+    ABAddressBookUnregisterExternalChangeCallback(ABAddressBookCreate(), addressBookChanged, (__bridge void *)pObserver);
+}
+
+- (ContactBean *)generateContactNamePhoneNumsInfoByRecord:(ABRecordRef)pRecord{
     ContactBean *_contact = [[ContactBean alloc] init];
     
     // set contact id
@@ -375,6 +295,137 @@ static AddressBookManager *singletonAddressBookManagerRef;
     return _ret;
 }
 
+- (ContactBean *)getContactInfoById:(NSInteger)pId{
+    ContactBean *_ret = nil;
+    
+    // check all contacts info array
+    _mAllContactsInfoArray = _mAllContactsInfoArray ? _mAllContactsInfoArray : [self getAllContactsInfoFromAB];
+    
+    for (ContactBean *_contact in _mAllContactsInfoArray) {
+        // check contact id
+        if (_contact.id == pId) {
+            _ret = _contact;
+            
+            break;
+        }
+    }
+    
+    return _ret;
+}
+
+- (NSArray *)getContactByName:(NSString *)pName allMatching:(BOOL)pAllMatching{
+    NSMutableArray *_ret = [[NSMutableArray alloc] init];
+    
+    // convert search contact name to lowercase string
+    pName = [pName lowercaseString];
+    
+    // check contact search result dictionary and all contacts info array
+    _mContactSearchResultDic = _mContactSearchResultDic ? _mContactSearchResultDic : [[NSMutableDictionary alloc] init];
+    _mAllContactsInfoArray = _mAllContactsInfoArray ? _mAllContactsInfoArray : [self getAllContactsInfoFromAB];
+    
+    // check search contact name
+    if ([[_mContactSearchResultDic allKeys] containsObject:pName]) {
+        // existed in search result dictionary
+        _ret = [_mContactSearchResultDic objectForKey:pName];
+    }
+    else {
+        // define contact search scope
+        NSArray *_contactSearchScope = _mAllContactsInfoArray;
+        
+        // check search contact name sub phone name
+        if (pName.length >= 2 && [[_mContactSearchResultDic allKeys] containsObject:[pName substringToIndex:pName.length - 2]]) {
+            _contactSearchScope = [_mContactSearchResultDic objectForKey:[pName substringToIndex:pName.length - 2]];
+        }
+        
+        // split search contact name
+        NSArray *_searchContactNameSplitArray = nil;
+        if (_contactSearchScope && [_contactSearchScope count] > 0) {
+            _searchContactNameSplitArray = [pName splitToFirstAndOthers];
+        }
+        
+        // search each contact in contact search scope
+        for (ContactBean *_contact in _contactSearchScope) {
+            // traversal all split name array
+            for (NSString *_splitName in _searchContactNameSplitArray) {
+                // split name unmatch flag
+                BOOL unmatch = NO;
+                
+                // get split name array
+                NSArray *_splitNameArray = [_splitName toArrayWithSeparator:SPLIT_SEPARATOR];
+                
+                // compare split name array count with contact name phonetic array count
+                if ([_splitNameArray count] > [_contact.namePhonetics count]) {
+                    continue;
+                }
+                
+                // need all matching
+                if (pAllMatching) {
+                    if (![_splitNameArray isMatchedNamePhonetics:_contact.namePhonetics]) {
+                        unmatch = YES;
+                    }
+                }
+                else {
+                    // slide split name array on contact name phonetic array
+                    for (NSInteger _index = 0; _index < [_contact.namePhonetics count] - [_splitNameArray count] + 1; _index++) {
+                        // split name array match flag in particular contact name phonetic array
+                        BOOL _matched = NO;
+                        
+                        // match each split name 
+                        for (NSInteger __index = 0; __index < [_splitNameArray count]; __index++) {
+                            // one split name unmatch flag
+                            BOOL __unmatched = NO;
+                            
+                            // traversal multi phonetic
+                            for (NSInteger ___index = 0; ___index < [[_contact.namePhonetics objectAtIndex:_index + __index] count]; ___index++) {
+                                // matched, contact phonetic has prefix with split name
+                                if ([[[_contact.namePhonetics objectAtIndex:_index + __index] objectAtIndex:___index] hasPrefix:[_splitNameArray objectAtIndex:__index]]) {
+                                    break;
+                                }
+                                else if (___index == [[_contact.namePhonetics objectAtIndex:_index + __index] count] - 1) {
+                                    __unmatched = YES;
+                                }
+                            }
+                            
+                            // one split name unmatch, break, slide split name array
+                            if (__unmatched) {
+                                break;
+                            }
+                            
+                            // all split name matched, break
+                            if (!__unmatched && __index == [_splitNameArray count] - 1) {
+                                _matched = YES;
+                                break;
+                            }
+                        }
+                        
+                        // one particular split name array metched, break
+                        if (_matched) {
+                            break;
+                        }
+                        
+                        // all split name array unmatch, break, search next contact
+                        if (!_matched && _index == [_contact.namePhonetics count] - [_splitNameArray count]) {
+                            unmatch = YES;
+                            break;
+                        }
+                    }
+                }
+                
+                // one contact match, add in search result array
+                if (!unmatch) {
+                    [_ret addObject:_contact];
+                    break;
+                }
+            }
+        }
+        
+        // add to contact search result dictionary
+        [_mContactSearchResultDic setObject:_ret forKey:pName];
+    }
+    
+    return _ret;
+}
+
 - (void)initContactIdGroupsDictionary{
     // check contact id - groups dictionary
     if (!_mContactIdGroupsDic) {
@@ -385,7 +436,7 @@ static AddressBookManager *singletonAddressBookManagerRef;
         return;
     }
     
-    // fetch the address book, addressBook manager object 
+    // fetch the addressBook 
     ABAddressBookRef addressBook = ABAddressBookCreate();
     
     // get all group array
@@ -431,7 +482,7 @@ static AddressBookManager *singletonAddressBookManagerRef;
 - (NSMutableArray *)getAllContactsInfoFromAB{
     NSMutableArray *_ret = [[NSMutableArray alloc] init];
     
-    // fetch the address book, addressBook manager object 
+    // fetch the addressBook 
     ABAddressBookRef addressBook = ABAddressBookCreate();
     
     // get all contacts
@@ -451,8 +502,8 @@ static AddressBookManager *singletonAddressBookManagerRef;
         }
         NSArray* _groupArray = [_mContactIdGroupsDic objectForKey:[NSNumber numberWithInt:_recordID]];
         
-        // get contact name and phone number info
-        ContactBean *_contactBean = [self getContactNamePhoneNumsInfoByRecord:_person];
+        // generate contact name and phone number info
+        ContactBean *_contactBean = [self generateContactNamePhoneNumsInfoByRecord:_person];
         
         // photo
         NSData* _photo = (__bridge NSData*)ABPersonCopyImageData(_person);
@@ -471,17 +522,94 @@ static AddressBookManager *singletonAddressBookManagerRef;
     return _ret;
 }
 
-- (ContactBean *)defaultContactByPhoneNumber:(NSString *)pPhoneNumber {
-    NSArray *contacts = [self getContactByPhoneNumber:pPhoneNumber];
-    ContactBean *defaultContact = nil;
-    if (contacts.count > 0) {
-        defaultContact = [contacts objectAtIndex:0];
-    }
-    return defaultContact;
-}
-
 - (void)printContactSearchResultDictionary{
     NSLog(@"Important Info: %@, contact search result dictionary = %@", NSStringFromClass(self.class), _mContactSearchResultDic);
+}
+
+- (NSDictionary *)refreshAddressBook{
+    NSMutableDictionary *_ret = [[NSMutableDictionary alloc] init];
+    
+    // re-init contactsId group dictionary
+    _mContactIdGroupsDic = nil;
+    [self initContactIdGroupsDictionary];
+    
+    @autoreleasepool {
+        // get new contacts info array from addressBook
+        NSArray *_newContactsInfoArray = [self getAllContactsInfoFromAB];
+        
+        // remove contact from all contacts info array if not existed in new contacts info array
+        // define existed flag
+        BOOL _existed;
+        for (ContactBean *_contact in _mAllContactsInfoArray) {
+            // set/re-set existed flag
+            _existed = NO;
+            
+            for (ContactBean *__contact in _newContactsInfoArray) {
+                // check new contacts info array existed the contact which in all contacts info array
+                if (_contact.id == __contact.id) {
+                    _existed = YES;
+                    
+                    break;
+                }
+            }
+            
+            // if existed, check next else remove the contact in all contacts info array
+            if (_existed) {
+                // get next
+                continue;
+            }
+            else {
+                // delete
+                [_mAllContactsInfoArray removeObject:_contact];
+                
+                // add to dirty contact id dictionary
+                [_ret setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithInteger:contactDelete] forKey:CONTACT_ACTION] forKey:[NSNumber numberWithInteger:_contact.id]];
+            }
+        }
+        
+        // compare and merge contact
+        for (ContactBean *_contact in _newContactsInfoArray) {
+            // get contact in all contacts info array
+            ContactBean *_oldContact = [self getContactInfoById:_contact.id];
+            
+            if (nil == _oldContact || NSOrderedSame != [_contact compare:_oldContact]) {
+                // reset all contacts info array, if existed, replace else add new contact
+                if (_oldContact) {
+                    // replace
+                    _oldContact = [_oldContact copyBaseProp:_contact];
+                    
+                    // create and init contact action dictionary
+                    NSMutableDictionary *_contactActionDic = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithInteger:contactModify] forKey:CONTACT_ACTION];
+                    // else action property can't implemetation???
+                    
+                    // add to dirty contact id dictionary
+                    [_ret setObject:_contactActionDic forKey:[NSNumber numberWithInteger:_contact.id]];
+                }
+                else {
+                    // add new
+                    [_mAllContactsInfoArray addObject:_contact];
+                    
+                    // add to dirty contact id dictionary
+                    [_ret setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithInteger:contactAdd] forKey:CONTACT_ACTION] forKey:[NSNumber numberWithInteger:_contact.id]];
+                }
+            }
+        }
+    }
+    
+    return _ret;
+}
+
+void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void *context){
+    // refresh addressBook and get dirty contact id dictionary
+    NSDictionary *_dirtyContactIdDic = [[AddressBookManager shareAddressBookManager] refreshAddressBook];
+    
+    // set info
+    if (nil == info) {
+        info = (__bridge CFDictionaryRef)_dirtyContactIdDic;
+    }
+    
+    // send message to addressBook changed observer
+    objc_msgSend((__bridge id)context, @selector(addressBookChanged:info:context:), addressBook, info, context);
 }
 
 @end

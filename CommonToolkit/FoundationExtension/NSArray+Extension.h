@@ -20,6 +20,9 @@ typedef enum {
 // get contact's phone numbers display text with style
 - (NSString *)getContactPhoneNumbersDisplayTextWithStyle:(PhoneNumbersDisplayStyle)pStyle;
 
+// split array can matches given name phonetics
+- (BOOL)isMatchedNamePhonetics:(NSArray *)pMatchesNamePhonetics;
+
 @end
 
 

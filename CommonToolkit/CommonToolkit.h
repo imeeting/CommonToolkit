@@ -26,6 +26,7 @@
 #import "NSBundle+Extension.h"
 #import "NSDate+Extension.h"
 #import "NSNumber+Extension.h"
+#import "NSAttributedString+Extension.h"
 
 // DataStruct
 #import "UserBean.h"
@@ -72,6 +73,7 @@
 // Custom UI
 #import "UISoftKeyboard.h"
 #import "UISoftKeyboardCell.h"
+#import "UIAttributedLabel.h"
 #import "ECLoadMoreUITableView.h"
 #import "TableFooterView.h"
 #import "ECUIControlTableViewCell.h"

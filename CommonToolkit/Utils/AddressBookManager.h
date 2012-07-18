@@ -12,6 +12,30 @@
 
 #import "ContactBean.h"
 
+// contact action key
+#define CONTACT_ACTION  @"action"
+
+// contact dirty type
+typedef enum {
+    contactAdd,
+    contactModify,
+    contactDelete
+} ContactDirtyType;
+
+
+// addressBook changed delegate
+@protocol AddressBookChangedDelegate <NSObject>
+
+@required
+
+// addressBook changed callback function
+- (void)addressBookChanged:(ABAddressBookRef)pAddressBook info:(CFDictionaryRef)pInfo context:(void *)pContext;
+
+@end
+
+
+
+
 @interface AddressBookManager : NSObject {
     // all contacts, contact id - groups dictionary
     // key is contact record id (int32_t)
@@ -49,5 +73,11 @@
 
 // get the default contact by phone number
 - (ContactBean*)defaultContactByPhoneNumber:(NSString*)pPhoneNumber;
+
+// add addressBook changed callback observer
+- (void)addABChangedObserver:(NSObject *)pObserver;
+
+// remove addressBook changed callback observer
+- (void)removeABChangedObserver:(NSObject *)pObserver;
 
 @end

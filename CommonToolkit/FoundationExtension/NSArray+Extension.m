@@ -50,6 +50,67 @@
     return _ret;
 }
 
+- (BOOL)isMatchedNamePhonetics:(NSArray *)pMatchesNamePhonetics{
+    BOOL _ret = NO;
+    
+    if (nil != self && nil != pMatchesNamePhonetics && 0 != [self count] && [self count] <= [pMatchesNamePhonetics count]) {
+        // split array has more elements
+        if ([self count] > 1) {
+            // slide split array in matches name phonetics
+            for (NSInteger _index = 0; _index < [pMatchesNamePhonetics count] - [self count] + 1; _index++) {
+                // check first element in aplit array and matches name phonetics
+                BOOL _headerMatched = NO;
+                
+                for (NSInteger __index = 0; __index < [[pMatchesNamePhonetics objectAtIndex:_index] count]; __index++) {
+                    if ([[[pMatchesNamePhonetics objectAtIndex:_index] objectAtIndex:__index] hasPrefix:[self objectAtIndex:0]]) {
+                        _headerMatched = YES;
+                        
+                        break;
+                    }
+                }
+                
+                // if header not matched, slide split array
+                if (!_headerMatched) {
+                    continue;
+                }
+                
+                // remove header, matches others left
+                NSArray *_subSplitArray = [self subarrayWithRange:NSMakeRange(1, [self count] - 1)];
+                NSArray *_subNamePhonetics = [pMatchesNamePhonetics subarrayWithRange:NSMakeRange(_index + 1, [pMatchesNamePhonetics count] - (_index + 1))];
+                
+                // left matches
+                if ([_subSplitArray isMatchedNamePhonetics:_subNamePhonetics]) {
+                    _ret = YES;
+                    
+                    break;
+                }
+            }
+        }
+        // split array just has one element
+        else if(1 == [self count]) {
+            BOOL _matched = NO;
+            
+            for (NSInteger _index = 0; _index < [pMatchesNamePhonetics count]; _index++) {
+                for (NSInteger __index = 0; __index < [[pMatchesNamePhonetics objectAtIndex:_index] count]; __index++) {
+                    if ([[[pMatchesNamePhonetics objectAtIndex:_index] objectAtIndex:__index] hasPrefix:[self objectAtIndex:0]]) {
+                        _matched = YES;
+                        _ret = YES;
+                        
+                        break;
+                    }
+                }
+                
+                // if matches, break immediately
+                if (_matched) {
+                    break;
+                }
+            }
+        }
+    }
+    
+    return _ret;
+}
+
 @end
 
 
