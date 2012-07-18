@@ -81,13 +81,19 @@
         // set style
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        // save each control's width and add each control to cell content view
+        // save each control's width and add each control to cell content view ant calculate cell height
         NSMutableArray *_controlsWidthArray = [[NSMutableArray alloc] initWithCapacity:[pControls count]];
+        CGFloat allHeight = 0;
         for(UIControl *_control in pControls){
             // save width
             [_controlsWidthArray addObject:[NSNumber numberWithFloat:_control.frame.size.width]];
             // add to cell content view
             [self.contentView addSubview:_control];
+            allHeight += _control.frame.size.height;
+        }
+        
+        if (allHeight != 0) {
+            _cellHeight = allHeight;
         }
         
         // process two and three controls

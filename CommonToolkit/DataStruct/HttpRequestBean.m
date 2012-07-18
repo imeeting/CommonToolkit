@@ -78,7 +78,7 @@
         NSLog(@"httpRequest object didFailed - request url = %@, error: %@, response data: %@", pRequest.url, _error, pRequest.responseData);
         
         // show default http request did failed toast
-        [[iToast makeText:NSLocalizedStringFromCommonToolkitBundle(@"default http request did failed toast", nil)] show];
+        [[[iToast makeText:NSLocalizedStringFromCommonToolkitBundle(@"default http request did failed toast", nil)] setDuration:iToastDurationLong] show];
     }
     else {
         NSLog(@"Warning : %@", self.processor ? [NSString stringWithFormat:@"http request object processor %@ can't implement did failed response method %@", NSStringFromClass([self.processor class]), NSStringFromSelector(self.failedRespSelector)] : [NSString stringWithFormat:@"http request object processor is nil"]);
