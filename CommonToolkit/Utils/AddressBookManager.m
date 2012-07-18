@@ -29,9 +29,6 @@ static AddressBookManager *singletonAddressBookManagerRef;
 // get contact information array by particular phone number
 - (NSArray *)getContactInfoByPhoneNumber:(NSString *)pPhoneNumber;
 
-// get contact info by particular contact id
-- (ContactBean *)getContactInfoById:(NSInteger)pId;
-
 // get contacts by name(not chinaese character): fuzzy matching
 - (NSArray *)getContactByName:(NSString *)pName allMatching:(BOOL)pAllMatching;
 
@@ -89,6 +86,24 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     // traversal addressBook
     [self initContactIdGroupsDictionary];
     _mAllContactsInfoArray = [self getAllContactsInfoFromAB];
+}
+
+- (ContactBean *)getContactInfoById:(NSInteger)pId{
+    ContactBean *_ret = nil;
+    
+    // check all contacts info array
+    _mAllContactsInfoArray = _mAllContactsInfoArray ? _mAllContactsInfoArray : [self getAllContactsInfoFromAB];
+    
+    for (ContactBean *_contact in _mAllContactsInfoArray) {
+        // check contact id
+        if (_contact.id == pId) {
+            _ret = _contact;
+            
+            break;
+        }
+    }
+    
+    return _ret;
 }
 
 - (NSArray *)getContactByPhoneNumber:(NSString *)pPhoneNumber{
@@ -171,8 +186,11 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         // register external change callback function
         ABAddressBookRegisterExternalChangeCallback(ABAddressBookCreate(), addressBookChanged, (__bridge void *)pObserver);
     }
-    else {
-        NSLog(@"Error: %@ can't implement addressBook changed callback function %@", NSStringFromClass(pObserver.class), NSStringFromSelector(@selector(addressBookChanged:info:context:)));
+    else if (nil != pObserver) {
+        NSLog(@"Warning: %@ can't implement addressBook changed callback function %@", NSStringFromClass(pObserver.class), NSStringFromSelector(@selector(addressBookChanged:info:context:)));
+        
+        // register external change callback function
+        ABAddressBookRegisterExternalChangeCallback(ABAddressBookCreate(), addressBookChanged, NULL);
     }
 }
 
@@ -289,24 +307,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                 [_ret addObject:_contact];
                 break;
             }
-        }
-    }
-    
-    return _ret;
-}
-
-- (ContactBean *)getContactInfoById:(NSInteger)pId{
-    ContactBean *_ret = nil;
-    
-    // check all contacts info array
-    _mAllContactsInfoArray = _mAllContactsInfoArray ? _mAllContactsInfoArray : [self getAllContactsInfoFromAB];
-    
-    for (ContactBean *_contact in _mAllContactsInfoArray) {
-        // check contact id
-        if (_contact.id == pId) {
-            _ret = _contact;
-            
-            break;
         }
     }
     
@@ -610,15 +610,12 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
 void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void *context){
     // refresh addressBook and get dirty contact id dictionary
-    NSDictionary *_dirtyContactIdDic = [[AddressBookManager shareAddressBookManager] refreshAddressBook];
-    
-    // set info
-    if (nil == info) {
-        info = (__bridge CFDictionaryRef)_dirtyContactIdDic;
-    }
+    info = (__bridge CFDictionaryRef)[[AddressBookManager shareAddressBookManager] refreshAddressBook];
     
     // send message to addressBook changed observer
-    objc_msgSend((__bridge id)context, @selector(addressBookChanged:info:context:), addressBook, info, context);
+    if (NULL != context) {
+        objc_msgSend((__bridge id)context, @selector(addressBookChanged:info:context:), addressBook, info, context);
+    }
 }
 
 @end
