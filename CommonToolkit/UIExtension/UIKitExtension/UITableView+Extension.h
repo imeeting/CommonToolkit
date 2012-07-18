@@ -13,6 +13,9 @@
 // insert row at indexPath
 - (void)insertRowAtIndexPath:(NSIndexPath *)pIndexPath withRowAnimation:(UITableViewRowAnimation)pAnimation;
 
+// reload row at indexPath
+- (void)reloadRowAtIndexPath:(NSIndexPath *)pIndexPath withRowAnimation:(UITableViewRowAnimation)pAnimation;
+
 // delete row at indexPath
 - (void)deleteRowAtIndexPath:(NSIndexPath *)pIndexPath withRowAnimation:(UITableViewRowAnimation)pAnimation;
 

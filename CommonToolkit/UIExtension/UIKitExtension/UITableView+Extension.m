@@ -3,7 +3,7 @@
 //  CommonToolkit
 //
 //  Created by  on 12-6-13.
-//  Copyright (c) 2012年 richitec. All rights reserved.
+//  Copyright (c) 2012 richitec. All rights reserved.
 //
 
 #import "UITableView+Extension.h"
@@ -15,10 +15,15 @@
     [self beginUpdates];
     
     // insert with animation
-    [self insertRowsAtIndexPaths:[[NSArray alloc] initWithObjects:pIndexPath, nil] withRowAnimation:pAnimation];
+    [self insertRowsAtIndexPaths:[NSArray arrayWithObject:pIndexPath] withRowAnimation:pAnimation];
     
     // end update
     [self endUpdates];
+}
+
+- (void)reloadRowAtIndexPath:(NSIndexPath *)pIndexPath withRowAnimation:(UITableViewRowAnimation)pAnimation{
+    // reload with animation
+    [self reloadRowsAtIndexPaths:[NSArray arrayWithObject:pIndexPath] withRowAnimation:pAnimation];
 }
 
 - (void)deleteRowAtIndexPath:(NSIndexPath *)pIndexPath withRowAnimation:(UITableViewRowAnimation)pAnimation{
@@ -26,7 +31,7 @@
     [self beginUpdates];
     
     // delete with animation
-    [self deleteRowsAtIndexPaths:[[NSArray alloc] initWithObjects:pIndexPath, nil] withRowAnimation:pAnimation];
+    [self deleteRowsAtIndexPaths:[NSArray arrayWithObject:pIndexPath] withRowAnimation:pAnimation];
     
     // end update
     [self endUpdates];
