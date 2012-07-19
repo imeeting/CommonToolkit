@@ -3,7 +3,7 @@
 //  CommonToolkit
 //
 //  Created by  on 12-6-13.
-//  Copyright (c) 2012 richitec. All rights reserved.
+//  Copyright (c) 2012年 richitec. All rights reserved.
 //
 
 #import "UITableView+Extension.h"

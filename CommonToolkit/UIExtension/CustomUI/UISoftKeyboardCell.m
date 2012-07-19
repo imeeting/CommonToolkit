@@ -3,7 +3,7 @@
 //  CommonToolkit
 //
 //  Created by  on 12-6-25.
-//  Copyright (c) 2012 richitec. All rights reserved.
+//  Copyright (c) 2012年 richitec. All rights reserved.
 //
 
 #import "UISoftKeyboardCell.h"

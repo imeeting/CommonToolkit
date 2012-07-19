@@ -547,29 +547,28 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         NSArray *_newContactsInfoArray = [self getAllContactsInfoFromAB];
         
         // remove contact from all contacts info array if not existed in new contacts info array
-        // define existed flag
-        BOOL _existed;
-        for (ContactBean *_contact in _mAllContactsInfoArray) {
+        // define contact existed in new all contacts info array flag
+        BOOL _existedInNew;
+        for (NSInteger _index = 0; _index < [_mAllContactsInfoArray count]; _index++) {
+            // get contact in all contacts info array
+            ContactBean *_contact = [_mAllContactsInfoArray objectAtIndex:_index];
+            
             // set/re-set existed flag
-            _existed = NO;
+            _existedInNew = NO;
             
             for (ContactBean *__contact in _newContactsInfoArray) {
                 // check new contacts info array existed the contact which in all contacts info array
                 if (_contact.id == __contact.id) {
-                    _existed = YES;
+                    _existedInNew = YES;
                     
                     break;
                 }
             }
             
             // if existed, check next else remove the contact in all contacts info array
-            if (_existed) {
-                // get next
-                continue;
-            }
-            else {
+            if (!_existedInNew) {
                 // delete
-                [_mAllContactsInfoArray removeObject:_contact];
+                [_mAllContactsInfoArray removeObjectAtIndex:_index];
                 
                 // add to dirty contact id dictionary
                 [_ret setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithInteger:contactDelete] forKey:CONTACT_ACTION] forKey:[NSNumber numberWithInteger:_contact.id]];
