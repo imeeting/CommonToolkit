@@ -83,8 +83,14 @@
 		DCD6AEA0158ED86C00CBBBDB /* NSBundle+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = DCD6AE9E158ED86C00CBBBDB /* NSBundle+Extension.m */; };
 		DCD6AF10158EFB6A00CBBBDB /* NSDate+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = DCD6AF0E158EFB6A00CBBBDB /* NSDate+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DCD6AF11158EFB6A00CBBBDB /* NSDate+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = DCD6AF0F158EFB6A00CBBBDB /* NSDate+Extension.m */; };
+		F800184F15B66BFB00745A8F /* NSAttributedString+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = F800184D15B66BFB00745A8F /* NSAttributedString+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F800185015B66BFB00745A8F /* NSAttributedString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = F800184E15B66BFB00745A8F /* NSAttributedString+Extension.m */; };
+		F800185415B66C1F00745A8F /* UIAttributedLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = F800185215B66C1F00745A8F /* UIAttributedLabel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F800185515B66C1F00745A8F /* UIAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F800185315B66C1F00745A8F /* UIAttributedLabel.m */; };
 		F885A58E159AAE5200709FC7 /* AVCamUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F885A58C159AAE5200709FC7 /* AVCamUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F885A58F159AAE5200709FC7 /* AVCamUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = F885A58D159AAE5200709FC7 /* AVCamUtilities.m */; };
+		F8B5F46B15AAD086005A8C09 /* NSNumber+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = F8B5F46915AAD086005A8C09 /* NSNumber+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F8B5F46C15AAD086005A8C09 /* NSNumber+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = F8B5F46A15AAD086005A8C09 /* NSNumber+Extension.m */; };
 		F8D791BC1599630300986BCD /* AsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = F8D791B41599630300986BCD /* AsyncSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8D791BD1599630300986BCD /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = F8D791B51599630300986BCD /* AsyncSocket.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		F8D791C01599630300986BCD /* SocketIO.h in Headers */ = {isa = PBXBuildFile; fileRef = F8D791B81599630300986BCD /* SocketIO.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -199,8 +205,14 @@
 		DCD6AE9E158ED86C00CBBBDB /* NSBundle+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+Extension.m"; sourceTree = "<group>"; };
 		DCD6AF0E158EFB6A00CBBBDB /* NSDate+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Extension.h"; sourceTree = "<group>"; };
 		DCD6AF0F158EFB6A00CBBBDB /* NSDate+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Extension.m"; sourceTree = "<group>"; };
+		F800184D15B66BFB00745A8F /* NSAttributedString+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+Extension.h"; sourceTree = "<group>"; };
+		F800184E15B66BFB00745A8F /* NSAttributedString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+Extension.m"; sourceTree = "<group>"; };
+		F800185215B66C1F00745A8F /* UIAttributedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIAttributedLabel.h; sourceTree = "<group>"; };
+		F800185315B66C1F00745A8F /* UIAttributedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIAttributedLabel.m; sourceTree = "<group>"; };
 		F885A58C159AAE5200709FC7 /* AVCamUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamUtilities.h; sourceTree = "<group>"; };
 		F885A58D159AAE5200709FC7 /* AVCamUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamUtilities.m; sourceTree = "<group>"; };
+		F8B5F46915AAD086005A8C09 /* NSNumber+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNumber+Extension.h"; sourceTree = "<group>"; };
+		F8B5F46A15AAD086005A8C09 /* NSNumber+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNumber+Extension.m"; sourceTree = "<group>"; };
 		F8D791B41599630300986BCD /* AsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncSocket.h; sourceTree = "<group>"; };
 		F8D791B51599630300986BCD /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncSocket.m; sourceTree = "<group>"; };
 		F8D791B81599630300986BCD /* SocketIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketIO.h; sourceTree = "<group>"; };
@@ -320,6 +332,10 @@
 		DC3C15B3158B936600B31A79 /* FoundationExtension */ = {
 			isa = PBXGroup;
 			children = (
+				F800184D15B66BFB00745A8F /* NSAttributedString+Extension.h */,
+				F800184E15B66BFB00745A8F /* NSAttributedString+Extension.m */,
+				F8B5F46915AAD086005A8C09 /* NSNumber+Extension.h */,
+				F8B5F46A15AAD086005A8C09 /* NSNumber+Extension.m */,
 				DCBC768415980ACB00EBEC1D /* FoundationExtensionBean.h */,
 				DCBC768515980ACB00EBEC1D /* FoundationExtensionBean.m */,
 				DCBC768815980BBF00EBEC1D /* FoundationExtensionManager.h */,
@@ -370,6 +386,8 @@
 		DC3C15CA158B936600B31A79 /* CustomUI */ = {
 			isa = PBXGroup;
 			children = (
+				F800185215B66C1F00745A8F /* UIAttributedLabel.h */,
+				F800185315B66C1F00745A8F /* UIAttributedLabel.m */,
 				DCBC767F1597FF6000EBEC1D /* UISoftKeyboard.h */,
 				DCBC76801597FF6000EBEC1D /* UISoftKeyboard.m */,
 				DCBC7690159836EF00EBEC1D /* UISoftKeyboardCell.h */,
@@ -529,6 +547,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F800185415B66C1F00745A8F /* UIAttributedLabel.h in Headers */,
+				F800184F15B66BFB00745A8F /* NSAttributedString+Extension.h in Headers */,
+				F8B5F46B15AAD086005A8C09 /* NSNumber+Extension.h in Headers */,
 				F8EDF12F15A6F230003DF47F /* UIViewGestureRecognizerDelegate.h in Headers */,
 				F885A58E159AAE5200709FC7 /* AVCamUtilities.h in Headers */,
 				F8D791BC1599630300986BCD /* AsyncSocket.h in Headers */,
@@ -697,6 +718,9 @@
 				F8D791C11599630300986BCD /* SocketIO.m in Sources */,
 				F8D791C31599630300986BCD /* WebSocket.m in Sources */,
 				F885A58F159AAE5200709FC7 /* AVCamUtilities.m in Sources */,
+				F8B5F46C15AAD086005A8C09 /* NSNumber+Extension.m in Sources */,
+				F800185015B66BFB00745A8F /* NSAttributedString+Extension.m in Sources */,
+				F800185515B66C1F00745A8F /* UIAttributedLabel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
