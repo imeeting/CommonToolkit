@@ -28,6 +28,9 @@
 // validate view gesture recognizer delegate reference and check selector
 - (BOOL)validateViewGestureRecognizerDelegate:(id<UIViewGestureRecognizerDelegate>)pGestureRecognizerDelegate andSelector:(SEL) pSelector;
 
+// validate view supported gesture
+- (BOOL)validateSupportedGesture:(GestureType)pGestureType;
+
 @end
 
 
@@ -138,9 +141,22 @@
 @implementation UIView (GestureRecognizer)
 
 - (void)setViewGestureRecognizerDelegate:(id<UIViewGestureRecognizerDelegate>)viewGestureRecognizerDelegate{
-    // check view view gesture recognizer delegate implement methods
+    // check view gesture recognizer delegate implement methods
+    if (![self validateViewGestureRecognizerDelegate:viewGestureRecognizerDelegate andSelector:@selector(supportedGestureInView:)]) {
+        if (viewGestureRecognizerDelegate) {
+            NSLog(@"Info: set view = %@ default supported gesture, supported all gesture type: tap, swipe, long press and pan", NSStringFromClass(self.class));
+        }
+        else {
+            return;
+        }
+    }
+    
+    // save view gesture recognizer delegate
+    [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtension:viewGestureRecognizerDelegate withType:viewGestureRecognizerDelegateExt forKey:[NSNumber numberWithInteger:self.hash]];
+    
+    // set supported gesture
     // long press
-    if ([self validateViewGestureRecognizerDelegate:viewGestureRecognizerDelegate andSelector:@selector(view:longPressAtPoint:andFingerMode:)]) {
+    if ([self validateSupportedGesture:longPress] && [self validateViewGestureRecognizerDelegate:viewGestureRecognizerDelegate andSelector:@selector(view:longPressAtPoint:andFingerMode:)]) {
         // create and init long press finger mode
         LongPressFingerMode _longPressFingerMode = /*default finger mode*/single;
         // check long press finger mode
@@ -167,7 +183,7 @@
         }
     }
     // swipe
-    if ([self validateViewGestureRecognizerDelegate:viewGestureRecognizerDelegate andSelector:@selector(view:swipeAtPoint:andDirection:)]) {
+    if ([self validateSupportedGesture:swipe] && [self validateViewGestureRecognizerDelegate:viewGestureRecognizerDelegate andSelector:@selector(view:swipeAtPoint:andDirection:)]) {
         // create and init swipe direction
         UISwipeGestureRecognizerDirection _swipeDirection = /*default direction*/UISwipeGestureRecognizerDirectionRight;
         // check swipe direction
@@ -194,7 +210,7 @@
         }
     }
     // tap
-    if ([self validateViewGestureRecognizerDelegate:viewGestureRecognizerDelegate andSelector:@selector(view:tapAtPoint:andFingerMode:andCountMode:)]) {
+    if ([self validateSupportedGesture:tap] && [self validateViewGestureRecognizerDelegate:viewGestureRecognizerDelegate andSelector:@selector(view:tapAtPoint:andFingerMode:andCountMode:)]) {
         // create and init tap finger mode and count mode
         TapFingerMode _tapFingerMode = /*default finger mode*/single;
         // check tap finger mode
@@ -233,9 +249,15 @@
             }
         }
     }
-    
-    // save view gesture recognizer delegate
-    [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtension:viewGestureRecognizerDelegate withType:viewGestureRecognizerDelegateExt forKey:[NSNumber numberWithInteger:self.hash]];
+    // pan
+    if ([self validateSupportedGesture:pan]) {
+        // create and init pan gesture recognizer
+        UIPanGestureRecognizer *_pangr = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureRecognizer:)];
+        // set delegate
+        _pangr.delegate = self;
+        // add pan gesture recognizer
+        [self addGestureRecognizer:_pangr];
+    }
 }
 
 - (id<UIViewGestureRecognizerDelegate>)viewGestureRecognizerDelegate{
@@ -275,6 +297,35 @@
             [self.viewGestureRecognizerDelegate view:self tapAtPoint:[pGestureRecognizer locationInView:self] andFingerMode:((UITapGestureRecognizer *)pGestureRecognizer).numberOfTouchesRequired andCountMode:((UITapGestureRecognizer *)pGestureRecognizer).numberOfTapsRequired];
         }
     }
+    // pan
+    else if ([pGestureRecognizer isMemberOfClass:[UIPanGestureRecognizer class]]) {
+        // just process changed and ended state
+        if (pGestureRecognizer.state == UIGestureRecognizerStateChanged || pGestureRecognizer.state == UIGestureRecognizerStateEnded) {
+            CGPoint _translation = [(UIPanGestureRecognizer *)pGestureRecognizer translationInView:pGestureRecognizer.view];
+            
+            CGRect _newFrame = pGestureRecognizer.view.frame;
+            _newFrame.origin.x = _newFrame.origin.x + _translation.x;
+            _newFrame.origin.y = _newFrame.origin.y + _translation.y;
+            
+            if (_newFrame.origin.x < 0) {
+                _newFrame.origin.x = 0;
+            }
+            else if (_newFrame.origin.x > pGestureRecognizer.view.superview.frame.size.width - pGestureRecognizer.view.frame.size.width) {
+                _newFrame.origin.x = pGestureRecognizer.view.superview.frame.size.width - pGestureRecognizer.view.frame.size.width;
+            }
+            
+            if (_newFrame.origin.y < 0) {
+                _newFrame.origin.y = 0;
+            }
+            else if (_newFrame.origin.y > pGestureRecognizer.view.superview.frame.size.height - pGestureRecognizer.view.frame.size.height) {
+                _newFrame.origin.y = pGestureRecognizer.view.superview.frame.size.height - pGestureRecognizer.view.frame.size.height;
+            }
+            
+            pGestureRecognizer.view.frame = _newFrame;
+            
+            [(UIPanGestureRecognizer *)pGestureRecognizer setTranslation:CGPointZero inView:pGestureRecognizer.view];
+        }
+    }
 }
 
 - (BOOL)validateViewGestureRecognizerDelegate:(id<UIViewGestureRecognizerDelegate>)pGestureRecognizerDelegate andSelector:(SEL)pSelector{
@@ -286,6 +337,25 @@
     }
     else {
         NSLog(@"%@ : %@", pGestureRecognizerDelegate ? @"Warning" : @"Error", pGestureRecognizerDelegate ? [NSString stringWithFormat:@"%@ view gesture recognizer delegate %@ can't implement method %@", NSStringFromClass(self.class), NSStringFromClass(pGestureRecognizerDelegate.class), NSStringFromSelector(pSelector)] : [NSString stringWithFormat:@"%@ view gesture recognizer delegate controller is nil", NSStringFromClass(self.class)]);
+    }
+    
+    return _ret;
+}
+
+- (BOOL)validateSupportedGesture:(GestureType)pGestureType{
+    BOOL _ret = NO;
+    
+    // set view default supported gesture, all type
+    GestureType _supportedGesture = tap | swipe | longPress | pan | pinch | rotation;
+    
+    // get view supported gesture
+    if ([self.viewGestureRecognizerDelegate respondsToSelector:@selector(supportedGestureInView:)]) {
+        _supportedGesture = [self.viewGestureRecognizerDelegate supportedGestureInView:self];
+    }
+    
+    // check gesture type parameter
+    if (pGestureType == (_supportedGesture & pGestureType)) {
+        _ret = YES;
     }
     
     return _ret;

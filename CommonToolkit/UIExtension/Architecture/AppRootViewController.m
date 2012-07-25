@@ -8,9 +8,34 @@
 
 #import "AppRootViewController.h"
 
+// normal view controller
+@interface NormalViewController : UIViewController
+
+// supported interface orientation
+@property (nonatomic, readwrite) UIInterfaceOrientation supportedInterfaceOrientation;
+
+// init with view controller
+- (id)initWithViewController:(UIViewController *)pViewController;
+
+@end
+
+
+
+
+// navigation view controller
+@interface NavigationViewController : UINavigationController
+
+// supported interface orientation
+@property (nonatomic, readwrite) UIInterfaceOrientation supportedInterfaceOrientation;
+
+@end
+
+
+
+
 @implementation AppRootViewController
 
-@synthesize interfaceOrientation = _interfaceOrientation;
+@synthesize supportedInterfaceOrientation = _supportedInterfaceOrientation;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -27,12 +52,12 @@
     // check application root view controller mode
     switch (pMode) {
         case navigationController:
-            _ret = [[UINavigationController alloc] initWithRootViewController:pViewController];
+            _ret = [[NavigationViewController alloc] initWithRootViewController:pViewController];
             break;
             
         case normalController:
         default:
-            _ret = pViewController;
+            _ret = [[NormalViewController alloc] initWithViewController:pViewController];
             break;
     }
     
@@ -53,14 +78,42 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    NSLog(@"shouldAutorotateToInterfaceOrientation - interfaceOrientation = %d", interfaceOrientation);
-    return (!_interfaceOrientation) ? UIInterfaceOrientationPortrait : (interfaceOrientation == _interfaceOrientation);
+    // Return YES for supported orientations
+	return YES;
 }
 
-- (void)setInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation{
-    NSLog(@"setInterfaceOrientation - interfaceOrientation = %d", interfaceOrientation);
-    
-    _interfaceOrientation = interfaceOrientation;
+@end
+
+
+
+
+@implementation NormalViewController
+
+@synthesize supportedInterfaceOrientation = _supportedInterfaceOrientation;
+
+- (id)initWithViewController:(UIViewController *)pViewController{
+    return (NormalViewController *)pViewController;
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    //NSLog(@"NormalViewController - shouldAutorotateToInterfaceOrientation - interfaceOrientation = %d and supportedInterfaceOrientation = %d", interfaceOrientation, _supportedInterfaceOrientation);
+    return (0 == _supportedInterfaceOrientation) ? interfaceOrientation == UIInterfaceOrientationPortrait : interfaceOrientation == _supportedInterfaceOrientation;
+}
+
+@end
+
+
+
+
+@implementation NavigationViewController
+
+@synthesize supportedInterfaceOrientation = _supportedInterfaceOrientation;
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    //NSLog(@"NavigationViewController - shouldAutorotateToInterfaceOrientation - interfaceOrientation = %d and supportedInterfaceOrientation = %d", interfaceOrientation, _supportedInterfaceOrientation);
+    return (0 == _supportedInterfaceOrientation) ? interfaceOrientation == UIInterfaceOrientationPortrait : interfaceOrientation == _supportedInterfaceOrientation;
 }
 
 @end

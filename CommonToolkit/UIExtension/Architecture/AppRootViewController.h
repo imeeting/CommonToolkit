@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+@class NavigationViewController;
+@class NormalViewController;
+
 // application root view controller mode type
 typedef enum {
     normalController,
@@ -17,10 +20,10 @@ typedef enum {
 
 @interface AppRootViewController : UIViewController
 
-// UI interface orientation
-@property (nonatomic, readwrite) UIInterfaceOrientation interfaceOrientation;
+// supported interface orientation
+@property (nonatomic, readwrite) UIInterfaceOrientation supportedInterfaceOrientation;
 
-// init with present view controller and applicate root view controller mode
+// init with present view controller and applicate root view controller mode, return NavigationViewController or NormalViewController
 - (id)initWithPresentViewController:(UIViewController *)pViewController andMode:(AppRootViewControllerMode)pMode;
 
 @end
