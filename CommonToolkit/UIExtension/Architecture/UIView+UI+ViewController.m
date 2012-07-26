@@ -299,31 +299,38 @@
     }
     // pan
     else if ([pGestureRecognizer isMemberOfClass:[UIPanGestureRecognizer class]]) {
+        // get pan gesture recognizer view current frame for updating
+        CGRect _updatingFrame = pGestureRecognizer.view.frame;
+        
         // just process changed and ended state
-        if (pGestureRecognizer.state == UIGestureRecognizerStateChanged || pGestureRecognizer.state == UIGestureRecognizerStateEnded) {
+        if (pGestureRecognizer.state == UIGestureRecognizerStateChanged) {
+            // get translation
             CGPoint _translation = [(UIPanGestureRecognizer *)pGestureRecognizer translationInView:pGestureRecognizer.view];
             
-            CGRect _newFrame = pGestureRecognizer.view.frame;
-            _newFrame.origin.x = _newFrame.origin.x + _translation.x;
-            _newFrame.origin.y = _newFrame.origin.y + _translation.y;
+            // set pan gesture view new frame size
+            _updatingFrame.origin.x = MIN(MAX(_updatingFrame.origin.x + _translation.x, 0.0), pGestureRecognizer.view.superview.frame.size.width - pGestureRecognizer.view.frame.size.width);
+            _updatingFrame.origin.y = MIN(MAX(_updatingFrame.origin.y + _translation.y, 0.0), pGestureRecognizer.view.superview.frame.size.height - pGestureRecognizer.view.frame.size.height);
             
-            if (_newFrame.origin.x < 0) {
-                _newFrame.origin.x = 0;
-            }
-            else if (_newFrame.origin.x > pGestureRecognizer.view.superview.frame.size.width - pGestureRecognizer.view.frame.size.width) {
-                _newFrame.origin.x = pGestureRecognizer.view.superview.frame.size.width - pGestureRecognizer.view.frame.size.width;
-            }
+            pGestureRecognizer.view.frame = _updatingFrame;
             
-            if (_newFrame.origin.y < 0) {
-                _newFrame.origin.y = 0;
-            }
-            else if (_newFrame.origin.y > pGestureRecognizer.view.superview.frame.size.height - pGestureRecognizer.view.frame.size.height) {
-                _newFrame.origin.y = pGestureRecognizer.view.superview.frame.size.height - pGestureRecognizer.view.frame.size.height;
-            }
-            
-            pGestureRecognizer.view.frame = _newFrame;
-            
+            // revert translation
             [(UIPanGestureRecognizer *)pGestureRecognizer setTranslation:CGPointZero inView:pGestureRecognizer.view];
+        }
+        else if (pGestureRecognizer.state == UIGestureRecognizerStateEnded) {
+            // get translation
+            CGPoint _velocity = [(UIPanGestureRecognizer *)pGestureRecognizer velocityInView:pGestureRecognizer.view];
+            
+            CGFloat _acceleration = 2000.0;
+            CGFloat _combineVelocity = sqrtf(_velocity.x * _velocity.x + _velocity.y * _velocity.y);
+            CGFloat _duration = _combineVelocity / _acceleration;
+            
+            // set pan gesture view new frame size
+            _updatingFrame.origin.x = MIN(MAX(_updatingFrame.origin.x + _combineVelocity * _velocity.x / (2 * _acceleration), 0.0), pGestureRecognizer.view.superview.frame.size.width - pGestureRecognizer.view.frame.size.width);
+            _updatingFrame.origin.y = MIN(MAX(_updatingFrame.origin.y + _combineVelocity * _velocity.y / (2 * _acceleration), 0.0), pGestureRecognizer.view.superview.frame.size.height - pGestureRecognizer.view.frame.size.height);
+            
+            [UIView animateWithDuration:MIN(1 / (5 * _duration), 0.3) delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+                pGestureRecognizer.view.frame = _updatingFrame;
+            } completion:nil];
         }
     }
 }
