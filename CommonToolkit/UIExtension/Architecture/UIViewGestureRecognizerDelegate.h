@@ -71,4 +71,7 @@ typedef enum {
 // tap at view point, finger mode and count mode
 - (void)view:(UIView *)pView tapAtPoint:(CGPoint)pPoint andFingerMode:(TapFingerMode)pFingerMode andCountMode:(TapCountMode)pCountMode;
 
+// frame rectangle had been changed notification
+- (void)view:(UIView *)pView frameChanged:(CGRect)pNewFrame;
+
 @end

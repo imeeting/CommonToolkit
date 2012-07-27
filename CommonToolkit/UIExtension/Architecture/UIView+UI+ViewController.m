@@ -10,6 +10,8 @@
 
 #import "UIViewExtensionManager.h"
 
+#import "UIViewExtensionBean_Extension.h"
+
 #import "CommonUtils.h"
 
 // one hand five fingers
@@ -18,6 +20,16 @@
 #define MAXTAPS_COUNT   3
 // four swipe direction
 #define SWIPEDIRECTION_COUNT    4
+
+// pan gesture acceleration
+#define PANGESTURE_ACCELERATION 2000.0
+// pinch gesture acceleration
+#define PINCHGESTURE_ACCELERATION   100.0
+// rotation gesture acceleration
+#define ROTATIONGESTURE_ACCELERATION    100.0
+
+// UIView origin frame rectangle extension key
+#define ORIGINFRAME_EXTENSIONKEY    @"origin_frame"
 
 // UIView extension
 @interface UIView (Private)
@@ -258,6 +270,27 @@
         // add pan gesture recognizer
         [self addGestureRecognizer:_pangr];
     }
+    // pinch
+    if ([self validateSupportedGesture:pinch]) {
+        // create and init pinch gesture recognizer
+        UIPinchGestureRecognizer *_pinchgr = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureRecognizer:)];
+        // set delegate
+        _pinchgr.delegate = self;
+        // add pinch gesture recognizer
+        [self addGestureRecognizer:_pinchgr];
+        
+        // save view origin frame rectangle to extension dictionary
+        [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtensionExtInfoDicValue:[NSValue valueWithCGRect:self.frame] withExtInfoDicKey:ORIGINFRAME_EXTENSIONKEY forKey:[NSNumber numberWithInteger:self.hash]];
+    }
+    // rotation
+    if ([self validateSupportedGesture:rotation]) {
+        // create and init rotation gesture recognizer
+        UIRotationGestureRecognizer *_rotationgr = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleGestureRecognizer:)];
+        // set delegate
+        _rotationgr.delegate = self;
+        // add rotation gesture recognizer
+        [self addGestureRecognizer:_rotationgr];
+    }
 }
 
 - (id<UIViewGestureRecognizerDelegate>)viewGestureRecognizerDelegate{
@@ -317,20 +350,74 @@
             [(UIPanGestureRecognizer *)pGestureRecognizer setTranslation:CGPointZero inView:pGestureRecognizer.view];
         }
         else if (pGestureRecognizer.state == UIGestureRecognizerStateEnded) {
-            // get translation
+            // get velocity
             CGPoint _velocity = [(UIPanGestureRecognizer *)pGestureRecognizer velocityInView:pGestureRecognizer.view];
             
-            CGFloat _acceleration = 2000.0;
             CGFloat _combineVelocity = sqrtf(_velocity.x * _velocity.x + _velocity.y * _velocity.y);
-            CGFloat _duration = _combineVelocity / _acceleration;
+            CGFloat _duration = _combineVelocity / PANGESTURE_ACCELERATION;
             
             // set pan gesture view new frame size
-            _updatingFrame.origin.x = MIN(MAX(_updatingFrame.origin.x + _combineVelocity * _velocity.x / (2 * _acceleration), 0.0), pGestureRecognizer.view.superview.frame.size.width - pGestureRecognizer.view.frame.size.width);
-            _updatingFrame.origin.y = MIN(MAX(_updatingFrame.origin.y + _combineVelocity * _velocity.y / (2 * _acceleration), 0.0), pGestureRecognizer.view.superview.frame.size.height - pGestureRecognizer.view.frame.size.height);
+            _updatingFrame.origin.x = MIN(MAX(_updatingFrame.origin.x + _combineVelocity * _velocity.x / (2 * PANGESTURE_ACCELERATION), 0.0), pGestureRecognizer.view.superview.frame.size.width - pGestureRecognizer.view.frame.size.width);
+            _updatingFrame.origin.y = MIN(MAX(_updatingFrame.origin.y + _combineVelocity * _velocity.y / (2 * PANGESTURE_ACCELERATION), 0.0), pGestureRecognizer.view.superview.frame.size.height - pGestureRecognizer.view.frame.size.height);
             
+            // add curve ease out animation
             [UIView animateWithDuration:MIN(1 / (5 * _duration), 0.3) delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
                 pGestureRecognizer.view.frame = _updatingFrame;
             } completion:nil];
+        }
+        
+        // validate view gesture recognizer delegate and call its method:(void)view: frameChanged:
+        if ([self validateViewGestureRecognizerDelegate:self.viewGestureRecognizerDelegate andSelector:@selector(view:frameChanged:)]) {
+            [self.viewGestureRecognizerDelegate view:self frameChanged:_updatingFrame];
+        }
+    }
+    // pinch
+    else if ([pGestureRecognizer isMemberOfClass:[UIPinchGestureRecognizer class]]) {
+        // get pinch gesture scale
+        CGFloat _scale = ((UIPinchGestureRecognizer *)pGestureRecognizer).scale;
+        
+        // just process changed and ended state
+        if (pGestureRecognizer.state == UIGestureRecognizerStateChanged) {
+            // set pinch gesture view new frame size
+            pGestureRecognizer.view.transform = CGAffineTransformScale(pGestureRecognizer.view.transform, _scale, _scale);
+        }
+        else if (pGestureRecognizer.state == UIGestureRecognizerStateEnded) {
+            // get velocity
+            CGFloat _velocity = ((UIPinchGestureRecognizer *)pGestureRecognizer).velocity;
+            
+            CGFloat _duration = ABS(_velocity) / PINCHGESTURE_ACCELERATION;
+            
+            // update scale
+            _scale = MIN(MAX(_velocity >= 0 ? (1 + (_velocity * _velocity) / (2 * PINCHGESTURE_ACCELERATION)) * _scale : (1 - (_velocity * _velocity) / (2 * PINCHGESTURE_ACCELERATION)) * _scale, ((NSValue *)[[[UIViewExtensionManager shareUIViewExtensionManager] uiViewExtensionForKey:[NSNumber numberWithInteger:self.hash]].extensionDic objectForKey:ORIGINFRAME_EXTENSIONKEY]).CGRectValue.size.width / self.frame.size.width), MIN(self.superview.frame.size.width / self.frame.size.width, self.superview.frame.size.height / self.frame.size.height));
+            
+            // add curve ease out animation
+            [UIView animateWithDuration:MIN(1 / (100 * _duration), 0.3) delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+                // set pinch gesture view new frame size
+                pGestureRecognizer.view.transform = CGAffineTransformScale(pGestureRecognizer.view.transform, _scale, _scale);
+                
+                pGestureRecognizer.view.frame = CGRectMake(MIN(MAX(pGestureRecognizer.view.frame.origin.x, 0.0), pGestureRecognizer.view.superview.frame.size.width - pGestureRecognizer.view.frame.size.width), MIN(MAX(pGestureRecognizer.view.frame.origin.y, 0.0), pGestureRecognizer.view.superview.frame.size.height - pGestureRecognizer.view.frame.size.height), pGestureRecognizer.view.frame.size.width, pGestureRecognizer.view.frame.size.height);
+            } completion:nil];
+        }
+        
+        // revert scale
+        ((UIPinchGestureRecognizer *)pGestureRecognizer).scale = 1;
+        
+        // validate view gesture recognizer delegate and call its method:(void)view: frameChanged:
+        if ([self validateViewGestureRecognizerDelegate:self.viewGestureRecognizerDelegate andSelector:@selector(view:frameChanged:)]) {
+            [self.viewGestureRecognizerDelegate view:self frameChanged:pGestureRecognizer.view.frame];
+        }
+    }
+    // rotation
+    else if ([pGestureRecognizer isMemberOfClass:[UIRotationGestureRecognizer class]]) {
+        // set rotation gesture view new frame size
+        pGestureRecognizer.view.transform = CGAffineTransformRotate(pGestureRecognizer.view.transform, ((UIRotationGestureRecognizer *)pGestureRecognizer).rotation);
+        
+        // revert rotation
+        ((UIRotationGestureRecognizer *)pGestureRecognizer).rotation = 0;
+        
+        // validate view gesture recognizer delegate and call its method:(void)view: frameChanged:
+        if ([self validateViewGestureRecognizerDelegate:self.viewGestureRecognizerDelegate andSelector:@selector(view:frameChanged:)]) {
+            [self.viewGestureRecognizerDelegate view:self frameChanged:pGestureRecognizer.view.frame];
         }
     }
 }
