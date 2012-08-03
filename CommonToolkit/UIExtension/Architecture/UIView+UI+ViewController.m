@@ -341,8 +341,8 @@
             CGPoint _translation = [(UIPanGestureRecognizer *)pGestureRecognizer translationInView:pGestureRecognizer.view];
             
             // set pan gesture view new frame size
-            _updatingFrame.origin.x = MIN(MAX(_updatingFrame.origin.x + _translation.x, 0.0), pGestureRecognizer.view.superview ? pGestureRecognizer.view.superview.frame.size.width : [UIScreen mainScreen].applicationFrame.size.width - pGestureRecognizer.view.frame.size.width);
-            _updatingFrame.origin.y = MIN(MAX(_updatingFrame.origin.y + _translation.y, 0.0), pGestureRecognizer.view.superview ? pGestureRecognizer.view.superview.frame.size.height : [UIScreen mainScreen].applicationFrame.size.height - pGestureRecognizer.view.frame.size.height);
+            _updatingFrame.origin.x = MIN(MAX(_updatingFrame.origin.x + _translation.x, 0.0), (pGestureRecognizer.view.superview ? pGestureRecognizer.view.superview.frame.size.width : [UIScreen mainScreen].applicationFrame.size.width) - pGestureRecognizer.view.frame.size.width);
+            _updatingFrame.origin.y = MIN(MAX(_updatingFrame.origin.y + _translation.y, 0.0), (pGestureRecognizer.view.superview ? pGestureRecognizer.view.superview.frame.size.height : [UIScreen mainScreen].applicationFrame.size.height) - pGestureRecognizer.view.frame.size.height);
             
             pGestureRecognizer.view.frame = _updatingFrame;
             
@@ -357,8 +357,8 @@
             CGFloat _duration = _combineVelocity / PANGESTURE_ACCELERATION;
             
             // set pan gesture view new frame size
-            _updatingFrame.origin.x = MIN(MAX(_updatingFrame.origin.x + _combineVelocity * _velocity.x / (2 * PANGESTURE_ACCELERATION), 0.0), pGestureRecognizer.view.superview ? pGestureRecognizer.view.superview.frame.size.width : [UIScreen mainScreen].applicationFrame.size.width - pGestureRecognizer.view.frame.size.width);
-            _updatingFrame.origin.y = MIN(MAX(_updatingFrame.origin.y + _combineVelocity * _velocity.y / (2 * PANGESTURE_ACCELERATION), 0.0), pGestureRecognizer.view.superview ? pGestureRecognizer.view.superview.frame.size.height : [UIScreen mainScreen].applicationFrame.size.height - pGestureRecognizer.view.frame.size.height);
+            _updatingFrame.origin.x = MIN(MAX(_updatingFrame.origin.x + _combineVelocity * _velocity.x / (2 * PANGESTURE_ACCELERATION), 0.0), (pGestureRecognizer.view.superview ? pGestureRecognizer.view.superview.frame.size.width : [UIScreen mainScreen].applicationFrame.size.width) - pGestureRecognizer.view.frame.size.width);
+            _updatingFrame.origin.y = MIN(MAX(_updatingFrame.origin.y + _combineVelocity * _velocity.y / (2 * PANGESTURE_ACCELERATION), 0.0), (pGestureRecognizer.view.superview ? pGestureRecognizer.view.superview.frame.size.height : [UIScreen mainScreen].applicationFrame.size.height) - pGestureRecognizer.view.frame.size.height);
             
             // add curve ease out animation
             [UIView animateWithDuration:MIN(1 / (5 * _duration), 0.3) delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
@@ -388,14 +388,14 @@
             CGFloat _duration = ABS(_velocity) / PINCHGESTURE_ACCELERATION;
             
             // update scale
-            _scale = MIN(MAX(_velocity >= 0 ? (1 + (_velocity * _velocity) / (2 * PINCHGESTURE_ACCELERATION)) * _scale : (1 - (_velocity * _velocity) / (2 * PINCHGESTURE_ACCELERATION)) * _scale, ((NSValue *)[[[UIViewExtensionManager shareUIViewExtensionManager] uiViewExtensionForKey:[NSNumber numberWithInteger:self.hash]].extensionDic objectForKey:ORIGINFRAME_EXTENSIONKEY]).CGRectValue.size.width / self.frame.size.width), MIN(self.superview ? self.superview.frame.size.width : [UIScreen mainScreen].applicationFrame.size.width / self.frame.size.width, self.superview ? self.superview.frame.size.height : [UIScreen mainScreen].applicationFrame.size.height / self.frame.size.height));
+            _scale = MIN(MAX(_velocity >= 0 ? (1 + (_velocity * _velocity) / (2 * PINCHGESTURE_ACCELERATION)) * _scale : (1 - (_velocity * _velocity) / (2 * PINCHGESTURE_ACCELERATION)) * _scale, ((NSValue *)[[[UIViewExtensionManager shareUIViewExtensionManager] uiViewExtensionForKey:[NSNumber numberWithInteger:self.hash]].extensionDic objectForKey:ORIGINFRAME_EXTENSIONKEY]).CGRectValue.size.width / self.frame.size.width), MIN((self.superview ? self.superview.frame.size.width : [UIScreen mainScreen].applicationFrame.size.width) / self.frame.size.width, (self.superview ? self.superview.frame.size.height : [UIScreen mainScreen].applicationFrame.size.height) / self.frame.size.height));
             
             // add curve ease out animation
             [UIView animateWithDuration:MIN(1 / (100 * _duration), 0.3) delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
                 // set pinch gesture view new frame size
                 pGestureRecognizer.view.transform = CGAffineTransformScale(pGestureRecognizer.view.transform, _scale, _scale);
                 
-                pGestureRecognizer.view.frame = CGRectMake(MIN(MAX(pGestureRecognizer.view.frame.origin.x, 0.0), pGestureRecognizer.view.superview ? pGestureRecognizer.view.superview.frame.size.width : [UIScreen mainScreen].applicationFrame.size.width - pGestureRecognizer.view.frame.size.width), MIN(MAX(pGestureRecognizer.view.frame.origin.y, 0.0), pGestureRecognizer.view.superview ? pGestureRecognizer.view.superview.frame.size.height : [UIScreen mainScreen].applicationFrame.size.height - pGestureRecognizer.view.frame.size.height), pGestureRecognizer.view.frame.size.width, pGestureRecognizer.view.frame.size.height);
+                pGestureRecognizer.view.frame = CGRectMake(MIN(MAX(pGestureRecognizer.view.frame.origin.x, 0.0), (pGestureRecognizer.view.superview ? pGestureRecognizer.view.superview.frame.size.width : [UIScreen mainScreen].applicationFrame.size.width) - pGestureRecognizer.view.frame.size.width), MIN(MAX(pGestureRecognizer.view.frame.origin.y, 0.0), (pGestureRecognizer.view.superview ? pGestureRecognizer.view.superview.frame.size.height : [UIScreen mainScreen].applicationFrame.size.height) - pGestureRecognizer.view.frame.size.height), pGestureRecognizer.view.frame.size.width, pGestureRecognizer.view.frame.size.height);
             } completion:nil];
         }
         
