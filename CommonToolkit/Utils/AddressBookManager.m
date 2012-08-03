@@ -17,6 +17,10 @@
 
 #import <objc/message.h>
 
+// matching result contact bean and index array key
+#define MATCHING_RESULT_CONTACT @"matchingResultContact"
+#define MATCHING_RESULT_INDEXS  @"matchingResultIndexs"
+
 // static singleton AddressBookManager reference
 static AddressBookManager *singletonAddressBookManagerRef;
 
@@ -28,9 +32,6 @@ static AddressBookManager *singletonAddressBookManagerRef;
 
 // get contact information array by particular phone number
 - (NSArray *)getContactInfoByPhoneNumber:(NSString *)pPhoneNumber;
-
-// get contacts by name(not chinaese character): fuzzy matching
-- (NSArray *)getContactByName:(NSString *)pName allMatching:(BOOL)pAllMatching;
 
 // init all contacts contact id - groups dictionary
 - (void)initContactIdGroupsDictionary;
@@ -116,7 +117,12 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     // check search contact phone number
     if ([[_mContactSearchResultDic allKeys] containsObject:pPhoneNumber]) {
         // existed in search result dictionary
-        _ret = [_mContactSearchResultDic objectForKey:pPhoneNumber];
+        for (NSDictionary *_matchingContactDic in [_mContactSearchResultDic objectForKey:pPhoneNumber]) {
+            [_ret addObject:[_matchingContactDic objectForKey:MATCHING_RESULT_CONTACT]];
+            
+            // append contact matching index array
+            [((ContactBean *)[_matchingContactDic objectForKey:MATCHING_RESULT_CONTACT]).extensionDic setObject:[_matchingContactDic objectForKey:MATCHING_RESULT_INDEXS] forKey:PHONENUMBER_MATCHING_INDEXS];
+        }
     }
     else {
         // define contact search scope
@@ -124,31 +130,241 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         
         // check search contact phone number sub phone number
         if (pPhoneNumber.length >= 2 && [[_mContactSearchResultDic allKeys] containsObject:[pPhoneNumber substringToIndex:pPhoneNumber.length - 2]]) {
-            _contactSearchScope = [_mContactSearchResultDic objectForKey:[pPhoneNumber substringToIndex:pPhoneNumber.length - 2]];
+            // get sub matched contact array
+            NSMutableArray *_subMatchedContactArr = [[NSMutableArray alloc] init];
+            
+            // reset contact search scope
+            for (NSDictionary *_matchingContactDic in [_mContactSearchResultDic objectForKey:[pPhoneNumber substringToIndex:pPhoneNumber.length - 2]]) {
+                [_subMatchedContactArr addObject:[_matchingContactDic objectForKey:MATCHING_RESULT_CONTACT]];
+            }
+            
+            _contactSearchScope = _subMatchedContactArr;
         }
+        
+        // define searched contact array
+        NSMutableArray *_searchedContactArray = [[NSMutableArray alloc] init];
         
         // search each contact in contact search scope
         for (ContactBean *_contact in _contactSearchScope) {
+            // phone number matching index array's array
+            NSMutableArray *_phoneNumberMatchingIndexsArr = [[NSMutableArray alloc] init];
+            
+            // has phone number matched flag
+            BOOL _hasOnePhoneNumberMatched = NO;
+            
             // search contact each phone number
             for (NSString *_phoneNumber in _contact.phoneNumbers) {
                 // check phone number is sub matched
                 if ([_phoneNumber containsSubString:pPhoneNumber]) {
-                    // add contact to result
-                    [_ret addObject:_contact];
-                    break;
+                    _hasOnePhoneNumberMatched = YES;
+                    
+                    // add phone number matching index array to phone number matching index array's array
+                    [_phoneNumberMatchingIndexsArr addObject:[NSArray arrayWithRange:[[_phoneNumber lowercaseString] rangeOfString:[pPhoneNumber lowercaseString]]]];
                 }
+                else {
+                    // add empty matching index array to phone number matching index array's array
+                    [_phoneNumberMatchingIndexsArr addObject:[[NSArray alloc] init]];
+                }
+            }
+            
+            // has one phone number in contact phone numbers matched
+            if (_hasOnePhoneNumberMatched) {
+                // add contact to result
+                [_ret addObject:_contact];
+                
+                // append contact matching index array
+                [_contact.extensionDic setObject:_phoneNumberMatchingIndexsArr forKey:PHONENUMBER_MATCHING_INDEXS];
+                
+                // add matching contact to searched contact array
+                [_searchedContactArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:_contact, MATCHING_RESULT_CONTACT, [_contact.extensionDic objectForKey:PHONENUMBER_MATCHING_INDEXS], MATCHING_RESULT_INDEXS, nil]];
             }
         }
         
         // add to contact search result dictionary
-        [_mContactSearchResultDic setObject:_ret forKey:pPhoneNumber];
+        [_mContactSearchResultDic setObject:_searchedContactArray forKey:pPhoneNumber];
     }
     
     return _ret;
 }
 
 - (NSArray *)getContactByName:(NSString *)pName{
-    return [self getContactByName:pName allMatching:YES];
+    return [self getContactByName:pName andMatchingType:full];
+}
+
+- (NSArray *)getContactByName:(NSString *)pName andMatchingType:(ContactMatchingType)pType{
+    NSMutableArray *_ret = [[NSMutableArray alloc] init];
+    
+    // convert search contact name to lowercase string
+    pName = [pName lowercaseString];
+    
+    // check contact search result dictionary and all contacts info array
+    _mContactSearchResultDic = _mContactSearchResultDic ? _mContactSearchResultDic : [[NSMutableDictionary alloc] init];
+    _mAllContactsInfoArray = _mAllContactsInfoArray ? _mAllContactsInfoArray : [self getAllContactsInfoFromAB];
+    
+    // check search contact name
+    if ([[_mContactSearchResultDic allKeys] containsObject:pName]) {
+        // existed in search result dictionary
+        for (NSDictionary *_matchingContactDic in [_mContactSearchResultDic objectForKey:pName]) {
+            [_ret addObject:[_matchingContactDic objectForKey:MATCHING_RESULT_CONTACT]];
+            
+            // append contact matching index array
+            [((ContactBean *)[_matchingContactDic objectForKey:MATCHING_RESULT_CONTACT]).extensionDic setObject:[_matchingContactDic objectForKey:MATCHING_RESULT_INDEXS] forKey:NAME_MATCHING_INDEXS];
+        }
+    }
+    else {
+        // define contact search scope
+        NSArray *_contactSearchScope = _mAllContactsInfoArray;
+        
+        // check search contact name sub name
+        if (pName.length >= 2 && [[_mContactSearchResultDic allKeys] containsObject:[pName substringToIndex:pName.length - 2]]) {
+            // get sub matched contact array
+            NSMutableArray *_subMatchedContactArr = [[NSMutableArray alloc] init];
+            
+            // reset contact search scope
+            for (NSDictionary *_matchingContactDic in [_mContactSearchResultDic objectForKey:[pName substringToIndex:pName.length - 2]]) {
+                [_subMatchedContactArr addObject:[_matchingContactDic objectForKey:MATCHING_RESULT_CONTACT]];
+            }
+            
+            _contactSearchScope = _subMatchedContactArr;
+        }
+        
+        // split search contact name
+        NSArray *_searchContactNameSplitArray = nil;
+        if (_contactSearchScope && [_contactSearchScope count] > 0) {
+            _searchContactNameSplitArray = [pName splitToFirstAndOthers];
+        }
+        
+        // define searched contact array
+        NSMutableArray *_searchedContactArray = [[NSMutableArray alloc] init];
+        
+        // search each contact in contact search scope
+        for (ContactBean *_contact in _contactSearchScope) {
+            // traversal all split name array
+            for (NSString *_splitName in _searchContactNameSplitArray) {
+                // split name unmatch flag
+                BOOL unmatch = NO;
+                
+                // matching index array
+                NSMutableArray *_nameMatchingIndexArr = [[NSMutableArray alloc] init];
+                
+                // get split name array
+                NSArray *_splitNameArray = [_splitName toArrayWithSeparator:SPLIT_SEPARATOR];
+                
+                // compare split name array count with contact name phonetic array count
+                if ([_splitNameArray count] > [_contact.namePhonetics count]) {
+                    continue;
+                }
+                
+                // need all matching
+                if (full == pType) {
+                    if (![_splitNameArray isMatchedNamePhonetics:_contact.namePhonetics]) {
+                        unmatch = YES;
+                    }
+                    else {
+                        // last split name element matching index
+                        NSInteger _lastElementMatchingIndex = 0;
+                        
+                        // set name matching index array
+                        for (NSInteger _index = 0; _index < [_splitNameArray count]; _index++) {
+                            for (NSInteger __index = _lastElementMatchingIndex; __index < [_contact.namePhonetics count]; __index++) {
+                                // split name element matching flag
+                                BOOL _elementMatching = NO;
+                                
+                                for (NSInteger ___index = 0; ___index < [[_contact.namePhonetics objectAtIndex:__index] count]; ___index++) {
+                                    // check split name array each element matching index
+                                    if ([[[_contact.namePhonetics objectAtIndex:__index] objectAtIndex:___index] hasPrefix:[_splitNameArray objectAtIndex:_index]]) {
+                                        // set split name element matching flag
+                                        _elementMatching = YES;
+                                        
+                                        // save split name element matching index
+                                        _lastElementMatchingIndex = __index + 1;
+                                        
+                                        // set name matching index array
+                                        [_nameMatchingIndexArr addObject:[NSNumber numberWithInteger:__index]];
+                                        
+                                        break;
+                                    }
+                                }
+                                
+                                // find element matching index
+                                if (_elementMatching) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    // slide split name array on contact name phonetic array
+                    for (NSInteger _index = 0; _index < [_contact.namePhonetics count] - [_splitNameArray count] + 1; _index++) {
+                        // split name array match flag in particular contact name phonetic array
+                        BOOL _matched = NO;
+                        
+                        // match each split name
+                        for (NSInteger __index = 0; __index < [_splitNameArray count]; __index++) {
+                            // one split name unmatch flag
+                            BOOL __unmatched = NO;
+                            
+                            // traversal multi phonetic
+                            for (NSInteger ___index = 0; ___index < [[_contact.namePhonetics objectAtIndex:_index + __index] count]; ___index++) {
+                                // matched, contact phonetic has prefix with split name
+                                if ([[[_contact.namePhonetics objectAtIndex:_index + __index] objectAtIndex:___index] hasPrefix:[_splitNameArray objectAtIndex:__index]]) {
+                                    break;
+                                }
+                                else if (___index == [[_contact.namePhonetics objectAtIndex:_index + __index] count] - 1) {
+                                    __unmatched = YES;
+                                }
+                            }
+                            
+                            // one split name unmatch, break, slide split name array
+                            if (__unmatched) {
+                                break;
+                            }
+                            
+                            // all split name matched, break
+                            if (!__unmatched && __index == [_splitNameArray count] - 1) {
+                                _matched = YES;
+                                break;
+                            }
+                        }
+                        
+                        // one particular split name array metched, break
+                        if (_matched) {
+                            // set name matching index array
+                            _nameMatchingIndexArr = [NSArray arrayWithRange:NSMakeRange(_index, [_splitNameArray count])];
+                            
+                            break;
+                        }
+                        
+                        // all split name array unmatch, break, search next contact
+                        if (!_matched && _index == [_contact.namePhonetics count] - [_splitNameArray count]) {
+                            unmatch = YES;
+                            break;
+                        }
+                    }
+                }
+                
+                // one contact match, add in search result array
+                if (!unmatch) {
+                    // add contact to result
+                    [_ret addObject:_contact];
+                    
+                    // append contact matching index array
+                    [_contact.extensionDic setObject:_nameMatchingIndexArr forKey:NAME_MATCHING_INDEXS];
+                    
+                    // add matching contact to searched contact array
+                    [_searchedContactArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:_contact, MATCHING_RESULT_CONTACT, [_contact.extensionDic objectForKey:NAME_MATCHING_INDEXS], MATCHING_RESULT_INDEXS, nil]];
+                    
+                    break;
+                }
+            }
+        }
+        
+        // add to contact search result dictionary
+        [_mContactSearchResultDic setObject:_searchedContactArray forKey:pName];
+    }
+    
+    return _ret;
 }
 
 - (void)getContactEnd{
@@ -313,119 +529,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     return _ret;
 }
 
-- (NSArray *)getContactByName:(NSString *)pName allMatching:(BOOL)pAllMatching{
-    NSMutableArray *_ret = [[NSMutableArray alloc] init];
-    
-    // convert search contact name to lowercase string
-    pName = [pName lowercaseString];
-    
-    // check contact search result dictionary and all contacts info array
-    _mContactSearchResultDic = _mContactSearchResultDic ? _mContactSearchResultDic : [[NSMutableDictionary alloc] init];
-    _mAllContactsInfoArray = _mAllContactsInfoArray ? _mAllContactsInfoArray : [self getAllContactsInfoFromAB];
-    
-    // check search contact name
-    if ([[_mContactSearchResultDic allKeys] containsObject:pName]) {
-        // existed in search result dictionary
-        _ret = [_mContactSearchResultDic objectForKey:pName];
-    }
-    else {
-        // define contact search scope
-        NSArray *_contactSearchScope = _mAllContactsInfoArray;
-        
-        // check search contact name sub phone name
-        if (pName.length >= 2 && [[_mContactSearchResultDic allKeys] containsObject:[pName substringToIndex:pName.length - 2]]) {
-            _contactSearchScope = [_mContactSearchResultDic objectForKey:[pName substringToIndex:pName.length - 2]];
-        }
-        
-        // split search contact name
-        NSArray *_searchContactNameSplitArray = nil;
-        if (_contactSearchScope && [_contactSearchScope count] > 0) {
-            _searchContactNameSplitArray = [pName splitToFirstAndOthers];
-        }
-        
-        // search each contact in contact search scope
-        for (ContactBean *_contact in _contactSearchScope) {
-            // traversal all split name array
-            for (NSString *_splitName in _searchContactNameSplitArray) {
-                // split name unmatch flag
-                BOOL unmatch = NO;
-                
-                // get split name array
-                NSArray *_splitNameArray = [_splitName toArrayWithSeparator:SPLIT_SEPARATOR];
-                
-                // compare split name array count with contact name phonetic array count
-                if ([_splitNameArray count] > [_contact.namePhonetics count]) {
-                    continue;
-                }
-                
-                // need all matching
-                if (pAllMatching) {
-                    if (![_splitNameArray isMatchedNamePhonetics:_contact.namePhonetics]) {
-                        unmatch = YES;
-                    }
-                }
-                else {
-                    // slide split name array on contact name phonetic array
-                    for (NSInteger _index = 0; _index < [_contact.namePhonetics count] - [_splitNameArray count] + 1; _index++) {
-                        // split name array match flag in particular contact name phonetic array
-                        BOOL _matched = NO;
-                        
-                        // match each split name 
-                        for (NSInteger __index = 0; __index < [_splitNameArray count]; __index++) {
-                            // one split name unmatch flag
-                            BOOL __unmatched = NO;
-                            
-                            // traversal multi phonetic
-                            for (NSInteger ___index = 0; ___index < [[_contact.namePhonetics objectAtIndex:_index + __index] count]; ___index++) {
-                                // matched, contact phonetic has prefix with split name
-                                if ([[[_contact.namePhonetics objectAtIndex:_index + __index] objectAtIndex:___index] hasPrefix:[_splitNameArray objectAtIndex:__index]]) {
-                                    break;
-                                }
-                                else if (___index == [[_contact.namePhonetics objectAtIndex:_index + __index] count] - 1) {
-                                    __unmatched = YES;
-                                }
-                            }
-                            
-                            // one split name unmatch, break, slide split name array
-                            if (__unmatched) {
-                                break;
-                            }
-                            
-                            // all split name matched, break
-                            if (!__unmatched && __index == [_splitNameArray count] - 1) {
-                                _matched = YES;
-                                break;
-                            }
-                        }
-                        
-                        // one particular split name array metched, break
-                        if (_matched) {
-                            break;
-                        }
-                        
-                        // all split name array unmatch, break, search next contact
-                        if (!_matched && _index == [_contact.namePhonetics count] - [_splitNameArray count]) {
-                            unmatch = YES;
-                            break;
-                        }
-                    }
-                }
-                
-                // one contact match, add in search result array
-                if (!unmatch) {
-                    [_ret addObject:_contact];
-                    break;
-                }
-            }
-        }
-        
-        // add to contact search result dictionary
-        [_mContactSearchResultDic setObject:_ret forKey:pName];
-    }
-    
-    return _ret;
-}
-
 - (void)initContactIdGroupsDictionary{
     // check contact id - groups dictionary
     if (!_mContactIdGroupsDic) {
@@ -522,6 +625,10 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     return _ret;
 }
 
+- (void)printContactSearchResultDictionary{
+    NSLog(@"Important Info: %@, contact search result dictionary = %@", NSStringFromClass(self.class), _mContactSearchResultDic);
+}
+
 - (ContactBean *)defaultContactByPhoneNumber:(NSString *)pPhoneNumber {
     NSArray *contacts = [self getContactByPhoneNumber:pPhoneNumber];
     ContactBean *defaultContact = nil;
@@ -529,10 +636,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         defaultContact = [contacts objectAtIndex:0];
     }
     return defaultContact;
-}
-
-- (void)printContactSearchResultDictionary{
-    NSLog(@"Important Info: %@, contact search result dictionary = %@", NSStringFromClass(self.class), _mContactSearchResultDic);
 }
 
 - (NSDictionary *)refreshAddressBook{
@@ -611,6 +714,9 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     // refresh addressBook and get dirty contact id dictionary
     info = (__bridge CFDictionaryRef)[[AddressBookManager shareAddressBookManager] refreshAddressBook];
     
+    // clear contact search result dictionary
+    [[AddressBookManager shareAddressBookManager] getContactEnd];
+    
     // send message to addressBook changed observer
     if (NULL != context) {
         objc_msgSend((__bridge id)context, @selector(addressBookChanged:info:context:), addressBook, info, context);
@@ -618,3 +724,4 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 }
 
 @end
+

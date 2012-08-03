@@ -15,12 +15,24 @@
 // contact action key
 #define CONTACT_ACTION  @"action"
 
+// contact phone number matching index array key
+#define PHONENUMBER_MATCHING_INDEXS @"phoneNumberMatchingIndexs"
+// contact name matching index array key
+#define NAME_MATCHING_INDEXS    @"nameMatchingIndexs"
+
 // contact dirty type
 typedef enum {
     contactAdd,
     contactModify,
     contactDelete
 } ContactDirtyType;
+
+
+// contact searched matching type
+typedef enum {
+    full,
+    order
+} ContactMatchingType;
 
 
 // addressBook changed delegate
@@ -47,7 +59,7 @@ typedef enum {
     
     // contact search result dictionary
     // key is search keyword (NSString)
-    // value is contact bean (ContactBean)
+    // value is array of contact bean (ContactBean) and contact matching index array dictionary
     NSMutableDictionary *_mContactSearchResultDic;
 }
 
@@ -67,6 +79,9 @@ typedef enum {
 
 // get contacts by name(not chinaese character): fuzzy matching
 - (NSArray *)getContactByName:(NSString *)pName;
+
+// get contacts by name with matching type
+- (NSArray *)getContactByName:(NSString *)pName andMatchingType:(ContactMatchingType)pType;
 
 // get contact end
 - (void)getContactEnd;
