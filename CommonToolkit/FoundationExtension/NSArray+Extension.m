@@ -118,6 +118,16 @@
 
 @implementation NSArray (Common)
 
++ (id)arrayWithRange:(NSRange)pRange{
+    NSMutableArray *_ret = [[NSMutableArray alloc] init];
+    
+    for (NSInteger _index = 0; _index < pRange.length; _index++) {
+        [_ret addObject:[NSNumber numberWithInteger:_index + pRange.location]];
+    }
+    
+    return _ret;
+}
+
 - (NSString *)toStringWithSeparator:(NSString *)pSeparator{
     NSMutableString *_ret = [[NSMutableString alloc] init];
     

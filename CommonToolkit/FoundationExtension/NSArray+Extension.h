@@ -30,6 +30,9 @@ typedef enum {
 
 @interface NSArray (Common)
 
+// array with NSRange, object is NSNumber
++ (id)arrayWithRange:(NSRange)pRange;
+
 // convert to string with separator
 - (NSString *)toStringWithSeparator:(NSString *)pSeparator;
 

@@ -28,7 +28,7 @@
     BOOL _ret = NO;
     
     // define range
-    NSRange _range =[[self lowercaseString] rangeOfString:[pString lowercaseString]];
+    NSRange _range = [[self lowercaseString] rangeOfString:[pString lowercaseString]];
     
     if (NSNotFound != _range.location) {
         _ret = YES;
