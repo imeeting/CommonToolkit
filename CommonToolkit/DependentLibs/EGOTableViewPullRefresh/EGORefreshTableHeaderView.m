@@ -115,7 +115,7 @@
 		
 		[NSDateFormatter setDefaultFormatterBehavior:NSDateFormatterBehaviorDefault];
 		NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-		[dateFormatter setDateStyle:NSDateFormatterShortStyle];
+		[dateFormatter setDateStyle:kCFDateFormatterMediumStyle];
 		[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 
 		_lastUpdatedLabel.text = [NSString stringWithFormat:@"%@: %@", NSLocalizedStringFromCommonToolkitBundle(@"Last Updated", @"Last Updated status"), [dateFormatter stringFromDate:date]];
