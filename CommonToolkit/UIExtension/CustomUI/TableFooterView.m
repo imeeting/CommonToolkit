@@ -70,8 +70,8 @@
         _indicatorText.frame = CGRectMake((320.0-120.0)/2, 11.0, 120.0, 23.0);
         // set text and text font
         _indicatorText.text = NSLocalizedStringFromCommonToolkitBundle(@"No more data", "");
-        _indicatorText.font = [UIFont boldSystemFontOfSize:16.0];
-        _indicatorText.textColor = [UIColor blackColor];
+        _indicatorText.font = [UIFont boldSystemFontOfSize:14.0];
+        _indicatorText.textColor = [UIColor grayColor];
         _indicatorText.textAlignment = UITextAlignmentCenter;
         _indicatorText.backgroundColor = [UIColor clearColor];
         // add indicatorText and activityView to view

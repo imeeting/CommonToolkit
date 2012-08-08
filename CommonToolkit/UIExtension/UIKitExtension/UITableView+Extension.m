@@ -23,6 +23,7 @@
 
 - (void)reloadRowAtIndexPath:(NSIndexPath *)pIndexPath withRowAnimation:(UITableViewRowAnimation)pAnimation{
     // reload with animation
+    NSLog(@"reloadRowAtIndexPath");
     [self reloadRowsAtIndexPaths:[NSArray arrayWithObject:pIndexPath] withRowAnimation:pAnimation];
 }
 
