@@ -41,7 +41,7 @@ typedef enum {
 @required
 
 // addressBook changed callback function
-- (void)addressBookChanged:(ABAddressBookRef)pAddressBook info:(NSDictionary *)pInfo context:(void *)pContext;
+- (void)addressBookChanged:(ABAddressBookRef)pAddressBook info:(NSDictionary *)pInfo observer:(id)pObserver;
 
 @end
 
@@ -61,6 +61,9 @@ typedef enum {
     // key is search keyword (NSString)
     // value is array of contact bean (ContactBean) and contact matching index array dictionary
     NSMutableDictionary *_mContactSearchResultDic;
+    
+    // addressBook changed observer
+    id _mAddressBookChangedObserver;
 }
 
 @property (nonatomic, readonly) NSMutableArray *allContactsInfoArray;
@@ -93,9 +96,9 @@ typedef enum {
 - (ContactBean*)defaultContactByPhoneNumber:(NSString*)pPhoneNumber;
 
 // add addressBook changed callback observer
-- (void)addABChangedObserver:(NSObject *)pObserver;
+- (void)addABChangedObserver:(id)pObserver;
 
 // remove addressBook changed callback observer
-- (void)removeABChangedObserver:(NSObject *)pObserver;
+- (void)removeABChangedObserver:(id)pObserver;
 
 @end

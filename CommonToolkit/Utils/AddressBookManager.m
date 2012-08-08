@@ -27,6 +27,8 @@ static AddressBookManager *singletonAddressBookManagerRef;
 // AddressBookManager extension
 @interface AddressBookManager ()
 
+@property (nonatomic, readonly) id addressBookChangedObserver;
+
 // generate contact with contact's name, phone numbers info by record
 - (ContactBean *)generateContactNamePhoneNumsInfoByRecord:(ABRecordRef)pRecord;
 
@@ -55,6 +57,8 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
 
 @implementation AddressBookManager
+
+@synthesize addressBookChangedObserver = _mAddressBookChangedObserver;
 
 - (id)init{
     self = [super init];
@@ -396,23 +400,32 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     return _ret;
 }
 
-- (void)addABChangedObserver:(NSObject *)pObserver{
+- (void)addABChangedObserver:(id)pObserver{
     // validate addressBookChanged implemetation
-    if ([CommonUtils validateProcessor:pObserver andSelector:@selector(addressBookChanged:info:context:)]) {
+    if ([CommonUtils validateProcessor:pObserver andSelector:@selector(addressBookChanged:info:observer:)]) {
+        // check addressBook changed observer
+        if (_mAddressBookChangedObserver && ![pObserver isEqual:_mAddressBookChangedObserver]) {
+            // remove addressBook changed observer
+            [self removeABChangedObserver:_mAddressBookChangedObserver];
+        }
+        
+        // save addressBook changed observer
+        _mAddressBookChangedObserver = pObserver;
+        
         // register external change callback function
-        ABAddressBookRegisterExternalChangeCallback(ABAddressBookCreate(), addressBookChanged, (__bridge void *)pObserver);
+        ABAddressBookRegisterExternalChangeCallback(ABAddressBookCreate(), addressBookChanged, (__bridge void *)(_mAddressBookChangedObserver));
     }
     else if (nil != pObserver) {
-        NSLog(@"Warning: %@ can't implement addressBook changed callback function %@", NSStringFromClass(pObserver.class), NSStringFromSelector(@selector(addressBookChanged:info:context:)));
+        NSLog(@"Warning: %@ can't implement addressBook changed callback function %@", NSStringFromClass(((NSObject *)pObserver).class), NSStringFromSelector(@selector(addressBookChanged:info:observer:)));
         
         // register external change callback function
         ABAddressBookRegisterExternalChangeCallback(ABAddressBookCreate(), addressBookChanged, NULL);
     }
 }
 
-- (void)removeABChangedObserver:(NSObject *)pObserver{
+- (void)removeABChangedObserver:(id)pObserver{
     // unregister external change callback function
-    ABAddressBookUnregisterExternalChangeCallback(ABAddressBookCreate(), addressBookChanged, (__bridge void *)pObserver);
+    ABAddressBookUnregisterExternalChangeCallback(ABAddressBookCreate(), addressBookChanged, (__bridge void *)(pObserver));
 }
 
 - (ContactBean *)generateContactNamePhoneNumsInfoByRecord:(ABRecordRef)pRecord{
@@ -711,6 +724,14 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 }
 
 void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void *context){
+    // get addressBook changed observer
+    id _addressBookChangedObserver = [AddressBookManager shareAddressBookManager].addressBookChangedObserver;
+    
+    // check addressBook changed observer, @chelsea ???, unregister external change callback function failed
+    if (![_addressBookChangedObserver isEqual:(__bridge id)(context)]) {
+        return;
+    }
+    
     // refresh addressBook and get dirty contact id dictionary
     info = (__bridge CFDictionaryRef)[[AddressBookManager shareAddressBookManager] refreshAddressBook];
     
@@ -718,10 +739,9 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     [[AddressBookManager shareAddressBookManager] getContactEnd];
     
     // send message to addressBook changed observer
-    if (NULL != context) {
-        objc_msgSend((__bridge id)context, @selector(addressBookChanged:info:context:), addressBook, info, context);
+    if (NULL != context && 0 != [(__bridge NSDictionary *)info count]) {
+        objc_msgSend(_addressBookChangedObserver, @selector(addressBookChanged:info:observer:), addressBook, info, _addressBookChangedObserver);
     }
 }
 
 @end
-
