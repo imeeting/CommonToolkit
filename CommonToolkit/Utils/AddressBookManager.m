@@ -20,6 +20,8 @@
 // matching result contact bean and index array key
 #define MATCHING_RESULT_CONTACT @"matchingResultContact"
 #define MATCHING_RESULT_INDEXS  @"matchingResultIndexs"
+#define PHONE_NUMBER_FILTER_PREFIX           [NSArray arrayWithObjects:@"17909", @"11808", @"12593", @"17951", @"17911", @"086", @"86", nil]
+
 
 // static singleton AddressBookManager reference
 static AddressBookManager *singletonAddressBookManagerRef;
@@ -493,7 +495,16 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         // process temp phone number array
         for(int _index = 0; _index < ABMultiValueGetCount(_contactPhoneNumberArrayInAB); _index++){
             NSString *_phoneNumber = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(_contactPhoneNumberArrayInAB, _index); 
-            
+            _phoneNumber = [_phoneNumber stringByTrimmingCharactersInString:@"()- "];
+            // remove the specified prefix
+            for (NSString *prefix in PHONE_NUMBER_FILTER_PREFIX) {
+                NSRange range = [_phoneNumber rangeOfString:prefix];
+                if (range.location == 0) {
+                    if (range.length < _phoneNumber.length) {
+                        _phoneNumber = [_phoneNumber substringFromIndex:range.length];
+                    }
+                }
+            }
             // add each phone number to contact phone number array
             [_contactPNArr addObject:[_phoneNumber stringByTrimmingCharactersInString:@"()- "]];
         }
