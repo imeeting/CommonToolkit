@@ -102,6 +102,9 @@
     // set view background image
     self.backgroundColor = [UIColor colorWithPatternImage:backgroundImg];
     
+    // set transparent
+    self.opaque = NO;
+    
     // save background image
     [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtension:backgroundImg withType:backgroundImgExt forKey:[NSNumber numberWithInteger:self.hash]];
 }
