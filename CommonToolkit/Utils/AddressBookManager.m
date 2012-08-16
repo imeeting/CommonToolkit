@@ -11,20 +11,57 @@
 #import "NSString+Extension.h"
 #import "NSArray+Extension.h"
 #import "NSBundle+Extension.h"
+
+#import "UIDevice+Extension.h"
+
 #import "CommonUtils.h"
 
 #import "ContactBean_Extension.h"
+
+#import "RegexKitLite.h"
 
 #import <objc/message.h>
 
 // matching result contact bean and index array key
 #define MATCHING_RESULT_CONTACT @"matchingResultContact"
 #define MATCHING_RESULT_INDEXS  @"matchingResultIndexs"
-#define PHONE_NUMBER_FILTER_PREFIX           [NSArray arrayWithObjects:@"17909", @"11808", @"12593", @"17951", @"17911", @"086", @"86", nil]
-
 
 // static singleton AddressBookManager reference
 static AddressBookManager *singletonAddressBookManagerRef;
+
+// NSArray contact private category
+@interface NSArray (ContactPrivate)
+
+// split array can matches given name phonetics
+- (BOOL)isMatchedNamePhonetics:(NSArray *)pMatchesNamePhonetics;
+
+// contact name phonetics string
+- (NSString *)namePhoneticsString;
+
+// multiplied by array
+- (NSArray *)multipliedByArray:(NSArray *)pArray;
+
+@end
+
+
+
+
+// NSString contact private category
+@interface NSString (ContactPrivate)
+
+// split to first letter and others
+- (NSArray *)splitToFirstAndOthers;
+
+// multiplied by array
+- (NSArray *)multipliedByArray:(NSArray *)pArray;
+
+// get all prefixes
+- (NSArray *)getAllPrefixes;
+
+@end
+
+
+
 
 // AddressBookManager extension
 @interface AddressBookManager ()
@@ -60,6 +97,8 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
 @implementation AddressBookManager
 
+@synthesize allContactsInfoArray = _mAllContactsInfoArray;
+
 @synthesize addressBookChangedObserver = _mAddressBookChangedObserver;
 
 - (id)init{
@@ -68,15 +107,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         // Initialization code
     }
     return self;
-}
-
-- (NSMutableArray *)allContactsInfoArray{
-    // remove each contact extension dictionary
-    for (ContactBean *_contact in _mAllContactsInfoArray) {
-        [_contact.extensionDic removeAllObjects];
-    }
-    
-    return _mAllContactsInfoArray;
 }
 
 + (AddressBookManager *)shareAddressBookManager{
@@ -114,6 +144,10 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 }
 
 - (NSArray *)getContactByPhoneNumber:(NSString *)pPhoneNumber{
+    return [self getContactByPhoneNumber:pPhoneNumber matchingType:sub orderBy:phonetics];
+}
+
+- (NSArray *)getContactByPhoneNumber:(NSString *)pPhoneNumber matchingType:(ContactPhoneNumberMatchingType)pPhoneNumberMatchingType orderBy:(ContactSortedType)pSortedType{
     NSMutableArray *_ret = [[NSMutableArray alloc] init];
     
     // check contact search result dictionary and all contacts info array
@@ -160,8 +194,8 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
             
             // search contact each phone number
             for (NSString *_phoneNumber in _contact.phoneNumbers) {
-                // check phone number is sub matched
-                if ([_phoneNumber containsSubString:pPhoneNumber]) {
+                // check phone number is sub or full matched
+                if (sub == pPhoneNumberMatchingType ? [_phoneNumber containsSubString:pPhoneNumber] : [_phoneNumber isEqualToString:pPhoneNumber]) {
                     _hasOnePhoneNumberMatched = YES;
                     
                     // add phone number matching index array to phone number matching index array's array
@@ -190,14 +224,14 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         [_mContactSearchResultDic setObject:_searchedContactArray forKey:pPhoneNumber];
     }
     
-    return _ret;
+    return pSortedType == phonetics ? [_ret phoneticsSortedContactsInfoArray] : _ret;
 }
 
 - (NSArray *)getContactByName:(NSString *)pName{
-    return [self getContactByName:pName andMatchingType:full];
+    return [self getContactByName:pName matchingType:fuzzy orderBy:phonetics];
 }
 
-- (NSArray *)getContactByName:(NSString *)pName andMatchingType:(ContactMatchingType)pType{
+- (NSArray *)getContactByName:(NSString *)pName matchingType:(ContactNameMatchingType)pNameMatchingType orderBy:(ContactSortedType)pSortedType{
     NSMutableArray *_ret = [[NSMutableArray alloc] init];
     
     // convert search contact name to lowercase string
@@ -254,7 +288,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                 NSMutableArray *_nameMatchingIndexArr = [[NSMutableArray alloc] init];
                 
                 // get split name array
-                NSArray *_splitNameArray = [_splitName toArrayWithSeparator:SPLIT_SEPARATOR];
+                NSArray *_splitNameArray = [_splitName toArrayWithSeparator:@" "];
                 
                 // compare split name array count with contact name phonetic array count
                 if ([_splitNameArray count] > [_contact.namePhonetics count]) {
@@ -262,7 +296,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                 }
                 
                 // need all matching
-                if (full == pType) {
+                if (fuzzy == pNameMatchingType) {
                     if (![_splitNameArray isMatchedNamePhonetics:_contact.namePhonetics]) {
                         unmatch = YES;
                     }
@@ -286,7 +320,8 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                                         _lastElementMatchingIndex = __index + 1;
                                         
                                         // set name matching index array
-                                        [_nameMatchingIndexArr addObject:[NSNumber numberWithInteger:__index]];
+                                        //[_nameMatchingIndexArr addObject:[NSNumber numberWithInteger:__index]];
+                                        [_nameMatchingIndexArr addObject:[NSDictionary dictionaryWithObject:[[[_contact.namePhonetics objectAtIndex:__index] objectAtIndex:___index] isEqualToString:[[_contact.fullNames objectAtIndex:__index] lowercaseString]] ? [NSNumber numberWithInteger:[[[_contact.namePhonetics objectAtIndex:__index] objectAtIndex:___index] rangeOfString:[_splitNameArray objectAtIndex:_index]].length] : NAME_CHARACTER_FULLMATCHING forKey:[NSNumber numberWithInteger:__index]]];
                                         
                                         break;
                                     }
@@ -337,7 +372,16 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                         // one particular split name array metched, break
                         if (_matched) {
                             // set name matching index array
-                            _nameMatchingIndexArr = [NSArray arrayWithRange:NSMakeRange(_index, [_splitNameArray count])];
+                            //_nameMatchingIndexArr = [NSArray arrayWithRange:NSMakeRange(_index, [_splitNameArray count])];
+                            for (NSInteger _splitIndex = 0; _splitIndex < [_splitNameArray count]; _splitIndex++) {
+                                // process each name phonetics
+                                for (NSString *_namePhonetics in [_contact.namePhonetics objectAtIndex:_index + _splitIndex]) {
+                                    // get the matched name phonetics
+                                    if ([_namePhonetics hasPrefix:[_splitNameArray objectAtIndex:_splitIndex]]) {
+                                        [_nameMatchingIndexArr addObject:[NSDictionary dictionaryWithObject:[_namePhonetics isEqualToString:[[_contact.fullNames objectAtIndex:_index + _splitIndex] lowercaseString]] ? [NSNumber numberWithInteger:[_namePhonetics rangeOfString:[_splitNameArray objectAtIndex:_splitIndex]].length] : NAME_CHARACTER_FULLMATCHING forKey:[NSNumber numberWithInteger:_index + _splitIndex]]];
+                                    }
+                                }
+                            }
                             
                             break;
                         }
@@ -370,7 +414,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         [_mContactSearchResultDic setObject:_searchedContactArray forKey:pName];
     }
     
-    return _ret;
+    return pSortedType == phonetics ? [_ret phoneticsSortedContactsInfoArray] : _ret;
 }
 
 - (void)getContactEnd{
@@ -448,54 +492,38 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     _lastName = (!_lastName) ? @"" : _lastName;
     
     // donn't need to use MiddleName usually
-    // check system current setting language
-    switch ([CommonUtils systemCurrentSettingLanguage]) {
-        case zh_Hans:
-        case zh_Hant:
-            {
-                // set display name
-                _contact.displayName = [[NSString stringWithFormat:@"%@ %@", _lastName, _firstName] isNil] ? (zh_Hans == [CommonUtils systemCurrentSettingLanguage]) ? @"无名字" : @"無名字" : [NSString stringWithFormat:@"%@ %@", _lastName, _firstName];
-                
-                // set full name array
-                NSMutableArray *_tmpNameArray = [[NSMutableArray alloc] init];
-                [_tmpNameArray addObjectsFromArray:[_lastName toArraySeparatedByCharacter]];
-                [_tmpNameArray addObjectsFromArray:[_firstName toArraySeparatedByCharacter]];
-                _contact.fullNames = _tmpNameArray;
-                
-                // set name phonetics
-                NSMutableArray *_tmpNamePhoneticArray = [[NSMutableArray alloc] init];
-                for (NSString *_name in _contact.fullNames) {
-                    // get each name unicode
-                    unichar _unicode = [_name characterAtIndex:0];
-                    // check name unicode
-                    if (_unicode >= 19968 && _unicode <= 40869) {
-                        // chinese character
-                        NSString *_nameUnicodeString = [NSString stringWithFormat:@"%0X", _unicode];
-                        [_tmpNamePhoneticArray addObject:[NSLocalizedStringFromPinyin4jBundle(_nameUnicodeString, nil) toArrayWithSeparator:@","]];
-                    }
-                    else {
-                        // others, character
-                        [_tmpNamePhoneticArray addObject:[NSArray arrayWithObject:_name]];
-                    }
-                }
-                _contact.namePhonetics = _tmpNamePhoneticArray;
-            }
-            break;
-            
-        case en:
-        default:
-            {
-                // set display name
-                _contact.displayName = [[NSString stringWithFormat:@"%@ %@", _firstName, _lastName] isNil] ? @"No Name" : [NSString stringWithFormat:@"%@ %@", _firstName, _lastName];
-                
-                // set full name array
-                _contact.fullNames = [NSArray arrayWithObjects:_firstName, _lastName, nil];
-                
-                // set name phonetics
-                _contact.namePhonetics = [NSArray arrayWithObjects:[_firstName lowercaseString], [_lastName lowercaseString], nil];
-            }
-            break;
+    // set display name
+    _contact.displayName = [[NSString stringWithFormat:@"%@ %@", _lastName, _firstName] isNil] ? zh_Hans == [UIDevice currentDevice].systemCurrentSettingLanguage ? @"无名字" : (zh_Hant == [UIDevice currentDevice].systemCurrentSettingLanguage ? @"無名字" : @"No Name") : zh_Hans == [UIDevice currentDevice].systemCurrentSettingLanguage || zh_Hant == [UIDevice currentDevice].systemCurrentSettingLanguage ? [NSString stringWithFormat:@"%@ %@", _lastName, _firstName] : [NSString stringWithFormat:@"%@ %@", _firstName, _lastName];
+    
+    // set full name array
+    NSMutableArray *_tmpNameArray = [[NSMutableArray alloc] init];
+    if (zh_Hans != [UIDevice currentDevice].systemCurrentSettingLanguage && zh_Hant != [UIDevice currentDevice].systemCurrentSettingLanguage) {
+        [_tmpNameArray addObjectsFromArray:[_firstName nameArraySeparatedByCharacter]];
+        [_tmpNameArray addObjectsFromArray:[_lastName nameArraySeparatedByCharacter]];
     }
+    else {
+        [_tmpNameArray addObjectsFromArray:[_lastName nameArraySeparatedByCharacter]];
+        [_tmpNameArray addObjectsFromArray:[_firstName nameArraySeparatedByCharacter]];
+    }
+    _contact.fullNames = _tmpNameArray;
+    
+    // set name phonetics
+    NSMutableArray *_tmpNamePhoneticArray = [[NSMutableArray alloc] init];
+    for (NSString *_name in _contact.fullNames) {
+        // get each name unicode
+        unichar _unicode = [_name characterAtIndex:0];
+        // check name unicode
+        if (_unicode >= 19968 && _unicode <= 40869) {
+            // chinese character
+            NSString *_nameUnicodeString = [NSString stringWithFormat:@"%0X", _unicode];
+            [_tmpNamePhoneticArray addObject:[NSLocalizedStringFromPinyin4jBundle(_nameUnicodeString, nil) toArrayWithSeparator:@","]];
+        }
+        else {
+            // others, character
+            [_tmpNamePhoneticArray addObject:[NSArray arrayWithObject:[_name lowercaseString]]];
+        }
+    }
+    _contact.namePhonetics = _tmpNamePhoneticArray;
     
     // phone numbers info
     // get contact's phone numbers array in addressBook
@@ -508,7 +536,8 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         // process temp phone number array
         for(int _index = 0; _index < ABMultiValueGetCount(_contactPhoneNumberArrayInAB); _index++){
             NSString *_phoneNumber = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(_contactPhoneNumberArrayInAB, _index); 
-            _phoneNumber = [_phoneNumber stringByTrimmingCharactersInString:@"()- "];
+            
+	    _phoneNumber = [_phoneNumber stringByTrimmingCharactersInString:@"()- "];
             // remove the specified prefix
             for (NSString *prefix in PHONE_NUMBER_FILTER_PREFIX) {
                 NSRange range = [_phoneNumber rangeOfString:prefix];
@@ -518,6 +547,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                     }
                 }
             }
+
             // add each phone number to contact phone number array
             [_contactPNArr addObject:[_phoneNumber stringByTrimmingCharactersInString:@"()- "]];
         }
@@ -649,10 +679,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     return _ret;
 }
 
-- (void)printContactSearchResultDictionary{
-    NSLog(@"Important Info: %@, contact search result dictionary = %@", NSStringFromClass(self.class), _mContactSearchResultDic);
-}
-
 - (ContactBean *)defaultContactByPhoneNumber:(NSString *)pPhoneNumber {
     NSArray *contacts = [self getContactByPhoneNumber:pPhoneNumber];
     ContactBean *defaultContact = nil;
@@ -660,6 +686,10 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         defaultContact = [contacts objectAtIndex:0];
     }
     return defaultContact;
+}
+
+- (void)printContactSearchResultDictionary{
+    NSLog(@"Important Info: %@, contact search result dictionary = %@", NSStringFromClass(self.class), _mContactSearchResultDic);
 }
 
 - (NSDictionary *)refreshAddressBook{
@@ -715,7 +745,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                     
                     // create and init contact action dictionary
                     NSMutableDictionary *_contactActionDic = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithInteger:contactModify] forKey:CONTACT_ACTION];
-                    // else action property can't implemetation???
+                    // detail action property can't implemetation???
                     
                     // add to dirty contact id dictionary
                     [_ret setObject:_contactActionDic forKey:[NSNumber numberWithInteger:_contact.id]];
@@ -753,6 +783,263 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     if (NULL != context && 0 != [(__bridge NSDictionary *)info count]) {
         objc_msgSend(_addressBookChangedObserver, @selector(addressBookChanged:info:observer:), addressBook, info, _addressBookChangedObserver);
     }
+}
+
+@end
+
+
+
+
+@implementation NSArray (AddressBook)
+
+- (NSMutableArray *)phoneticsSortedContactsInfoArray{
+    NSMutableArray *_ret = [[NSMutableArray alloc] init];
+    
+    // process need to sorted contacts info array
+    for (ContactBean *_contact in self) {
+        // append contact to sorted contacts info array
+        // if self is empty, add the first without compare
+        if (0 == [_ret count]) {
+            [_ret addObject:_contact];
+        }
+        else {
+            // comare with each sorted contact in sorted contacts info array
+            for (NSInteger _index = 0; _index < [_ret count]; _index++) {
+                // the contact has no name
+                if ([[_contact.namePhonetics namePhoneticsString] isEqualToString:@""]) {
+                    if (![[((ContactBean *)[_ret objectAtIndex:_index]).namePhonetics namePhoneticsString] isEqualToString:@""]) {
+                        // at last
+                        if (_index == [_ret count] - 1) {
+                            [_ret addObject:_contact];
+                            
+                            break;
+                        }
+                        else {
+                            // except the sorted contact with name
+                            continue;
+                        }
+                    }
+                    // if the sorted contact without name, compare their first phone number
+                    else if ([[_contact.phoneNumbers objectAtIndex:0] compare:[((ContactBean *)[_ret objectAtIndex:_index]).phoneNumbers objectAtIndex:0]] < NSOrderedSame) {
+                        [_ret insertObject:_contact atIndex:_index];
+                        
+                        break;
+                    }
+                    
+                    // at last
+                    if (_index == [_ret count] - 1) {
+                        [_ret addObject:_contact];
+                        
+                        break;
+                    }
+                }
+                
+                // compare the contact name phonetics, if the had been sorted contact without name, insert immediately
+                if ([[((ContactBean *)[_ret objectAtIndex:_index]).namePhonetics namePhoneticsString] isEqualToString:@""] || [[_contact.namePhonetics namePhoneticsString] compare:[((ContactBean *)[_ret objectAtIndex:_index]).namePhonetics namePhoneticsString]] < NSOrderedSame) {
+                    [_ret insertObject:_contact atIndex:_index];
+                    
+                    break;
+                }
+                
+                // at last
+                if (_index == [_ret count] - 1) {
+                    [_ret addObject:_contact];
+                    
+                    break;
+                }
+            }
+        }
+    }
+    
+    return _ret;
+}
+
+@end
+
+
+
+
+@implementation NSString (AddressBook)
+
+- (NSArray *)nameArraySeparatedByCharacter{
+    NSMutableArray *_ret = [NSMutableArray arrayWithArray:[self componentsSeparatedByRegex:@"([A-Za-z0-9]*)"]];
+    
+    // all characters
+    if (_ret && 0 == [_ret count] && ![self isNil]) {
+        [_ret addObject:self];
+    }
+    else if (_ret && [_ret count] > 0) {
+        // trim " " object
+        for (NSInteger _index = 0; _index < [_ret count]; _index++) {
+            if ([[_ret objectAtIndex:_index] isNil]) {
+                [_ret removeObjectAtIndex:_index];
+                
+                _index--;
+            }
+        }
+    }
+    
+    return _ret;
+}
+
+@end
+
+
+
+
+@implementation NSArray (ContactPrivate)
+
+- (BOOL)isMatchedNamePhonetics:(NSArray *)pMatchesNamePhonetics{
+    BOOL _ret = NO;
+    
+    if (nil != self && nil != pMatchesNamePhonetics && 0 != [self count] && [self count] <= [pMatchesNamePhonetics count]) {
+        // split array has more elements
+        if ([self count] > 1) {
+            // slide split array in matches name phonetics
+            for (NSInteger _index = 0; _index < [pMatchesNamePhonetics count] - [self count] + 1; _index++) {
+                // check first element in aplit array and matches name phonetics
+                BOOL _headerMatched = NO;
+                
+                for (NSInteger __index = 0; __index < [[pMatchesNamePhonetics objectAtIndex:_index] count]; __index++) {
+                    if ([[[pMatchesNamePhonetics objectAtIndex:_index] objectAtIndex:__index] hasPrefix:[self objectAtIndex:0]]) {
+                        _headerMatched = YES;
+                        
+                        break;
+                    }
+                }
+                
+                // if header not matched, slide split array
+                if (!_headerMatched) {
+                    continue;
+                }
+                
+                // remove header, matches others left
+                NSArray *_subSplitArray = [self subarrayWithRange:NSMakeRange(1, [self count] - 1)];
+                NSArray *_subNamePhonetics = [pMatchesNamePhonetics subarrayWithRange:NSMakeRange(_index + 1, [pMatchesNamePhonetics count] - (_index + 1))];
+                
+                // left matches
+                if ([_subSplitArray isMatchedNamePhonetics:_subNamePhonetics]) {
+                    _ret = YES;
+                    
+                    break;
+                }
+            }
+        }
+        // split array just has one element
+        else if(1 == [self count]) {
+            BOOL _matched = NO;
+            
+            for (NSInteger _index = 0; _index < [pMatchesNamePhonetics count]; _index++) {
+                for (NSInteger __index = 0; __index < [[pMatchesNamePhonetics objectAtIndex:_index] count]; __index++) {
+                    if ([[[pMatchesNamePhonetics objectAtIndex:_index] objectAtIndex:__index] hasPrefix:[self objectAtIndex:0]]) {
+                        _matched = YES;
+                        _ret = YES;
+                        
+                        break;
+                    }
+                }
+                
+                // if matches, break immediately
+                if (_matched) {
+                    break;
+                }
+            }
+        }
+    }
+    
+    return _ret;
+}
+
+- (NSString *)namePhoneticsString{
+    NSMutableString *_ret = [[NSMutableString alloc] init];
+    
+    // name phonetics is not empty
+    if (self && [self count] > 0) {
+        // append each name first phonetics
+        for (NSInteger _index = 0; _index < [self count]; _index++) {
+            [_ret appendString:[[self objectAtIndex:_index] objectAtIndex:0]];
+        }
+    }
+    
+    return _ret;
+}
+
+- (NSArray *)multipliedByArray:(NSArray *)pArray{
+    NSMutableSet *_ret = [[NSMutableSet alloc] init];
+    
+    // check parameter array
+    if (self && (!pArray || 0 == [pArray count])) {
+        [_ret addObjectsFromArray:self];
+    }
+    
+    // check self
+    if (pArray && (!self || 0 == [self count])) {
+        [_ret addObjectsFromArray:pArray];
+    }
+    
+    // self and parameter array not nil
+    if (self && pArray && [self count] > 0 && [pArray count] > 0) {
+        // traversal self
+        for (NSString *_selfArrayString in self) {
+            // traversal parameter
+            for (NSString *_parameterArrayString in pArray) {
+                [_ret addObject:[NSString stringWithFormat:@"%@%@", _selfArrayString, _parameterArrayString]];
+            }
+        }
+    }
+    
+    return [_ret allObjects];
+}
+
+@end
+
+
+
+
+@implementation NSString (ContactPrivate)
+
+- (NSArray *)splitToFirstAndOthers{
+    NSMutableArray *_ret = [[NSMutableArray alloc] init];
+    
+    // check self
+    if ([self isNil]) {
+        NSLog(@"Error: nil or empty string mustn't split");
+    }
+    else if (self.length >= 2) {
+        // get first letter and others
+        NSString *_firstLetter = [self substringToIndex:1];
+        NSString *_others = [self substringFromIndex:1];
+        
+        [_ret addObjectsFromArray:[_firstLetter multipliedByArray:[_others splitToFirstAndOthers]]];
+    }
+    else {
+        [_ret addObject:self];
+    }
+    
+    return _ret;
+}
+
+- (NSArray *)multipliedByArray:(NSArray *)pArray{
+    NSMutableArray *_ret = [[NSMutableArray alloc] init];
+    
+    for (NSString *_string in pArray) {
+        // x1 x2
+        [_ret addObject:[NSString stringWithFormat:@"%@ %@", self, _string]];
+        // x1x2
+        [_ret addObject:[NSString stringWithFormat:@"%@%@", self, _string]];
+    }
+    
+    return _ret;
+}
+
+- (NSArray *)getAllPrefixes{
+    NSMutableArray *_ret = [[NSMutableArray alloc] init];
+    
+    for (NSInteger _index = 0; _index < self.length; _index++) {
+        [_ret addObject:[self substringToIndex:_index + 1]];
+    }
+    
+    return _ret;
 }
 
 @end

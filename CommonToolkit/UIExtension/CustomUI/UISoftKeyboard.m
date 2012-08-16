@@ -413,6 +413,16 @@
     return _ret;
 }
 
+- (BOOL)compareWithUISoftKeyboardIndexPath:(NSIndexPath *)pIndexPath{
+    BOOL _ret = NO;
+    
+    if (self.skb_row == pIndexPath.skb_row && self.skb_cell == pIndexPath.skb_cell) {
+        _ret = YES;
+    }
+    
+    return _ret;
+}
+
 - (void)dealloc{
     // remove foundation extension bean from FoundationExtensionBeanDictionary
     [[FoundationExtensionManager shareFoundationExtensionManager] removeFoundationExtensionForKey:[NSNumber numberWithInteger:[super hash]]];

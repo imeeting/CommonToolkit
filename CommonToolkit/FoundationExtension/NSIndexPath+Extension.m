@@ -23,20 +23,3 @@
 }
 
 @end
-
-
-
-
-@implementation NSIndexPath (UISoftKeyboardCompare)
-
-- (BOOL)compareWithUISoftKeyboardIndexPath:(NSIndexPath *)pIndexPath{
-    BOOL _ret = NO;
-    
-    if (self.skb_row == pIndexPath.skb_row && self.skb_cell == pIndexPath.skb_cell) {
-        _ret = YES;
-    }
-    
-    return _ret;
-}
-
-@end

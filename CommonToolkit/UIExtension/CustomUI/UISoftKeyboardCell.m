@@ -12,8 +12,6 @@
 
 #import "UISoftKeyboard.h"
 
-#import "NSIndexPath+Extension.h"
-
 // UISoftKeyboardCell extension
 @interface UISoftKeyboardCell ()
 

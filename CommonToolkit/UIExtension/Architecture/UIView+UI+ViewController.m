@@ -12,6 +12,8 @@
 
 #import "UIViewExtensionBean_Extension.h"
 
+#import "UIDevice+Extension.h"
+
 #import "CommonUtils.h"
 
 // one hand five fingers
@@ -42,6 +44,9 @@
 
 // validate view supported gesture
 - (BOOL)validateSupportedGesture:(GestureType)pGestureType;
+
+// convert NSInteger to binary array(NSNumber *)
+- (NSArray *)convertIntegerToBinaryArray:(NSInteger)pInteger;
 
 @end
 
@@ -102,8 +107,10 @@
     // set view background image
     self.backgroundColor = [UIColor colorWithPatternImage:backgroundImg];
     
-    // set transparent
-    self.opaque = NO;
+    // set transparent, if ios system version under 5.0
+    if ([UIDevice currentDevice].systemVersionNum < 5.0) {
+        self.opaque = NO;
+    }
     
     // save background image
     [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtension:backgroundImg withType:backgroundImgExt forKey:[NSNumber numberWithInteger:self.hash]];
@@ -180,7 +187,7 @@
         }
         
         // get long press finger mode integer binary array
-        NSArray *_longPressFingerModeIBA = [[CommonUtils convertIntegerToBinaryArray:_longPressFingerMode] subarrayWithRange:NSMakeRange(sizeof(int) * CHAR_BIT - MAXFINGERS_COUNT, MAXFINGERS_COUNT)];
+        NSArray *_longPressFingerModeIBA = [[self convertIntegerToBinaryArray:_longPressFingerMode] subarrayWithRange:NSMakeRange(sizeof(int) * CHAR_BIT - MAXFINGERS_COUNT, MAXFINGERS_COUNT)];
         
         // process long press finger mode integer binary array
         for (NSInteger _index = 0; _index < [_longPressFingerModeIBA count]; _index++) {
@@ -207,7 +214,7 @@
         }
         
         // get swipe direction integer binary array
-        NSArray *_swipeDirectionIBA = [[CommonUtils convertIntegerToBinaryArray:_swipeDirection] subarrayWithRange:NSMakeRange(sizeof(int) * CHAR_BIT - SWIPEDIRECTION_COUNT, SWIPEDIRECTION_COUNT)];
+        NSArray *_swipeDirectionIBA = [[self convertIntegerToBinaryArray:_swipeDirection] subarrayWithRange:NSMakeRange(sizeof(int) * CHAR_BIT - SWIPEDIRECTION_COUNT, SWIPEDIRECTION_COUNT)];
         
         // process swipe direction integer binary array
         for (NSInteger _index = 0; _index < [_swipeDirectionIBA count]; _index++) {
@@ -239,8 +246,8 @@
         }
         
         // get tap finger mode integer binary array and count mode integer binary array
-        NSArray *_tapFingerModeIBA = [[CommonUtils convertIntegerToBinaryArray:_tapFingerMode] subarrayWithRange:NSMakeRange(sizeof(int) * CHAR_BIT - MAXFINGERS_COUNT, MAXFINGERS_COUNT)];
-        NSArray *_tapCountModeIBA = [[CommonUtils convertIntegerToBinaryArray:_tapCountMode] subarrayWithRange:NSMakeRange(sizeof(int) * CHAR_BIT - MAXTAPS_COUNT, MAXTAPS_COUNT)];
+        NSArray *_tapFingerModeIBA = [[self convertIntegerToBinaryArray:_tapFingerMode] subarrayWithRange:NSMakeRange(sizeof(int) * CHAR_BIT - MAXFINGERS_COUNT, MAXFINGERS_COUNT)];
+        NSArray *_tapCountModeIBA = [[self convertIntegerToBinaryArray:_tapCountMode] subarrayWithRange:NSMakeRange(sizeof(int) * CHAR_BIT - MAXTAPS_COUNT, MAXTAPS_COUNT)];
         
         // process tap finger mode integer binary array and count mode integer binary array
         for (NSInteger _index = 0; _index < [_tapCountModeIBA count]; _index++) {
@@ -456,6 +463,22 @@
     }
     
     return _ret;
+}
+
+- (NSArray *)convertIntegerToBinaryArray:(NSInteger)pInteger{
+    // get int bits count in ios
+    size_t bits = sizeof(int) * CHAR_BIT;
+    
+    NSMutableArray *_ret = [[NSMutableArray alloc] initWithCapacity:bits];
+    
+    // type punning because signed shift is implementation-defined
+    unsigned u = *(unsigned *)&pInteger;
+    for (; bits--; u >>= 1) {
+        [_ret addObject:[NSNumber numberWithInt:u & 1 ? 1 : 0]];
+    }
+    
+    // array reverse
+    return [[_ret reverseObjectEnumerator] allObjects];
 }
 
 @end

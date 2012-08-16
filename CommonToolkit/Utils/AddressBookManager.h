@@ -20,6 +20,9 @@
 // contact name matching index array key
 #define NAME_MATCHING_INDEXS    @"nameMatchingIndexs"
 
+// contact name character full matching
+#define NAME_CHARACTER_FULLMATCHING [NSNumber numberWithInteger:-1]
+
 // contact dirty type
 typedef enum {
     contactAdd,
@@ -28,11 +31,47 @@ typedef enum {
 } ContactDirtyType;
 
 
-// contact searched matching type
+// contact searched name matching type
+typedef enum {
+    fuzzy,
+    order
+} ContactNameMatchingType;
+
+
+// contact searched phone number matching type
 typedef enum {
     full,
-    order
-} ContactMatchingType;
+    sub
+} ContactPhoneNumberMatchingType;
+
+
+// contact searched sorted type
+typedef enum {
+    identity,
+    phonetics
+} ContactSortedType;
+
+
+// NSArray addressBook category
+@interface NSArray (AddressBook)
+
+// phonetics sorted contacts info array
+- (NSMutableArray *)phoneticsSortedContactsInfoArray;
+
+@end
+
+
+
+
+// NSString addressBook category
+@interface NSString (AddressBook)
+
+// get contact display name array separated by character regular expression ([A-Za-z0-9]*)
+- (NSArray *)nameArraySeparatedByCharacter;
+
+@end
+
+
 
 
 // addressBook changed delegate
@@ -80,11 +119,14 @@ typedef enum {
 // get contacts by phone number: sub matching
 - (NSArray *)getContactByPhoneNumber:(NSString *)pPhoneNumber;
 
+// get contacts by phone number with matching type and sorted type
+- (NSArray *)getContactByPhoneNumber:(NSString *)pPhoneNumber matchingType:(ContactPhoneNumberMatchingType)pPhoneNumberMatchingType orderBy:(ContactSortedType)pSortedType;
+
 // get contacts by name(not chinaese character): fuzzy matching
 - (NSArray *)getContactByName:(NSString *)pName;
 
-// get contacts by name with matching type
-- (NSArray *)getContactByName:(NSString *)pName andMatchingType:(ContactMatchingType)pType;
+// get contacts by name with matching type and sorted type
+- (NSArray *)getContactByName:(NSString *)pName matchingType:(ContactNameMatchingType)pNameMatchingType orderBy:(ContactSortedType)pSortedType;
 
 // get contact end
 - (void)getContactEnd;

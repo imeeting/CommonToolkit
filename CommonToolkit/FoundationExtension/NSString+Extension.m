@@ -10,18 +10,6 @@
 
 #import <CommonCrypto/CommonDigest.h>
 
-#import "RegexKitLite.h"
-
-@interface NSString (Private)
-
-// multiplied by array
-- (NSArray *)multipliedByArray:(NSArray *)pArray;
-
-@end
-
-
-
-
 @implementation NSString (Common)
 
 - (BOOL)containsSubString:(NSString *)pString{
@@ -33,6 +21,39 @@
     if (NSNotFound != _range.location) {
         _ret = YES;
     }
+    
+    return _ret;
+}
+
+- (NSArray *)rangesOfString:(NSString *)pString{
+    NSMutableArray *_ret = [[NSMutableArray alloc] init];
+    
+    // define parent string
+    NSString *_parentString = self;
+    
+    // define parent string location in self string
+    NSInteger _parentStringLocation = 0;
+    
+    // define range of paramter string in parent string
+    NSRange _range = NSMakeRange(0, 0);
+    
+    // get ranges
+    do {
+        // reset range
+        _range = [_parentString rangeOfString:pString];
+        
+        // parameter string found in parent string
+        if (NSNotFound != _range.location) {
+            // reset parent string
+            _parentString = [_parentString substringFromIndex:_range.location + _range.length];
+            
+            // add ranges to return result
+            [_ret addObject:NSStringFromRange(NSMakeRange(_parentStringLocation + _range.location, _range.length))];
+            
+            // save parent string location in self string
+            _parentStringLocation += _range.location + _range.length;
+        }
+    } while (0 != _range.length && _range.length <= _parentString.length);
     
     return _ret;
 }
@@ -73,7 +94,6 @@
 - (NSArray *)stringParagraphs{
     // string paragraphs array
     NSArray *_paragraphsArray = [self componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\n"]];
-    //NSLog(@"string = %@, paragraphs array = %@ and count = %d", self, _paragraphsArray, [_paragraphsArray count]);
     
     return _paragraphsArray;
 }
@@ -93,8 +113,6 @@
     CC_MD5(cCharUTF8String, strlen(cCharUTF8String), _result);
     
     NSString *_ret = [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x", _result[0], _result[1], _result[2], _result[3], _result[4], _result[5], _result[6], _result[7], _result[8], _result[9], _result[10], _result[11], _result[12], _result[13], _result[14], _result[15]];
-    
-    //NSLog(@"string md5: orig string: %@ and after md5 = %@", _ret, [_ret uppercaseString]);
     
     return [_ret uppercaseString];
 }
@@ -120,83 +138,6 @@
         _ret = self;
     }
     
-    return _ret;
-}
-
-@end
-
-
-
-
-@implementation NSString (Contact)
-
-- (NSArray *)splitToFirstAndOthers{
-    NSMutableArray *_ret = [[NSMutableArray alloc] init];
-    
-    // check self
-    if ([self isNil]) {
-        NSLog(@"Error: nil or empty string mustn't split");
-    }
-    else if (self.length >= 2) {
-        // get first letter and others
-        NSString *_firstLetter = [self substringToIndex:1];
-        NSString *_others = [self substringFromIndex:1];
-        
-        [_ret addObjectsFromArray:[_firstLetter multipliedByArray:[_others splitToFirstAndOthers]]];
-    }
-    else {
-        [_ret addObject:self];
-    }
-    
-    return _ret;
-}
-
-- (NSArray *)getAllPrefixes{
-    NSMutableArray *_ret = [[NSMutableArray alloc] init];
-    
-    for (NSInteger _index = 0; _index < self.length; _index++) {
-        [_ret addObject:[self substringToIndex:_index + 1]];
-    }
-    
-    return _ret;
-}
-
-- (NSArray *)toArraySeparatedByCharacter{
-    NSMutableArray *_ret = [NSMutableArray arrayWithArray:[self componentsSeparatedByRegex:@"([A-Za-z0-9]*)"]];
-    
-    // all characters
-    if (_ret && 0 == [_ret count] && ![self isNil]) {
-        [_ret addObject:self];
-    }
-    else if (_ret && [_ret count] > 0) {
-        // trim "" object
-        for (NSInteger _index = 0; _index < [_ret count]; _index++) {
-            if ([[_ret objectAtIndex:_index] isNil]) {
-                [_ret removeObjectAtIndex:_index];
-            }
-        }
-    }
-    
-    return _ret;
-}
-
-@end
-
-
-
-
-@implementation NSString (Private)
-
-- (NSArray *)multipliedByArray:(NSArray *)pArray{
-    NSMutableArray *_ret = [[NSMutableArray alloc] init];
-
-    for (NSString *_string in pArray) {
-        // x1 x2
-        [_ret addObject:[NSString stringWithFormat:@"%@%@%@", self, SPLIT_SEPARATOR, _string]];
-        // x1x2
-        [_ret addObject:[NSString stringWithFormat:@"%@%@", self, _string]];
-    }
-
     return _ret;
 }
 

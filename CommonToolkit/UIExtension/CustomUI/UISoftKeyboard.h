@@ -118,4 +118,7 @@
 // generate indexPath for softKeyboard
 + (NSIndexPath *)indexPathForCell:(NSInteger)pSoftKeyboardCell inRow:(NSInteger)pSoftKeyboardRow;
 
+// compare with UISoftKeyboard indexPath
+- (BOOL)compareWithUISoftKeyboardIndexPath:(NSIndexPath *)pIndexPath;
+
 @end

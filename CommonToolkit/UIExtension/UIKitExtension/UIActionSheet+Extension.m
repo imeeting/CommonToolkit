@@ -12,6 +12,8 @@
 
 #import "UIViewExtensionBean_Extension.h"
 
+#import "UIDevice+Extension.h"
+
 #import "CommonUtils.h"
 
 #import <objc/message.h>
@@ -29,7 +31,7 @@
         // define cancel button title string
         NSString *_cancelButtonTitleString;
         // init title string and cancel button title string
-        switch ([CommonUtils systemCurrentSettingLanguage]) {
+        switch ([UIDevice currentDevice].systemCurrentSettingLanguage) {
             case zh_Hans:
                 _cancelButtonTitleString = @"取消";
                 break;
