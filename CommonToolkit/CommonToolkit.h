@@ -80,5 +80,6 @@
 
 //UIKit Extension
 #import "UIImage+Extension.h"
+#import "UIDevice+Extension.h"
 
 #endif
