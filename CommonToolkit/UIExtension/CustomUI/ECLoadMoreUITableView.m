@@ -84,9 +84,7 @@
             // init and add table footerView
             self.tableFooterView = [[TableFootSpinnerView alloc] initWithFrame:CGRectMake(0.0 , self.frame.size.height, self.frame.size.width, 45.0)];
         }
-        else{
-            NSLog(@"no more data.");
-            
+        else{            
             // init and add table footerView
             if(!self.tableFooterView){
                 self.tableFooterView = [[TableFootNoMoreDataView alloc] initWithFrame:CGRectMake(0.0 , self.frame.size.height, self.frame.size.width, 45.0)];

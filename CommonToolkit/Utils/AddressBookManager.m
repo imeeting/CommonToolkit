@@ -25,6 +25,7 @@
 // matching result contact bean and index array key
 #define MATCHING_RESULT_CONTACT @"matchingResultContact"
 #define MATCHING_RESULT_INDEXS  @"matchingResultIndexs"
+#define PHONE_NUMBER_FILTER_PREFIX           [NSArray arrayWithObjects:@"17909", @"11808", @"12593", @"17951", @"17911", @"086", @"86", nil]
 
 // static singleton AddressBookManager reference
 static AddressBookManager *singletonAddressBookManagerRef;

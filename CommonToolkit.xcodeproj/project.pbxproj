@@ -87,6 +87,10 @@
 		F800185015B66BFB00745A8F /* NSAttributedString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = F800184E15B66BFB00745A8F /* NSAttributedString+Extension.m */; };
 		F800185415B66C1F00745A8F /* UIAttributedLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = F800185215B66C1F00745A8F /* UIAttributedLabel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F800185515B66C1F00745A8F /* UIAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F800185315B66C1F00745A8F /* UIAttributedLabel.m */; };
+		F87686BE15DE333A00DDDA23 /* RIButtonItem.h in Headers */ = {isa = PBXBuildFile; fileRef = F87686BA15DE333A00DDDA23 /* RIButtonItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F87686BF15DE333A00DDDA23 /* RIButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F87686BB15DE333A00DDDA23 /* RIButtonItem.m */; };
+		F87686C015DE333A00DDDA23 /* UIAlertView+Blocks.h in Headers */ = {isa = PBXBuildFile; fileRef = F87686BC15DE333A00DDDA23 /* UIAlertView+Blocks.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F87686C115DE333A00DDDA23 /* UIAlertView+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = F87686BD15DE333A00DDDA23 /* UIAlertView+Blocks.m */; };
 		F885A58E159AAE5200709FC7 /* AVCamUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F885A58C159AAE5200709FC7 /* AVCamUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F885A58F159AAE5200709FC7 /* AVCamUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = F885A58D159AAE5200709FC7 /* AVCamUtilities.m */; };
 		F8B5F46B15AAD086005A8C09 /* NSNumber+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = F8B5F46915AAD086005A8C09 /* NSNumber+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -97,6 +101,8 @@
 		F8D791C11599630300986BCD /* SocketIO.m in Sources */ = {isa = PBXBuildFile; fileRef = F8D791B91599630300986BCD /* SocketIO.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		F8D791C21599630300986BCD /* WebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = F8D791BA1599630300986BCD /* WebSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8D791C31599630300986BCD /* WebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = F8D791BB1599630300986BCD /* WebSocket.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		F8D81C8F15DCE2E700E1F17C /* UIDevice+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = F8D81C8D15DCE2E700E1F17C /* UIDevice+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F8D81C9015DCE2E700E1F17C /* UIDevice+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = F8D81C8E15DCE2E700E1F17C /* UIDevice+Extension.m */; };
 		F8E3BEDD158F10C200467088 /* MBProgressHUD.h in Headers */ = {isa = PBXBuildFile; fileRef = F8E3BEDB158F10C200467088 /* MBProgressHUD.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8E3BEDE158F10C200467088 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E3BEDC158F10C200467088 /* MBProgressHUD.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		F8E3BEE3158F192E00467088 /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = F8E3BEE1158F192E00467088 /* JSONKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -209,6 +215,10 @@
 		F800184E15B66BFB00745A8F /* NSAttributedString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+Extension.m"; sourceTree = "<group>"; };
 		F800185215B66C1F00745A8F /* UIAttributedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIAttributedLabel.h; sourceTree = "<group>"; };
 		F800185315B66C1F00745A8F /* UIAttributedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIAttributedLabel.m; sourceTree = "<group>"; };
+		F87686BA15DE333A00DDDA23 /* RIButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RIButtonItem.h; sourceTree = "<group>"; };
+		F87686BB15DE333A00DDDA23 /* RIButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RIButtonItem.m; sourceTree = "<group>"; };
+		F87686BC15DE333A00DDDA23 /* UIAlertView+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+Blocks.h"; sourceTree = "<group>"; };
+		F87686BD15DE333A00DDDA23 /* UIAlertView+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+Blocks.m"; sourceTree = "<group>"; };
 		F885A58C159AAE5200709FC7 /* AVCamUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamUtilities.h; sourceTree = "<group>"; };
 		F885A58D159AAE5200709FC7 /* AVCamUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamUtilities.m; sourceTree = "<group>"; };
 		F8B5F46915AAD086005A8C09 /* NSNumber+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNumber+Extension.h"; sourceTree = "<group>"; };
@@ -219,6 +229,8 @@
 		F8D791B91599630300986BCD /* SocketIO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketIO.m; sourceTree = "<group>"; };
 		F8D791BA1599630300986BCD /* WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocket.h; sourceTree = "<group>"; };
 		F8D791BB1599630300986BCD /* WebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSocket.m; sourceTree = "<group>"; };
+		F8D81C8D15DCE2E700E1F17C /* UIDevice+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+Extension.h"; sourceTree = "<group>"; };
+		F8D81C8E15DCE2E700E1F17C /* UIDevice+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+Extension.m"; sourceTree = "<group>"; };
 		F8E3BEDB158F10C200467088 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		F8E3BEDC158F10C200467088 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		F8E3BEE1158F192E00467088 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
@@ -405,6 +417,12 @@
 		DC3C15CB158B936600B31A79 /* UIKitExtension */ = {
 			isa = PBXGroup;
 			children = (
+				F87686BA15DE333A00DDDA23 /* RIButtonItem.h */,
+				F87686BB15DE333A00DDDA23 /* RIButtonItem.m */,
+				F87686BC15DE333A00DDDA23 /* UIAlertView+Blocks.h */,
+				F87686BD15DE333A00DDDA23 /* UIAlertView+Blocks.m */,
+				F8D81C8D15DCE2E700E1F17C /* UIDevice+Extension.h */,
+				F8D81C8E15DCE2E700E1F17C /* UIDevice+Extension.m */,
 				DC3C15CC158B936600B31A79 /* UIActionSheet+Extension.h */,
 				DC3C15CD158B936600B31A79 /* UIActionSheet+Extension.m */,
 				DC3C1616158B941000B31A79 /* UIColor+Extension.h */,
@@ -547,6 +565,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F87686BE15DE333A00DDDA23 /* RIButtonItem.h in Headers */,
+				F87686C015DE333A00DDDA23 /* UIAlertView+Blocks.h in Headers */,
+				F8D81C8F15DCE2E700E1F17C /* UIDevice+Extension.h in Headers */,
 				F800185415B66C1F00745A8F /* UIAttributedLabel.h in Headers */,
 				F800184F15B66BFB00745A8F /* NSAttributedString+Extension.h in Headers */,
 				F8B5F46B15AAD086005A8C09 /* NSNumber+Extension.h in Headers */,
@@ -721,6 +742,9 @@
 				F8B5F46C15AAD086005A8C09 /* NSNumber+Extension.m in Sources */,
 				F800185015B66BFB00745A8F /* NSAttributedString+Extension.m in Sources */,
 				F800185515B66C1F00745A8F /* UIAttributedLabel.m in Sources */,
+				F8D81C9015DCE2E700E1F17C /* UIDevice+Extension.m in Sources */,
+				F87686BF15DE333A00DDDA23 /* RIButtonItem.m in Sources */,
+				F87686C115DE333A00DDDA23 /* UIAlertView+Blocks.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
