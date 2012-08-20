@@ -69,9 +69,6 @@ static AddressBookManager *singletonAddressBookManagerRef;
 
 @property (nonatomic, readonly) id addressBookChangedObserver;
 
-// generate contact with contact's name, phone numbers info by record
-- (ContactBean *)generateContactNamePhoneNumsInfoByRecord:(ABRecordRef)pRecord;
-
 // get contact information array by particular phone number
 - (NSArray *)getContactInfoByPhoneNumber:(NSString *)pPhoneNumber;
 
@@ -475,93 +472,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     ABAddressBookUnregisterExternalChangeCallback(ABAddressBookCreate(), addressBookChanged, (__bridge void *)(pObserver));
 }
 
-- (ContactBean *)generateContactNamePhoneNumsInfoByRecord:(ABRecordRef)pRecord{
-    ContactBean *_contact = [[ContactBean alloc] init];
-    
-    // set contact id
-    _contact.id = ABRecordGetRecordID(pRecord);
-    
-    // name info
-    // get person first name, middle name and last name
-    NSString *_firstName = (__bridge_transfer NSString *)ABRecordCopyValue(pRecord, kABPersonFirstNameProperty);
-    NSString *_middleName = (__bridge_transfer NSString *)ABRecordCopyValue(pRecord, kABPersonMiddleNameProperty);
-    NSString *_lastName = (__bridge_transfer NSString *)ABRecordCopyValue(pRecord, kABPersonLastNameProperty);
-    
-    // check first, middle and last name
-    _firstName = (!_firstName) ? @"" : _firstName;
-    _middleName = (!_middleName) ? @"" : _middleName;
-    _lastName = (!_lastName) ? @"" : _lastName;
-    
-    // donn't need to use MiddleName usually
-    // set display name
-    _contact.displayName = [[NSString stringWithFormat:@"%@ %@", _lastName, _firstName] isNil] ? zh_Hans == [UIDevice currentDevice].systemCurrentSettingLanguage ? @"无名字" : (zh_Hant == [UIDevice currentDevice].systemCurrentSettingLanguage ? @"無名字" : @"No Name") : zh_Hans == [UIDevice currentDevice].systemCurrentSettingLanguage || zh_Hant == [UIDevice currentDevice].systemCurrentSettingLanguage ? [NSString stringWithFormat:@"%@ %@", _lastName, _firstName] : [NSString stringWithFormat:@"%@ %@", _firstName, _lastName];
-    
-    // set full name array
-    NSMutableArray *_tmpNameArray = [[NSMutableArray alloc] init];
-    if (zh_Hans != [UIDevice currentDevice].systemCurrentSettingLanguage && zh_Hant != [UIDevice currentDevice].systemCurrentSettingLanguage) {
-        [_tmpNameArray addObjectsFromArray:[_firstName nameArraySeparatedByCharacter]];
-        [_tmpNameArray addObjectsFromArray:[_lastName nameArraySeparatedByCharacter]];
-    }
-    else {
-        [_tmpNameArray addObjectsFromArray:[_lastName nameArraySeparatedByCharacter]];
-        [_tmpNameArray addObjectsFromArray:[_firstName nameArraySeparatedByCharacter]];
-    }
-    _contact.fullNames = _tmpNameArray;
-    
-    // set name phonetics
-    NSMutableArray *_tmpNamePhoneticArray = [[NSMutableArray alloc] init];
-    for (NSString *_name in _contact.fullNames) {
-        // get each name unicode
-        unichar _unicode = [_name characterAtIndex:0];
-        // check name unicode
-        if (_unicode >= 19968 && _unicode <= 40869) {
-            // chinese character
-            NSString *_nameUnicodeString = [NSString stringWithFormat:@"%0X", _unicode];
-            [_tmpNamePhoneticArray addObject:[NSLocalizedStringFromPinyin4jBundle(_nameUnicodeString, nil) toArrayWithSeparator:@","]];
-        }
-        else {
-            // others, character
-            [_tmpNamePhoneticArray addObject:[NSArray arrayWithObject:[_name lowercaseString]]];
-        }
-    }
-    _contact.namePhonetics = _tmpNamePhoneticArray;
-    
-    // phone numbers info
-    // get contact's phone numbers array in addressBook
-    ABMultiValueRef _contactPhoneNumberArrayInAB = (ABMultiValueRef)ABRecordCopyValue(pRecord, kABPersonPhoneProperty);
-    
-    // check contact's phone numbers array in addressBook
-    if(_contactPhoneNumberArrayInAB){
-        NSMutableArray *_contactPNArr = [[NSMutableArray alloc] init];
-        
-        // process temp phone number array
-        for(int _index = 0; _index < ABMultiValueGetCount(_contactPhoneNumberArrayInAB); _index++){
-            NSString *_phoneNumber = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(_contactPhoneNumberArrayInAB, _index); 
-            
-	    _phoneNumber = [_phoneNumber stringByTrimmingCharactersInString:@"()- "];
-            // remove the specified prefix
-            for (NSString *prefix in PHONE_NUMBER_FILTER_PREFIX) {
-                NSRange range = [_phoneNumber rangeOfString:prefix];
-                if (range.location == 0) {
-                    if (range.length < _phoneNumber.length) {
-                        _phoneNumber = [_phoneNumber substringFromIndex:range.length];
-                    }
-                }
-            }
-
-            // add each phone number to contact phone number array
-            [_contactPNArr addObject:[_phoneNumber stringByTrimmingCharactersInString:@"()- "]];
-        }
-        
-        // set contact phone number array
-        _contact.phoneNumbers = _contactPNArr;
-    }
-    
-    CFRelease(_contactPhoneNumberArrayInAB);
-    
-    return _contact;
-}
-
 - (NSArray *)getContactInfoByPhoneNumber:(NSString *)pPhoneNumber{
     NSMutableArray *_ret = [[NSMutableArray alloc] init];
     
@@ -652,26 +562,110 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         ABRecordRef _person = CFArrayGetValueAtIndex(_contacts, _index);
         
         // get contact info
-        // id
-        ABRecordID _recordID = ABRecordGetRecordID(_person);
+        ContactBean *_contactBean = [[ContactBean alloc] init];
+        
+        // set contact id
+        _contactBean.id = ABRecordGetRecordID(_person);
+        
         // group array
         if (!_mContactIdGroupsDic) {
             [self initContactIdGroupsDictionary];
         }
-        NSArray* _groupArray = [_mContactIdGroupsDic objectForKey:[NSNumber numberWithInt:_recordID]];
+        // set contact group
+        _contactBean.groups = [_mContactIdGroupsDic objectForKey:[NSNumber numberWithInt:ABRecordGetRecordID(_person)]];
         
-        // generate contact name and phone number info
-        ContactBean *_contactBean = [self generateContactNamePhoneNumsInfoByRecord:_person];
+        // name info
+        // get person first name, middle name and last name
+        NSString *_firstName = (__bridge_transfer NSString *)ABRecordCopyValue(_person, kABPersonFirstNameProperty);
+        NSString *_middleName = (__bridge_transfer NSString *)ABRecordCopyValue(_person, kABPersonMiddleNameProperty);
+        NSString *_lastName = (__bridge_transfer NSString *)ABRecordCopyValue(_person, kABPersonLastNameProperty);
         
-        // photo
-        NSData* _photo = (__bridge NSData*)ABPersonCopyImageData(_person);
+        // check first, middle and last name
+        _firstName = (!_firstName) ? @"" : _firstName;
+        _middleName = (!_middleName) ? @"" : _middleName;
+        _lastName = (!_lastName) ? @"" : _lastName;
         
-        // perfect contact
-        _contactBean.groups = _groupArray;
-        _contactBean.photo = _photo;
+        // donn't need to use MiddleName usually
+        // set display name
+        _contactBean.displayName = [[NSString stringWithFormat:@"%@ %@", _lastName, _firstName] isNil] ? zh_Hans == [UIDevice currentDevice].systemCurrentSettingLanguage ? @"无名字" : (zh_Hant == [UIDevice currentDevice].systemCurrentSettingLanguage ? @"無名字" : @"No Name") : zh_Hans == [UIDevice currentDevice].systemCurrentSettingLanguage || zh_Hant == [UIDevice currentDevice].systemCurrentSettingLanguage ? [NSString stringWithFormat:@"%@ %@", _lastName, _firstName] : [NSString stringWithFormat:@"%@ %@", _firstName, _lastName];
+        
+        // set full name array
+        NSMutableArray *_tmpNameArray = [[NSMutableArray alloc] init];
+        if (zh_Hans != [UIDevice currentDevice].systemCurrentSettingLanguage && zh_Hant != [UIDevice currentDevice].systemCurrentSettingLanguage) {
+            [_tmpNameArray addObjectsFromArray:[_firstName nameArraySeparatedByCharacter]];
+            [_tmpNameArray addObjectsFromArray:[_lastName nameArraySeparatedByCharacter]];
+        }
+        else {
+            [_tmpNameArray addObjectsFromArray:[_lastName nameArraySeparatedByCharacter]];
+            [_tmpNameArray addObjectsFromArray:[_firstName nameArraySeparatedByCharacter]];
+        }
+        _contactBean.fullNames = _tmpNameArray;
+        
+        // set name phonetics
+        NSMutableArray *_tmpNamePhoneticArray = [[NSMutableArray alloc] init];
+        for (NSString *_name in _contactBean.fullNames) {
+            // get each name unicode
+            unichar _unicode = [_name characterAtIndex:0];
+            // check name unicode
+            if (_unicode >= 19968 && _unicode <= 40869) {
+                // chinese character
+                NSString *_nameUnicodeString = [NSString stringWithFormat:@"%0X", _unicode];
+                [_tmpNamePhoneticArray addObject:[NSLocalizedStringFromPinyin4jBundle(_nameUnicodeString, nil) toArrayWithSeparator:@","]];
+            }
+            else {
+                // others, character
+                [_tmpNamePhoneticArray addObject:[NSArray arrayWithObject:[_name lowercaseString]]];
+            }
+        }
+        _contactBean.namePhonetics = _tmpNamePhoneticArray;
+        
+        // phone numbers info
+        // get contact's phone numbers array in addressBook
+        ABMultiValueRef _contactPhoneNumberArrayInAB = (ABMultiValueRef)ABRecordCopyValue(_person, kABPersonPhoneProperty);
+        
+        // check contact's phone numbers array in addressBook
+        if(_contactPhoneNumberArrayInAB){
+            NSMutableArray *_contactPNArr = [[NSMutableArray alloc] init];
+            
+            // process temp phone number array
+            for(int _index = 0; _index < ABMultiValueGetCount(_contactPhoneNumberArrayInAB); _index++){
+                NSString *_phoneNumber = [(__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(_contactPhoneNumberArrayInAB, _index) stringByTrimmingCharactersInString:@"()- "];
+                
+                // if contact has no name, set first phone number as contact display name
+                if (0 == _index && 0 == [_contactBean.fullNames count]) {
+                    // update display name
+                    _contactBean.displayName = _phoneNumber;
+                    /*
+                    // update full names
+                    _contactBean.fullNames = [_phoneNumber nameArraySeparatedByCharacter];
+                    // update name phonetics
+                    NSMutableArray *_tmpNamePhoneticArray = [[NSMutableArray alloc] init];
+                    for (NSString *_eachName in _contactBean.fullNames) {
+                        [_tmpNamePhoneticArray addObject:[NSArray arrayWithObject:_eachName]];
+                    }
+                    _contactBean.namePhonetics = _tmpNamePhoneticArray;
+                     */
+                }
+                
+                // add each phone number to contact phone number array
+                [_contactPNArr addObject:_phoneNumber];
+            }
+            
+            // set contact phone number array
+            _contactBean.phoneNumbers = _contactPNArr;
+        }
+        
+        // release contact phone numbers ABMultiValueRef
+        CFRelease(_contactPhoneNumberArrayInAB);
+        
+        // set contact photo
+        _contactBean.photo = (__bridge NSData *)(ABPersonCopyImageData(_person));
         
         // add contactBean in all contacts array
-        [_ret addObject:_contactBean];
+        //[_ret addObject:_contactBean];
+        if ([_contactBean.fullNames count] > 0 || [_contactBean.phoneNumbers count] > 0) {
+            [_ret addObject:_contactBean];
+        }
     }
     
     // release
@@ -799,8 +793,8 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     // process need to sorted contacts info array
     for (ContactBean *_contact in self) {
         // append contact to sorted contacts info array
-        // if self is empty, add the first without compare
-        if (0 == [_ret count]) {
+        // if self is empty or the contact without name and phone numbers, add without compare
+        if (0 == [_ret count] || (0 == [_contact.fullNames count] && 0 == [_contact.phoneNumbers count])) {
             [_ret addObject:_contact];
         }
         else {
@@ -808,6 +802,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
             for (NSInteger _index = 0; _index < [_ret count]; _index++) {
                 // the contact has no name
                 if ([[_contact.namePhonetics namePhoneticsString] isEqualToString:@""]) {
+                    // sorted contact has name
                     if (![[((ContactBean *)[_ret objectAtIndex:_index]).namePhonetics namePhoneticsString] isEqualToString:@""]) {
                         // at last
                         if (_index == [_ret count] - 1) {
@@ -821,10 +816,14 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                         }
                     }
                     // if the sorted contact without name, compare their first phone number
-                    else if ([[_contact.phoneNumbers objectAtIndex:0] compare:[((ContactBean *)[_ret objectAtIndex:_index]).phoneNumbers objectAtIndex:0]] < NSOrderedSame) {
+                    else if (([((ContactBean *)[_ret objectAtIndex:_index]).phoneNumbers count] > 0 && [[_contact.phoneNumbers objectAtIndex:0] compare:[((ContactBean *)[_ret objectAtIndex:_index]).phoneNumbers objectAtIndex:0]] < NSOrderedSame) || 0 == [((ContactBean *)[_ret objectAtIndex:_index]).phoneNumbers count]) {
                         [_ret insertObject:_contact atIndex:_index];
                         
                         break;
+                    }
+                    else if (_index < [_ret count] - 1) {
+                        // except the sorted contact without name and phone number is less
+                        continue;
                     }
                     
                     // at last
