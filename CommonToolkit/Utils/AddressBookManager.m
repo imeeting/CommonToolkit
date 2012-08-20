@@ -538,7 +538,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         for(int _index = 0; _index < ABMultiValueGetCount(_contactPhoneNumberArrayInAB); _index++){
             NSString *_phoneNumber = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(_contactPhoneNumberArrayInAB, _index); 
             
-	    _phoneNumber = [_phoneNumber stringByTrimmingCharactersInString:@"()- "];
+            _phoneNumber = [_phoneNumber stringByTrimmingCharactersInString:@"()- "];
             // remove the specified prefix
             for (NSString *prefix in PHONE_NUMBER_FILTER_PREFIX) {
                 NSRange range = [_phoneNumber rangeOfString:prefix];
