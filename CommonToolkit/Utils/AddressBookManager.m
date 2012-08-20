@@ -631,6 +631,16 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
             for(int _index = 0; _index < ABMultiValueGetCount(_contactPhoneNumberArrayInAB); _index++){
                 NSString *_phoneNumber = [(__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(_contactPhoneNumberArrayInAB, _index) stringByTrimmingCharactersInString:@"()- "];
                 
+                // remove the specified prefix
+                for (NSString *prefix in PHONE_NUMBER_FILTER_PREFIX) {
+                    NSRange range = [_phoneNumber rangeOfString:prefix];
+                    if (range.location == 0) {
+                        if (range.length < _phoneNumber.length) {
+                            _phoneNumber = [_phoneNumber substringFromIndex:range.length];
+                        }
+                    }
+                }
+                
                 // if contact has no name, set first phone number as contact display name
                 if (0 == _index && 0 == [_contactBean.fullNames count]) {
                     // update display name
