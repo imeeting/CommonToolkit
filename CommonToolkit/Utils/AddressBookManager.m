@@ -769,6 +769,61 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     return _ret;
 }
 
+- (BOOL)isContactExistInAddressBookByName:(NSString *)name {
+    ABAddressBookRef addressBook = ABAddressBookCreate();
+    CFArrayRef contacts = ABAddressBookCopyPeopleWithName(addressBook, (__bridge CFStringRef)name);
+    CFIndex count = CFArrayGetCount(contacts);
+    BOOL exist = NO;
+    if (count <= 0) {
+        exist = NO;
+    } else {
+        for (CFIndex i = 0; i < count; i++) {
+            ABRecordRef contact = CFArrayGetValueAtIndex(contacts, i);
+            NSString *contactName = (__bridge_transfer NSString*)ABRecordCopyValue(contact, kABPersonFirstNameProperty);
+            if ([name isEqualToString:contactName]) {
+                exist = YES;
+            }
+        }
+    }
+    CFRelease(addressBook);
+    CFRelease(contacts);
+    return exist;
+}
+
+- (BOOL)addConatctToAddressBookWithFirstName:(NSString *)firstName andLastName:(NSString *)lastName andPhones:(NSArray *)phoneNumbers {
+    ABAddressBookRef addressBook = ABAddressBookCreate();
+    BOOL success = NO;
+    CFErrorRef error = NULL;
+    
+    ABRecordRef contact = ABPersonCreate();
+
+    ABRecordSetValue(contact, kABPersonFirstNameProperty, (__bridge CFStringRef)firstName, &error);
+    ABRecordSetValue(contact, kABPersonLastNameProperty, (__bridge CFStringRef)lastName, &error);
+    
+    ABMultiValueIdentifier identifier;
+    
+    ABMutableMultiValueRef phones = ABMultiValueCreateMutable(kABMultiStringPropertyType);
+    if (phoneNumbers) {
+        for (NSString *phoneNumber in phoneNumbers) {
+            ABMultiValueAddValueAndLabel(phones, (__bridge CFStringRef)phoneNumber, kABPersonPhoneMainLabel, &identifier);
+        }
+    }
+    ABRecordSetValue(contact, kABPersonPhoneProperty, phones, &error);
+    
+    
+    bool didSave = ABAddressBookSave(addressBook, &error);
+    if (didSave) {
+        success = YES;
+    } else {
+        success = NO;
+    }
+    
+    CFRelease(phones);
+    CFRelease(contact);
+    CFRelease(addressBook);
+    return success;
+}
+
 void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void *context){
     // get addressBook changed observer
     id _addressBookChangedObserver = [AddressBookManager shareAddressBookManager].addressBookChangedObserver;
@@ -1051,5 +1106,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     
     return _ret;
 }
+
 
 @end

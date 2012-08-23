@@ -135,7 +135,7 @@ typedef enum {
 - (NSArray *)contactsDisplayNameArrayWithPhoneNumber:(NSString *)pPhoneNumber;
 
 // get the default contact by phone number
-- (ContactBean*)defaultContactByPhoneNumber:(NSString*)pPhoneNumber;
+- (ContactBean*)defaultContactByPhoneNumber:(NSString *)pPhoneNumber;
 
 // add addressBook changed callback observer
 - (void)addABChangedObserver:(id)pObserver;
@@ -143,4 +143,7 @@ typedef enum {
 // remove addressBook changed callback observer
 - (void)removeABChangedObserver:(id)pObserver;
 
+- (BOOL)isContactExistInAddressBookByName:(NSString *)name;
+
+- (BOOL)addConatctToAddressBookWithFirstName:(NSString *)firstName andLastName:(NSString *)lastName andPhones:(NSArray *)phoneNumbers;
 @end
