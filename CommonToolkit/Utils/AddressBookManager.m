@@ -96,7 +96,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 @implementation AddressBookManager
 
 @synthesize allContactsInfoArray = _mAllContactsInfoArray;
-
+@synthesize allGroupsInfoArray = _allGroupsInfoArray;
 @synthesize addressBookChangedObserver = _mAddressBookChangedObserver;
 
 - (id)init{
@@ -498,6 +498,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     // check contact id - groups dictionary
     if (!_mContactIdGroupsDic) {
         _mContactIdGroupsDic = [[NSMutableDictionary alloc] init];
+        _allGroupsInfoArray = [[NSMutableArray alloc] initWithCapacity:10];
     }
     else {
         // return immediately
@@ -510,6 +511,8 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     // get all group array
     CFArrayRef _groups = ABAddressBookCopyArrayOfAllGroups(addressBook);
     
+    NSLog(@"addressbook group count: %ld", CFArrayGetCount(_groups));
+    
     // process all group array
     for(int _index = 0; _index < CFArrayGetCount(_groups); _index++){
         // get group object
@@ -517,6 +520,12 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         
         // get group name, part of contact id - groups dictionary, group array value
         NSString *_groupName = (__bridge NSString*)ABRecordCopyValue(_group, kABGroupNameProperty);
+        ABRecordID groupId = ABRecordGetRecordID(_group);
+        
+        NSDictionary *groupInfo = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:groupId], @"group_id", _groupName, @"group_name", nil];
+        [_allGroupsInfoArray addObject:groupInfo];
+        
+        NSLog(@"addressbook group id: %d, name: %@", groupId, _groupName);
         
         // get all group members
         CFArrayRef _groupMembers = ABGroupCopyArrayOfAllMembers(_group);
@@ -525,20 +534,20 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         for (int __index = 0; __index < CFArrayGetCount(_groupMembers); __index++) {
             // get group member id
             ABRecordID _memberID = ABRecordGetRecordID(CFArrayGetValueAtIndex(_groupMembers, __index));
-            
+
             // judge group member id
             if ([[_mContactIdGroupsDic allKeys] containsObject:[NSNumber numberWithInt:_memberID]]) {
                 // get existed value
                 NSMutableArray *_value = [NSMutableArray arrayWithArray:[_mContactIdGroupsDic objectForKey:[NSNumber numberWithInt:_memberID]]];
                 
-                // append the group name
-                [_value addObject:_groupName];
+                // append the group info
+                [_value addObject:groupInfo];
                 // set dictionary
                 [_mContactIdGroupsDic setObject:_value forKey:[NSNumber numberWithInt:_memberID]];
             }
             else{
                 // set dictionary
-                [_mContactIdGroupsDic setObject:[NSArray arrayWithObject:_groupName] forKey:[NSNumber numberWithInt:_memberID]];
+                [_mContactIdGroupsDic setObject:[NSArray arrayWithObject:groupInfo] forKey:[NSNumber numberWithInt:_memberID]];
             }
         }
     }

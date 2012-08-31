@@ -106,6 +106,7 @@ typedef enum {
 }
 
 @property (nonatomic, readonly) NSMutableArray *allContactsInfoArray;
+@property (nonatomic, readonly) NSMutableArray *allGroupsInfoArray;
 
 // share singleton AddressBookManager
 + (AddressBookManager *)shareAddressBookManager;
