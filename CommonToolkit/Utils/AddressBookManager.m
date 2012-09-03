@@ -222,7 +222,8 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         [_mContactSearchResultDic setObject:_searchedContactArray forKey:pPhoneNumber];
     }
     
-    return pSortedType == phonetics ? [_ret phoneticsSortedContactsInfoArray] : _ret;
+    //return pSortedType == phonetics ? [_ret phoneticsSortedContactsInfoArray] : _ret;
+    return _ret;
 }
 
 - (NSArray *)getContactByName:(NSString *)pName{
@@ -412,7 +413,8 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         [_mContactSearchResultDic setObject:_searchedContactArray forKey:pName];
     }
     
-    return pSortedType == phonetics ? [_ret phoneticsSortedContactsInfoArray] : _ret;
+   // return pSortedType == phonetics ? [_ret phoneticsSortedContactsInfoArray] : _ret;
+    return _ret;
 }
 
 - (void)getContactEnd{
