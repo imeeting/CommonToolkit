@@ -92,8 +92,10 @@
         NSInteger _groupsMaxCount = [_groups count] > [pContactBean.groups count] ? [pContactBean.groups count] : [_groups count];
         
         for (NSInteger _index = 0; _index < _groupsMaxCount; _index++) {
-            if (![[_groups objectAtIndex:_index] isEqualToString:[pContactBean.groups objectAtIndex:_index]]) {
-                _ret = NSOrderedAscending;
+            NSDictionary *groupInfo1 = [_groups objectAtIndex:_index];
+            NSDictionary *groupInfo2 = [pContactBean.groups objectAtIndex:_index];
+            if (![[groupInfo1 objectForKey:@"group_id"] isEqualToNumber:[groupInfo2 objectForKey:@"group_id"]]) {
+                _ret = NSOrderedAscending;	
                 
                 return _ret;
             }
