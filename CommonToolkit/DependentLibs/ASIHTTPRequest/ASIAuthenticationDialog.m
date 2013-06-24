@@ -33,6 +33,9 @@ static const NSUInteger kDomainSection = 1;
 
 
 @interface ASIAuthenticationDialog ()
+// add by ares
++ (void)dismissModalViewController:(UIViewController *)pUIViewController;
+
 - (void)showTitle;
 - (void)show;
 - (NSArray *)requestsRequiringTheseCredentials;
@@ -217,9 +220,13 @@ static const NSUInteger kDomainSection = 1;
 + (void)dismiss
 {
 	if ([sharedDialog respondsToSelector:@selector(presentingViewController)])
-		[[sharedDialog presentingViewController] dismissModalViewControllerAnimated:YES];
-	else 
-		[[sharedDialog parentViewController] dismissModalViewControllerAnimated:YES];
+        // modify by ares
+		// [[sharedDialog presentingViewController] dismissModalViewControllerAnimated:YES];
+        [self dismissModalViewController:[sharedDialog presentingViewController]];
+	else
+        // modify by ares
+		// [[sharedDialog parentViewController] dismissModalViewControllerAnimated:YES];
+        [self dismissModalViewController:[sharedDialog parentViewController]];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -237,10 +244,28 @@ static const NSUInteger kDomainSection = 1;
 		[[self class] dismiss];
 	} else {
 		if ([self respondsToSelector:@selector(presentingViewController)])
-			[[self presentingViewController] dismissModalViewControllerAnimated:YES];
+            // modify by ares
+			// [[self presentingViewController] dismissModalViewControllerAnimated:YES];
+            [ASIAuthenticationDialog dismissModalViewController:[self presentingViewController]];
 		else
-			[[self parentViewController] dismissModalViewControllerAnimated:YES];
+            // modify by ares
+			// [[self parentViewController] dismissModalViewControllerAnimated:YES];
+            [ASIAuthenticationDialog dismissModalViewController:[self parentViewController]];
 	}
+}
+
+// add by ares
++ (void)dismissModalViewController:(UIViewController *)pUIViewController{
+    // check view controller
+    if (nil != pUIViewController) {
+        if ([pUIViewController respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]){
+            [pUIViewController dismissViewControllerAnimated:YES completion:nil];
+        } else {
+            [pUIViewController performSelector:@selector(dismissModalViewControllerAnimated:) withObject:[NSNumber numberWithBool:YES]];
+        }
+    } else {
+        NSLog(@"Param UIViewController is nil");
+    }
 }
 
 - (void)showTitle
@@ -315,7 +340,13 @@ static const NSUInteger kDomainSection = 1;
 	}
 #endif
 
-	[[self presentingController] presentModalViewController:self animated:YES];
+    // modify by ares
+	// [[self presentingController] presentModalViewController:self animated:YES];
+    if ([[self presentingController] respondsToSelector:@selector(presentViewController:animated:completion:)]){
+        [[self presentingController] presentViewController:self animated:YES completion:nil];
+    } else {
+        [[self presentingController] performSelector:@selector(presentModalViewController:animated:) withObject:self withObject:[NSNumber numberWithBool:YES]];
+    }
 }
 
 #pragma mark button callbacks

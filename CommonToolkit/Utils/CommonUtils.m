@@ -2,7 +2,7 @@
 //  CommonUtils.m
 //  CommonToolkit
 //
-//  Created by  on 12-6-9.
+//  Created by Ares on 12-6-9.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 

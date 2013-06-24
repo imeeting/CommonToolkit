@@ -2,7 +2,7 @@
 //  UIColor+Extension.h
 //  CommonToolkit
 //
-//  Created by  on 12-6-15.
+//  Created by Ares on 12-6-15.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 

@@ -2,7 +2,7 @@
 //  AddressBookManager.h
 //  CommonToolkit
 //
-//  Created by  on 12-6-8.
+//  Created by Ares on 12-6-8.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 
@@ -57,6 +57,9 @@ typedef enum {
 
 // phonetics sorted contacts info array
 - (NSMutableArray *)phoneticsSortedContactsInfoArray;
+
+// optimization phonetics sorted contacts info array
+- (NSMutableArray *)optPhoneticsSortedContactsInfoArray;
 
 @end
 

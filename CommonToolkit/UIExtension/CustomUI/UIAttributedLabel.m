@@ -2,7 +2,7 @@
 //  UIAttributedLabel.m
 //  CommonToolkit
 //
-//  Created by  on 12-7-14.
+//  Created by Ares on 12-7-14.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 
@@ -14,15 +14,17 @@
 
 CTTextAlignment CTTextAlignmentFromUITextAlignment(UITextAlignment alignment) {
 	switch (alignment) {
-		case UITextAlignmentLeft: 
+		case NSTextAlignmentLeft:
             return kCTLeftTextAlignment;
-		case UITextAlignmentCenter: 
+		case NSTextAlignmentCenter:
             return kCTCenterTextAlignment;
-		case UITextAlignmentRight: 
+		case NSTextAlignmentRight:
             return kCTRightTextAlignment;
-            // special OOB value if we decide to use it even if it's not really standard... 
-		case UITextAlignmentJustify: 
+            // special OOB value if we decide to use it even if it's not really standard...
+        /*
+		case UITextAlignmentJustify:
             return kCTJustifiedTextAlignment; 
+         */
 		default: 
             return kCTNaturalTextAlignment;
 	}
@@ -30,17 +32,17 @@ CTTextAlignment CTTextAlignmentFromUITextAlignment(UITextAlignment alignment) {
 
 CTLineBreakMode CTLineBreakModeFromUILineBreakMode(UILineBreakMode lineBreakMode) {
 	switch (lineBreakMode) {
-		case UILineBreakModeWordWrap: 
+		case NSLineBreakByWordWrapping:
             return kCTLineBreakByWordWrapping;
-		case UILineBreakModeCharacterWrap: 
+		case NSLineBreakByCharWrapping: 
             return kCTLineBreakByCharWrapping;
-		case UILineBreakModeClip: 
+		case NSLineBreakByClipping: 
             return kCTLineBreakByClipping;
-		case UILineBreakModeHeadTruncation: 
+		case NSLineBreakByTruncatingHead: 
             return kCTLineBreakByTruncatingHead;
-		case UILineBreakModeTailTruncation: 
+		case NSLineBreakByTruncatingTail: 
             return kCTLineBreakByTruncatingTail;
-		case UILineBreakModeMiddleTruncation: 
+		case NSLineBreakByTruncatingMiddle:
             return kCTLineBreakByTruncatingMiddle;
 		default: 
             return 0;
@@ -437,7 +439,7 @@ BOOL CTRunContainsCharactersFromStringRange(CTRunRef run, NSRange range) {
 	_mLinkColor = [UIColor blueColor];
 	_mHighlightedLinkColor = [UIColor colorWithWhite:0.4 alpha:0.3];
 	_mUnderlineLinks = YES;
-	_mAutomaticallyAddLinksForType = NSTextCheckingTypeLink;
+	_mAutomaticallyAddLinksForType = (NSTextCheckingTypes)NSTextCheckingTypeLink;
 	if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tel:0"]]) {
 		_mAutomaticallyAddLinksForType |= NSTextCheckingTypePhoneNumber;
 	}
@@ -649,7 +651,7 @@ BOOL CTRunContainsCharactersFromStringRange(CTRunRef run, NSRange range) {
 
 #if OHAttributedLabel_WarnAboutKnownIssues
 - (void)warnAboutKnownIssues_CheckLineBreakMode {
-	BOOL _truncationMode = (self.lineBreakMode == UILineBreakModeHeadTruncation) || (self.lineBreakMode == UILineBreakModeMiddleTruncation) || (self.lineBreakMode == UILineBreakModeTailTruncation);
+	BOOL _truncationMode = (self.lineBreakMode == NSLineBreakByTruncatingHead) || (self.lineBreakMode == NSLineBreakByTruncatingMiddle) || (self.lineBreakMode == NSLineBreakByTruncatingTail);
     
 	if (_truncationMode) {
 		NSLog(@"[UIAttributedLabel] Warning: \"UILineBreakMode...Truncation\" lineBreakModes not yet fully supported by CoreText and UIAttributedLabel");

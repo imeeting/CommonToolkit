@@ -2,11 +2,13 @@
 //  UIView+UI+ViewController.m
 //  CommonToolkit
 //
-//  Created by  on 12-6-7.
+//  Created by Ares on 12-6-7.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 
 #import "UIView+UI+ViewController.h"
+
+#import <QuartzCore/QuartzCore.h>
 
 #import "UIViewExtensionManager.h"
 
@@ -15,6 +17,12 @@
 #import "UIDevice+Extension.h"
 
 #import "CommonUtils.h"
+
+#import "DisplayScreenUtils.h"
+
+#import "CGRectMaker+Extension.h"
+
+#import "FoundationExtensionManager.h"
 
 // one hand five fingers
 #define MAXFINGERS_COUNT    5
@@ -120,6 +128,100 @@
     return [[UIViewExtensionManager shareUIViewExtensionManager] uiViewExtensionForKey:[NSNumber numberWithInteger:self.hash]].backgroundImg;
 }
 
+- (void)setTabBarItem:(UITabBarItem *)tabBarItem{
+    // set view tab bar item
+    self.viewControllerRef.tabBarItem = tabBarItem;
+    
+    // save tab bar item
+    [[UIViewExtensionManager shareUIViewExtensionManager] setUIViewExtension:tabBarItem withType:tabBarItemExt forKey:[NSNumber numberWithInteger:self.hash]];
+}
+
+- (UITabBarItem *)tabBarItem{
+    return [[UIViewExtensionManager shareUIViewExtensionManager] uiViewExtensionForKey:[NSNumber numberWithInteger:self.hash]].tabBarItem;
+}
+
+@end
+
+
+
+
+@implementation UIView (Draw)
+
+- (void)setCornerRadius:(CGFloat)cornerRadius{
+    // set corner radius
+    if (cornerRadius > 0.0) {
+        self.layer.cornerRadius = cornerRadius;
+        self.layer.masksToBounds = YES;
+    }
+}
+
+- (void)setBorderWithWidth:(CGFloat)borderWidth andColor:(UIColor *)borderColor{
+    // set border width and color
+    if (borderWidth > 0.0 && nil != borderColor) {
+        self.layer.borderWidth = borderWidth;
+        self.layer.borderColor = [borderColor CGColor];
+    }
+}
+
+- (void)resizesSubviews{
+    // get UIView all subviews
+    NSArray *_allSubViews = [self subviews];
+    
+    // get UIView draw rectangle
+    CGRect _drawRect = self.bounds;
+    
+    // check if there is or not subviews
+    if (nil != _allSubViews) {
+        for (int i = 0; i < _allSubViews.count; i++) {
+            // get each subview
+            UIView *_subView = [_allSubViews objectAtIndex:i];
+            
+            // get subview frame origin
+            CGFloat _subViewOriginX = _subView.frame.origin.x;
+            CGFloat _subViewOriginY = _subView.frame.origin.y;
+            
+            // get subview frame width and height
+            CGFloat _subViewWidth = _subView.frame.size.width;
+            CGFloat _subViewHeight = _subView.frame.size.height;
+            
+            // get foundation extension manager
+            FoundationExtensionManager *_foundationExtensionManager = [FoundationExtensionManager shareFoundationExtensionManager];
+            
+            // check subview origin, width, height and update them
+            if (_drawRect.size.width < _subViewOriginX && FILL_PARENT >= _subViewOriginX) {
+                _subViewOriginX = _drawRect.size.width * (_subViewOriginX / FILL_PARENT);
+            }
+            else if (FILL_PARENT < _subViewOriginX) {
+                _subViewOriginX = evaluateFAOE([[[[[_foundationExtensionManager foundationExtensionForKey:[NSNumber numberWithUnsignedInteger:_subView.hash]] extensionDic] objectForKey:ORIGIN_X_FEKEY] stringByReplacingOccurrencesOfString:[NSString stringWithCString:FILL_PARENT_STRING encoding:NSUTF8StringEncoding] withString:[NSString stringWithFormat:@"%d", (int)_drawRect.size.width]] cStringUsingEncoding:NSUTF8StringEncoding]);
+            }
+            if (_drawRect.size.height < _subViewOriginY && FILL_PARENT >= _subViewOriginY) {
+                _subViewOriginY = _drawRect.size.height * (_subViewOriginY / FILL_PARENT);
+            }
+            else if (FILL_PARENT < _subViewOriginY) {
+                _subViewOriginY = evaluateFAOE([[[[[_foundationExtensionManager foundationExtensionForKey:[NSNumber numberWithUnsignedInteger:_subView.hash]] extensionDic] objectForKey:ORIGIN_Y_FEKEY] stringByReplacingOccurrencesOfString:[NSString stringWithCString:FILL_PARENT_STRING encoding:NSUTF8StringEncoding] withString:[NSString stringWithFormat:@"%d", (int)_drawRect.size.height]] cStringUsingEncoding:NSUTF8StringEncoding]);
+            }
+            if (_drawRect.size.width < _subViewWidth && FILL_PARENT >= _subViewWidth) {
+                _subViewWidth = _drawRect.size.width * (_subViewWidth / FILL_PARENT);
+            }
+            else if (FILL_PARENT < _subViewWidth) {
+                _subViewWidth = evaluateFAOE([[[[[_foundationExtensionManager foundationExtensionForKey:[NSNumber numberWithUnsignedInteger:_subView.hash]] extensionDic] objectForKey:SIZE_WIDTH_FEKEY] stringByReplacingOccurrencesOfString:[NSString stringWithCString:FILL_PARENT_STRING encoding:NSUTF8StringEncoding] withString:[NSString stringWithFormat:@"%d", (int)_drawRect.size.width]] cStringUsingEncoding:NSUTF8StringEncoding]);
+            }
+            if (_drawRect.size.height < _subViewHeight && FILL_PARENT >= _subViewHeight) {
+                _subViewHeight = _drawRect.size.height * (_subViewHeight / FILL_PARENT);
+            }
+            else if (FILL_PARENT < _subViewHeight) {
+                _subViewHeight = evaluateFAOE([[[[[_foundationExtensionManager foundationExtensionForKey:[NSNumber numberWithUnsignedInteger:_subView.hash]] extensionDic] objectForKey:SIZE_HEIGHT_FEKEY] stringByReplacingOccurrencesOfString:[NSString stringWithCString:FILL_PARENT_STRING encoding:NSUTF8StringEncoding] withString:[NSString stringWithFormat:@"%d", (int)_drawRect.size.height]] cStringUsingEncoding:NSUTF8StringEncoding]);
+            }
+            
+            // update subview frame
+            _subView.frame = CGRectMake(_subViewOriginX, _subViewOriginY, _subViewWidth, _subViewHeight);
+            
+            // subview resize its subviews
+            [_subView resizesSubviews];
+        }
+    }
+}
+
 @end
 
 
@@ -135,6 +237,7 @@
     self.viewControllerRef.navigationItem.titleView = self.titleView;
     self.viewControllerRef.navigationItem.leftBarButtonItem = self.leftBarButtonItem;
     self.viewControllerRef.navigationItem.rightBarButtonItem = self.rightBarButtonItem;
+    self.viewControllerRef.tabBarItem = self.tabBarItem;
 }
 
 - (UIViewController *)viewControllerRef{

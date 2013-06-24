@@ -2,7 +2,7 @@
 //  NSBundle+Extension.m
 //  CommonToolkit
 //
-//  Created by  on 12-6-18.
+//  Created by Ares on 12-6-18.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 

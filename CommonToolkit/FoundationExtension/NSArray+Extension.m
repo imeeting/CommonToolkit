@@ -2,7 +2,7 @@
 //  NSArray+Extension.m
 //  CommonToolkit
 //
-//  Created by  on 12-6-8.
+//  Created by Ares on 12-6-8.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 

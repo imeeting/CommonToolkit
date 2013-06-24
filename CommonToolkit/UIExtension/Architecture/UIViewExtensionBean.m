@@ -2,7 +2,7 @@
 //  UIViewExtensionBean.m
 //  CommonToolkit
 //
-//  Created by  on 12-6-7.
+//  Created by Ares on 12-6-7.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 
@@ -17,6 +17,7 @@
 @synthesize leftBarButtonItem = _leftBarButtonItem;
 @synthesize rightBarButtonItem = _rightBarButtonItem;
 @synthesize backgroundImg = _backgroundImg;
+@synthesize tabBarItem = _tabBarItem;
 
 @synthesize viewControllerRef = _viewControllerRef;
 
@@ -34,7 +35,7 @@
 }
 
 - (NSString *)description{
-    return [NSString stringWithFormat:@"UIViewExtensionBean description: title = %@, title view = %@, left bar button item = %@, right bar button item = %@, background image = %@, view controller reference = %@ and view gesture recognizer delegate = %@, extension dictionary = %@", _title, _titleView, _leftBarButtonItem, _rightBarButtonItem, _backgroundImg, _viewControllerRef, _viewGestureRecognizerDelegate, _extensionDic];
+    return [NSString stringWithFormat:@"UIViewExtensionBean description: title = %@, title view = %@, left bar button item = %@, right bar button item = %@, background image = %@, tab bar item = %@, view controller reference = %@ and view gesture recognizer delegate = %@, extension dictionary = %@", _title, _titleView, _leftBarButtonItem, _rightBarButtonItem, _backgroundImg, _tabBarItem, _viewControllerRef, _viewGestureRecognizerDelegate, _extensionDic];
 }
 
 @end

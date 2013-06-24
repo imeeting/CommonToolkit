@@ -1,12 +1,12 @@
 //
-//  HttpUtil+Signature.m
+//  HttpUtils+Signature.m
 //  CommonToolkit
 //
-//  Created by  on 12-6-15.
+//  Created by Ares on 12-6-15.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 
-#import "HttpUtil+Signature.h"
+#import "HttpUtils+Signature.h"
 
 #import "NSString+Extension.h"
 #import "NSArray+Extension.h"
@@ -18,7 +18,7 @@
 // signature parameter key
 #define SIGNATURE_PARAMETER_KEY    @"sig"
 
-@implementation HttpUtil (Signature)
+@implementation HttpUtils (Signature)
 
 // generate signature with request parameter
 + (NSString *)generateSignatureWithParameter:(NSDictionary *)pParameter{
