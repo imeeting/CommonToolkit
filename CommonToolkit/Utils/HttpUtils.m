@@ -1,12 +1,12 @@
 //
-//  HttpUtil.m
+//  HttpUtils.m
 //  CommonToolkit
 //
-//  Created by  on 12-6-11.
+//  Created by Ares on 12-6-11.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 
-#import "HttpUtil.h"
+#import "HttpUtils.h"
 
 #import "ASIFormDataRequest.h"
 
@@ -22,7 +22,7 @@ typedef enum {
 
 
 // HttpUtil extension
-@interface HttpUtil ()
+@interface HttpUtils ()
 
 // send http request with method, type and postFormat if it is post request
 + (void)sendRequestWithUrl:(NSString *)pUrl andParameter:(NSDictionary *)pParameter andUserInfo:(NSDictionary *)pUserInfo andProcessor:(id)pProcessor andFinishedRespSelector:(SEL)pFinRespSel andFailedRespSelector:(SEL)pFailRespSel andRequestMethod:(HTTPRequestMethod)pMethod andRequestType:(HTTPRequestType)pType andPostFormat:(HttpPostFormat)pPostFormat;
@@ -32,7 +32,7 @@ typedef enum {
 
 
 
-@implementation HttpUtil
+@implementation HttpUtils
 
 + (void)getRequestWithUrl:(NSString *)pUrl andParameter:(NSDictionary *)pParameter andUserInfo:(NSDictionary *)pUserInfo andRequestType:(HTTPRequestType)pType andProcessor:(id)pProcessor andFinishedRespSelector:(SEL)pFinRespSel andFailedRespSelector:(SEL)pFailRespSel{
     [self sendRequestWithUrl:pUrl andParameter:pParameter andUserInfo:pUserInfo andProcessor:pProcessor andFinishedRespSelector:pFinRespSel andFailedRespSelector:pFailRespSel andRequestMethod:get andRequestType:pType andPostFormat:nonentity];

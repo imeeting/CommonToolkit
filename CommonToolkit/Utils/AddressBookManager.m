@@ -2,7 +2,7 @@
 //  AddressBookManager.m
 //  CommonToolkit
 //
-//  Created by  on 12-6-8.
+//  Created by Ares on 12-6-8.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 
@@ -15,6 +15,7 @@
 #import "UIDevice+Extension.h"
 
 #import "CommonUtils.h"
+#import "PinyinUtils.h"
 
 #import "ContactBean_Extension.h"
 
@@ -84,6 +85,9 @@ static AddressBookManager *singletonAddressBookManagerRef;
 // refresh addressBook and return contact id dirty dictionary
 // key: contact id(NSInteger), value: action dictionary(NSDictionary *)
 - (NSDictionary *)refreshAddressBook;
+
+// fetch the addressBook reference
+- (ABAddressBookRef) fetchAddressBook;
 
 // private method: addressBook changed callback function
 void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void *context);
@@ -222,8 +226,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         [_mContactSearchResultDic setObject:_searchedContactArray forKey:pPhoneNumber];
     }
     
-    //return pSortedType == phonetics ? [_ret phoneticsSortedContactsInfoArray] : _ret;
-    return _ret;
+    return pSortedType == phonetics ? [_ret optPhoneticsSortedContactsInfoArray] : _ret;
 }
 
 - (NSArray *)getContactByName:(NSString *)pName{
@@ -413,8 +416,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         [_mContactSearchResultDic setObject:_searchedContactArray forKey:pName];
     }
     
-   // return pSortedType == phonetics ? [_ret phoneticsSortedContactsInfoArray] : _ret;
-    return _ret;
+    return pSortedType == phonetics ? [_ret optPhoneticsSortedContactsInfoArray] : _ret;
 }
 
 - (void)getContactEnd{
@@ -447,6 +449,9 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 }
 
 - (void)addABChangedObserver:(id)pObserver{
+    // fetch the addressBook
+    ABAddressBookRef addressBook = [self fetchAddressBook];
+    
     // validate addressBookChanged implemetation
     if ([CommonUtils validateProcessor:pObserver andSelector:@selector(addressBookChanged:info:observer:)]) {
         // check addressBook changed observer
@@ -459,19 +464,19 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         _mAddressBookChangedObserver = pObserver;
         
         // register external change callback function
-        ABAddressBookRegisterExternalChangeCallback(ABAddressBookCreate(), addressBookChanged, (__bridge void *)(_mAddressBookChangedObserver));
+        ABAddressBookRegisterExternalChangeCallback(addressBook, addressBookChanged, (__bridge void *)(_mAddressBookChangedObserver));
     }
     else if (nil != pObserver) {
         NSLog(@"Warning: %@ can't implement addressBook changed callback function %@", NSStringFromClass(((NSObject *)pObserver).class), NSStringFromSelector(@selector(addressBookChanged:info:observer:)));
         
         // register external change callback function
-        ABAddressBookRegisterExternalChangeCallback(ABAddressBookCreate(), addressBookChanged, NULL);
+        ABAddressBookRegisterExternalChangeCallback(addressBook, addressBookChanged, NULL);
     }
 }
 
 - (void)removeABChangedObserver:(id)pObserver{
     // unregister external change callback function
-    ABAddressBookUnregisterExternalChangeCallback(ABAddressBookCreate(), addressBookChanged, (__bridge void *)(pObserver));
+    ABAddressBookUnregisterExternalChangeCallback([self fetchAddressBook], addressBookChanged, (__bridge void *)(pObserver));
 }
 
 - (NSArray *)getContactInfoByPhoneNumber:(NSString *)pPhoneNumber{
@@ -508,7 +513,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     }
     
     // fetch the addressBook 
-    ABAddressBookRef addressBook = ABAddressBookCreate();
+    ABAddressBookRef addressBook = [self fetchAddressBook];
     
     // get all group array
     CFArrayRef _groups = ABAddressBookCopyArrayOfAllGroups(addressBook);
@@ -562,8 +567,8 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 - (NSMutableArray *)getAllContactsInfoFromAB{
     NSMutableArray *_ret = [[NSMutableArray alloc] init];
     
-    // fetch the addressBook 
-    ABAddressBookRef addressBook = ABAddressBookCreate();
+    // fetch the addressBook
+    ABAddressBookRef addressBook = [self fetchAddressBook];
     
     // get all contacts
     CFArrayRef _contacts = ABAddressBookCopyArrayOfAllPeople(addressBook);
@@ -779,6 +784,37 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     return _ret;
 }
 
+- (ABAddressBookRef)fetchAddressBook{
+    // define the fetched addressBook object
+    ABAddressBookRef _addressBook = nil;
+    
+    // check ios version and fetch the addressBook
+    if ([[UIDevice currentDevice].systemVersion floatValue] >= 6.0) {
+        // ios 6
+        CFErrorRef error = nil;
+        
+        _addressBook = ABAddressBookCreateWithOptions(NULL, &error);
+        
+        // check the addressBook access permission
+        ABAddressBookRequestAccessWithCompletion(_addressBook, ^(bool granted, CFErrorRef error){
+            // callback can occur in background, address book must be accessed on thread it was created on
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (error) {
+                    NSLog(@"Error: fetch the addressBook error");
+                }
+                else if (!granted) {
+                    NSLog(@"Error: fetch the addressBook, access not granted");
+                }
+            });
+        });
+    } else {
+        // ios 4/5
+        _addressBook = ABAddressBookCreate();
+    }
+    
+    return _addressBook;
+}
+
 - (BOOL)isContactExistInAddressBookByName:(NSString *)name {
     ABAddressBookRef addressBook = ABAddressBookCreate();
     CFArrayRef contacts = ABAddressBookCopyPeopleWithName(addressBook, (__bridge CFStringRef)name);
@@ -926,6 +962,29 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         }
     }
     return _ret;
+}
+
+- (NSMutableArray *)optPhoneticsSortedContactsInfoArray{
+    @autoreleasepool {
+        NSArray *_tmpSortedArray = [NSArray arrayWithArray:self];
+        
+        return [NSMutableArray arrayWithArray:[_tmpSortedArray sortedArrayUsingComparator:^(ContactBean *_contact1, ContactBean *_contact2){
+            NSComparisonResult _stringComparisonResult = NSOrderedSame;
+            
+            // compare
+            if ([_contact1.fullNames count] > 0 && 0 == [_contact2.fullNames count]) {
+                _stringComparisonResult = NSOrderedAscending;
+            }
+            else if ([_contact2.fullNames count] > 0 && 0 == [_contact1.fullNames count]) {
+                _stringComparisonResult = NSOrderedDescending;
+            }
+            else if ([_contact1.fullNames count] > 0 && [_contact2.fullNames count] > 0) {
+                _stringComparisonResult = [[_contact1.namePhonetics namePhoneticsString] compare:[_contact2.namePhonetics namePhoneticsString]];
+            }
+            
+            return _stringComparisonResult;
+        }]];
+    }
 }
 
 @end

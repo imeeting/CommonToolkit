@@ -24,13 +24,13 @@ typedef enum {
 // system version number
 @property (nonatomic, readonly) CGFloat systemVersionNum;
 
+// unique identifier
+@property (nonatomic, readonly) NSString *uniqueId;
+
+// hardware model
+@property (nonatomic, readonly) NSString *hardwareModel;
+
 // system current seeting language
 @property (nonatomic, readonly) SystemCurrentSettingLanguage systemCurrentSettingLanguage;
-
-// UIApplication status bar height
-@property (nonatomic, readonly) CGFloat statusBarHeight;
-
-// UIApplication navigation bar default height
-@property (nonatomic, readonly) CGFloat navigationBarHeight;
 
 @end

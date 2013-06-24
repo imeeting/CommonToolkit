@@ -2,7 +2,7 @@
 //  UIViewExtensionManager.m
 //  CommonToolkit
 //
-//  Created by  on 12-6-7.
+//  Created by Ares on 12-6-7.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 
@@ -63,6 +63,10 @@ static UIViewExtensionManager *singletonUIViewExtensionManagerRef;
             
         case backgroundImgExt:
             _uiViewExtensionBean.backgroundImg = pExtension;
+            break;
+            
+        case tabBarItemExt:
+            _uiViewExtensionBean.tabBarItem = pExtension;
             break;
             
         case viewControllerRefExt:

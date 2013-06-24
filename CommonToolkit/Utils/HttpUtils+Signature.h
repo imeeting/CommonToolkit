@@ -1,14 +1,14 @@
 //
-//  HttpUtil+Signature.h
+//  HttpUtils+Signature.h
 //  CommonToolkit
 //
-//  Created by  on 12-6-15.
+//  Created by Ares on 12-6-15.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 
-#import "HttpUtil.h"
+#import "HttpUtils.h"
 
-@interface HttpUtil (Signature)
+@interface HttpUtils (Signature)
 
 // get signature http request
 + (void)getSignatureRequestWithUrl:(NSString *)pUrl andParameter:(NSDictionary *)pParameter andUserInfo:(NSDictionary *)pUserInfo andRequestType:(HTTPRequestType)pType andProcessor:(id)pProcessor andFinishedRespSelector:(SEL)pFinRespSel andFailedRespSelector:(SEL)pFailRespSel;

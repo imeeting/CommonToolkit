@@ -2,7 +2,7 @@
 //  NSString+Extension.m
 //  CommonToolkit
 //
-//  Created by  on 12-6-7.
+//  Created by Ares on 12-6-7.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 

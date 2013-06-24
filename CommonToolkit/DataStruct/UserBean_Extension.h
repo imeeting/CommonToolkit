@@ -2,7 +2,7 @@
 //  UserBean_Extension.h
 //  CommonToolkit
 //
-//  Created by  on 12-6-12.
+//  Created by Ares on 12-6-12.
 //  Copyright (c) 2012年 richitec. All rights reserved.
 //
 
